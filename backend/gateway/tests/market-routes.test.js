@@ -7,7 +7,7 @@ describe('market routes', () => {
     const app = createApp();
 
     const response = await request(app)
-      .get('/api/hqchart/stock')
+      .get('/api/stock')
       .query({ symbol: '600000', providerMode: 'mock' });
 
     expect(response.status).toBe(200);
@@ -31,7 +31,7 @@ describe('market routes', () => {
     const app = createApp();
 
     const response = await request(app)
-      .get('/api/hqchart/stock')
+      .get('/api/stock')
       .query({ symbol: '600000', providerMode: 'force-error' });
 
     expect(response.status).toBe(502);
@@ -48,7 +48,7 @@ describe('market routes', () => {
     const app = createApp();
 
     const response = await request(app)
-      .get('/api/hqchart/stock')
+      .get('/api/stock')
       .query({ symbol: '600000', providerMode: 'bad' });
 
     expect(response.status).toBe(400);
@@ -58,7 +58,7 @@ describe('market routes', () => {
     const app = createApp();
 
     const response = await request(app)
-      .get('/api/hqchart/stock')
+      .get('/api/stock')
       .query({ symbol: '600000', provider: 'unknown', providerMode: 'mock' });
 
     expect(response.status).toBe(400);

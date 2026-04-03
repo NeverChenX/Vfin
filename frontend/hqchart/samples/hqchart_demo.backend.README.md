@@ -5,7 +5,7 @@
 1. 启动 gateway
 
 ```bash
-cd hqchart-gateway
+cd backend/gateway
 npm install
 npm run dev
 ```
@@ -13,13 +13,13 @@ npm run dev
 默认接口基址:
 
 ```text
-http://127.0.0.1:18080/api/hqchart
+http://127.0.0.1:18080/api
 ```
 
 2. 用本地静态服务器打开 demo 页面
 
 ```text
-webhqchart.demo/samples/hqchart_demo.html
+frontend/hqchart/samples/hqchart_demo.html
 ```
 
 建议不要直接双击 `file://` 打开，使用任意静态服务器更稳定。
@@ -27,14 +27,14 @@ webhqchart.demo/samples/hqchart_demo.html
 示例:
 
 ```bash
-cd webhqchart.demo
+cd frontend
 python -m http.server 8080
 ```
 
 然后访问:
 
 ```text
-http://127.0.0.1:8080/samples/hqchart_demo.html
+http://127.0.0.1:8080/hqchart
 ```
 
 ## 可选 Query 参数
@@ -46,7 +46,7 @@ http://127.0.0.1:8080/samples/hqchart_demo.html
 示例:
 
 ```text
-http://127.0.0.1:8080/samples/hqchart_demo.html?apiBase=http://127.0.0.1:18080/api/hqchart&providerMode=mock
+http://127.0.0.1:8080/hqchart?apiBase=http://127.0.0.1:18080/api&providerMode=mock
 ```
 
 ## 页面行为
@@ -62,7 +62,7 @@ http://127.0.0.1:8080/samples/hqchart_demo.html?apiBase=http://127.0.0.1:18080/a
 ```bash
 @'
 const fs = require('fs');
-const html = fs.readFileSync('webhqchart.demo/samples/hqchart_demo.html', 'utf8');
+const html = fs.readFileSync('frontend/hqchart/samples/hqchart_demo.html', 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
 new Function(scripts[scripts.length - 1]);
 console.log('inline-script-ok');
@@ -80,7 +80,7 @@ inline-script-ok
 1. 页面空白或控制台报接口错误
 
 - 确认 gateway 已启动
-- 打开 `http://127.0.0.1:18080/api/hqchart/health/live` 应返回 `{"ok":true}`
+- 打开 `http://127.0.0.1:18080/api/health/live` 应返回 `{"ok":true}`
 
 2. 左侧列表为空
 
@@ -101,5 +101,4 @@ inline-script-ok
 
 5. 图表数据和本地 demo 数据不一致
 
-- 本页默认以后端为准
-- 只有接口失败时，部分图表请求才会回退到本地 demo testdata
+- 本页仅使用后端数据，不再回退本地 demo testdata

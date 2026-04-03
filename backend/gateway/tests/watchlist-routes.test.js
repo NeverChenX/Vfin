@@ -26,7 +26,7 @@ describe('watchlist routes', () => {
     const app = createApp({ watchlistService });
 
     const added = await request(app)
-      .post('/api/hqchart/watchlist')
+      .post('/api/watchlist')
       .send({ symbol: '700' });
 
     expect(added.status).toBe(200);
@@ -35,24 +35,24 @@ describe('watchlist routes', () => {
     expect(added.body.item.displayName).toBe('00700.hk');
 
     const addedAgain = await request(app)
-      .post('/api/hqchart/watchlist')
+      .post('/api/watchlist')
       .send({ symbol: '00700.hk' });
 
     expect(addedAgain.status).toBe(200);
     expect(addedAgain.body.item).toEqual(added.body.item);
 
-    const listed = await request(app).get('/api/hqchart/watchlist');
+    const listed = await request(app).get('/api/watchlist');
 
     expect(listed.status).toBe(200);
     expect(listed.body.items).toHaveLength(1);
     expect(listed.body.items[0]).toEqual(added.body.item);
 
-    const removed = await request(app).delete('/api/hqchart/watchlist/700');
+    const removed = await request(app).delete('/api/watchlist/700');
 
     expect(removed.status).toBe(200);
     expect(removed.body).toEqual({ removed: '00700.hk' });
 
-    const listedAfterDelete = await request(app).get('/api/hqchart/watchlist');
+    const listedAfterDelete = await request(app).get('/api/watchlist');
 
     expect(listedAfterDelete.status).toBe(200);
     expect(listedAfterDelete.body).toEqual({ items: [] });
@@ -63,7 +63,7 @@ describe('watchlist routes', () => {
     const app = createApp({ watchlistService });
 
     const response = await request(app)
-      .post('/api/hqchart/watchlist')
+      .post('/api/watchlist')
       .send({ symbol: 'invalid' });
 
     expect(response.status).toBe(400);
@@ -93,7 +93,7 @@ describe('watchlist routes', () => {
       }
     });
 
-    const response = await request(app).get('/api/hqchart/watchlist');
+    const response = await request(app).get('/api/watchlist');
 
     expect(response.status).toBe(500);
     expect(response.headers['x-trace-id']).toMatch(/\S+/);
@@ -113,7 +113,7 @@ describe('watchlist routes', () => {
     let app = createApp({ watchlistService });
 
     const added = await request(app)
-      .post('/api/hqchart/watchlist')
+      .post('/api/watchlist')
       .send({ symbol: '600000' });
 
     expect(added.status).toBe(200);
@@ -123,7 +123,7 @@ describe('watchlist routes', () => {
     watchlistService = createWatchlistService({ dbPath });
     app = createApp({ watchlistService });
 
-    const listed = await request(app).get('/api/hqchart/watchlist');
+    const listed = await request(app).get('/api/watchlist');
 
     expect(listed.status).toBe(200);
     expect(listed.body.items).toHaveLength(1);

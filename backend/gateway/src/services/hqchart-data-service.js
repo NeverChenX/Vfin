@@ -34,13 +34,13 @@ function createCacheKey(operation, context) {
   });
 }
 
-function createExecutionContext(params) {
+function createExecutionContext(params, defaultProviderMode) {
   const { symbol, market } = normalizeSymbol(params.symbol);
 
   return {
     symbol,
     market,
-    providerMode: params.providerMode ?? 'mock',
+    providerMode: params.providerMode ?? defaultProviderMode,
     provider: params.provider,
     period: params.period,
     day: params.day,
@@ -53,10 +53,11 @@ export function createHqchartDataService({
   cacheService = createCacheService(),
   resilienceService = createResilienceService(),
   normalizer = createHqchartNormalizer(),
-  cacheTtlMs = 1_000
+  cacheTtlMs = 1_000,
+  providerMode = 'live'
 } = {}) {
   async function execute(operation, params = {}) {
-    const context = createExecutionContext(params);
+    const context = createExecutionContext(params, providerMode);
     const cacheKey = createCacheKey(operation, context);
 
     return cacheService.getOrSet(

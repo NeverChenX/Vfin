@@ -1,29 +1,24 @@
 export function loadConfig(env = process.env) {
   const rawPort = env.PORT;
+  const providerOrderRaw = env.HQ_PROVIDER_ORDER || 'sina,tencent';
+  const providerOrder = providerOrderRaw
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const providerMode = env.HQ_PROVIDER_MODE || 'live';
 
-  if (rawPort == null || rawPort === '') {
-    return {
-      port: 18080
-    };
-  }
-
-  if (!/^\d+$/.test(rawPort)) {
+  let port = 18080;
+  if (rawPort && /^\d+$/.test(rawPort)) {
+    const numeric = Number(rawPort);
+    if (numeric >= 1 && numeric <= 65535) port = numeric;
+    else console.warn(`Invalid PORT "${rawPort}", falling back to 18080`);
+  } else if (rawPort) {
     console.warn(`Invalid PORT "${rawPort}", falling back to 18080`);
-    return {
-      port: 18080
-    };
-  }
-
-  const port = Number(rawPort);
-
-  if (port < 1 || port > 65535) {
-    console.warn(`Invalid PORT "${rawPort}", falling back to 18080`);
-    return {
-      port: 18080
-    };
   }
 
   return {
-    port
+    port,
+    providerOrder: providerOrder.length ? providerOrder : ['sina', 'tencent'],
+    providerMode
   };
 }
