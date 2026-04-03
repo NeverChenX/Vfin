@@ -3,18 +3,28 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 import { loadConfig } from './config.js';
+import { createMarketRouter } from './routes/market-routes.js';
 import { createWatchlistRouter } from './routes/watchlist-routes.js';
+import { createHqchartDataService } from './services/hqchart-data-service.js';
 import { createWatchlistService } from './services/watchlist-service.js';
 
-export function createApp({ watchlistService } = {}) {
+export function createApp({ watchlistService, hqchartDataService } = {}) {
   const app = express();
   let defaultWatchlistService;
+  let defaultHqchartDataService;
   const service = watchlistService ?? (() => {
     if (!defaultWatchlistService) {
       defaultWatchlistService = createWatchlistService();
     }
 
     return defaultWatchlistService;
+  });
+  const marketDataService = hqchartDataService ?? (() => {
+    if (!defaultHqchartDataService) {
+      defaultHqchartDataService = createHqchartDataService();
+    }
+
+    return defaultHqchartDataService;
   });
 
   app.use(express.json());
@@ -29,6 +39,7 @@ export function createApp({ watchlistService } = {}) {
     res.status(200).json({ ok: true });
   });
 
+  app.use('/api/hqchart', createMarketRouter({ hqchartDataService: marketDataService }));
   app.use('/api/hqchart/watchlist', createWatchlistRouter({ watchlistService: service }));
 
   return app;
