@@ -8,7 +8,8 @@ export function createApp() {
   const app = express();
 
   app.use((req, res, next) => {
-    res.setHeader('X-Request-Id', uuidv4());
+    const requestId = req.get('X-Request-Id') ?? uuidv4();
+    res.setHeader('X-Request-Id', requestId);
     next();
   });
 
