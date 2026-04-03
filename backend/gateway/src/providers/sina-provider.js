@@ -1,7 +1,32 @@
+import iconv from 'iconv-lite';
 import { BaseProvider } from './base-provider.js';
+import { fetchText } from './http-client.js';
+import { parseSinaQuote } from './live-mappers.js';
 
 function createTimestamp() {
   return '2026-04-03T09:30:00.000Z';
+}
+
+function buildSinaSymbol({ market, symbol }) {
+  if (symbol?.includes('.')) {
+    const [code] = symbol.split('.');
+    return `${market}${code}`;
+  }
+  return symbol;
+}
+
+async function fetchSinaQuote(context) {
+  const code = buildSinaSymbol(context);
+  const url = `https://hq.sinajs.cn/list=${code}`;
+  const buffer = await fetchText(url, {
+    headers: {
+      Referer: 'https://finance.sina.com.cn',
+      'User-Agent': 'Mozilla/5.0'
+    },
+    responseType: 'arrayBuffer'
+  });
+  const text = iconv.decode(Buffer.from(buffer), 'gbk');
+  return parseSinaQuote(text);
 }
 
 export class SinaProvider extends BaseProvider {
@@ -11,6 +36,26 @@ export class SinaProvider extends BaseProvider {
 
   async fetchQuote(context) {
     this.ensureMockableMode(context.providerMode, 'quote');
+
+    if (context.providerMode === 'live') {
+      try {
+        const data = await fetchSinaQuote(context);
+        return {
+          symbol: context.symbol,
+          market: context.market,
+          name: data.name,
+          now: data.now,
+          open: data.open,
+          high: data.high,
+          low: data.low,
+          volume: data.volume,
+          turnover: data.turnover,
+          timestamp: data.time
+        };
+      } catch (error) {
+        throw this.createError(`Sina quote failed: ${error.message}`, { cause: error });
+      }
+    }
 
     return {
       symbol: context.symbol,
@@ -28,6 +73,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchMinute(context) {
     this.ensureMockableMode(context.providerMode, 'minute');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina minute not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,
@@ -43,6 +91,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchKline(context) {
     this.ensureMockableMode(context.providerMode, 'kline');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina kline not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,
@@ -83,6 +134,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchCapital(context) {
     this.ensureMockableMode(context.providerMode, 'capital');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina capital not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,
@@ -97,6 +151,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchCallauction(context) {
     this.ensureMockableMode(context.providerMode, 'callauction');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina callauction not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,
@@ -111,6 +168,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchTradeDetail(context) {
     this.ensureMockableMode(context.providerMode, 'trade');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina trade detail not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,
@@ -126,6 +186,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchNews(context) {
     this.ensureMockableMode(context.providerMode, 'news');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina news not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,
@@ -144,6 +207,9 @@ export class SinaProvider extends BaseProvider {
 
   async fetchAnnouncements(context) {
     this.ensureMockableMode(context.providerMode, 'announcements');
+    if (context.providerMode === 'live') {
+      throw this.createError('Sina announcements not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       symbol: context.symbol,

@@ -28,7 +28,7 @@ export class BaseProvider {
   }
 
   ensureMockableMode(mode, operation) {
-    if (mode === 'mock') {
+    if (mode === 'mock' || mode === 'live') {
       return;
     }
 
@@ -56,3 +56,4 @@ export class BaseProvider {
     return error;
   }
 }
+

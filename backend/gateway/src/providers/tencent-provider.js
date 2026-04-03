@@ -1,7 +1,23 @@
 import { BaseProvider } from './base-provider.js';
+import { fetchJson, fetchText } from './http-client.js';
+import { parseTencentQuote, parseTencentMinute, parseTencentKline } from './live-mappers.js';
 
 function createTimestamp() {
   return '2026-04-03T09:30:00.000Z';
+}
+
+function buildTencentSymbol({ market, symbol }) {
+  if (symbol?.includes('.')) {
+    const [code] = symbol.split('.');
+    return `${market}${code}`;
+  }
+  return symbol;
+}
+
+function resolveTencentPeriod(period) {
+  if (!period) return 'day';
+  if (['day', 'week', 'month', 'year'].includes(period)) return period;
+  return 'day';
 }
 
 export class TencentProvider extends BaseProvider {
@@ -11,6 +27,34 @@ export class TencentProvider extends BaseProvider {
 
   async fetchQuote(context) {
     this.ensureMockableMode(context.providerMode, 'quote');
+
+    if (context.providerMode === 'live') {
+      try {
+        const code = buildTencentSymbol(context);
+        const url = `https://qt.gtimg.cn/q=${code}`;
+        const text = await fetchText(url, {
+          headers: {
+            Referer: 'https://finance.qq.com/',
+            'User-Agent': 'Mozilla/5.0'
+          }
+        });
+        const data = parseTencentQuote(text);
+        return {
+          code: context.symbol,
+          market: context.market,
+          title: data.name,
+          price: data.now,
+          openPrice: data.open,
+          maxPrice: data.high,
+          minPrice: data.low,
+          totalVolume: data.volume,
+          totalAmount: data.turnover,
+          time: data.time
+        };
+      } catch (error) {
+        throw this.createError(`Tencent quote failed: ${error.message}`, { cause: error });
+      }
+    }
 
     return {
       code: context.symbol,
@@ -29,6 +73,24 @@ export class TencentProvider extends BaseProvider {
   async fetchMinute(context) {
     this.ensureMockableMode(context.providerMode, 'minute');
 
+    if (context.providerMode === 'live') {
+      try {
+        const code = buildTencentSymbol(context);
+        const url = `https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=${code}`;
+        const json = await fetchJson(url);
+        const data = json?.data?.[code] ?? {};
+        const parsed = parseTencentMinute(data?.data ?? {});
+        return {
+          code: context.symbol,
+          market: context.market,
+          line: parsed.points.map((point) => [point.time, point.price, point.volume, point.avgPrice]),
+          time: new Date().toISOString()
+        };
+      } catch (error) {
+        throw this.createError(`Tencent minute failed: ${error.message}`, { cause: error });
+      }
+    }
+
     return {
       code: context.symbol,
       market: context.market,
@@ -43,6 +105,35 @@ export class TencentProvider extends BaseProvider {
 
   async fetchKline(context) {
     this.ensureMockableMode(context.providerMode, 'kline');
+
+    if (context.providerMode === 'live') {
+      try {
+        const code = buildTencentSymbol(context);
+        const period = resolveTencentPeriod(context.period);
+        const count = context.count ?? 200;
+        const url = `https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=${code},${period},,,${count}`;
+        const json = await fetchJson(url);
+        const data = json?.data?.[code] ?? {};
+        const parsed = parseTencentKline(data, period);
+        return {
+          code: context.symbol,
+          market: context.market,
+          cycle: period,
+          candles: parsed.list.map((item) => [
+            item.date,
+            item.open,
+            item.high,
+            item.low,
+            item.close,
+            item.volume,
+            item.amount
+          ]),
+          time: new Date().toISOString()
+        };
+      } catch (error) {
+        throw this.createError(`Tencent kline failed: ${error.message}`, { cause: error });
+      }
+    }
 
     return {
       code: context.symbol,
@@ -59,6 +150,9 @@ export class TencentProvider extends BaseProvider {
 
   async fetchCapital(context) {
     this.ensureMockableMode(context.providerMode, 'capital');
+    if (context.providerMode === 'live') {
+      throw this.createError('Tencent capital not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       code: context.symbol,
@@ -75,6 +169,9 @@ export class TencentProvider extends BaseProvider {
 
   async fetchCallauction(context) {
     this.ensureMockableMode(context.providerMode, 'callauction');
+    if (context.providerMode === 'live') {
+      throw this.createError('Tencent callauction not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       code: context.symbol,
@@ -91,6 +188,9 @@ export class TencentProvider extends BaseProvider {
 
   async fetchTradeDetail(context) {
     this.ensureMockableMode(context.providerMode, 'trade');
+    if (context.providerMode === 'live') {
+      throw this.createError('Tencent trade detail not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       code: context.symbol,
@@ -106,6 +206,9 @@ export class TencentProvider extends BaseProvider {
 
   async fetchNews(context) {
     this.ensureMockableMode(context.providerMode, 'news');
+    if (context.providerMode === 'live') {
+      throw this.createError('Tencent news not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       code: context.symbol,
@@ -124,6 +227,9 @@ export class TencentProvider extends BaseProvider {
 
   async fetchAnnouncements(context) {
     this.ensureMockableMode(context.providerMode, 'announcements');
+    if (context.providerMode === 'live') {
+      throw this.createError('Tencent announcements not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
+    }
 
     return {
       code: context.symbol,
