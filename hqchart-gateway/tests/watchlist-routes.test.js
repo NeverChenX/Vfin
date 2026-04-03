@@ -67,7 +67,42 @@ describe('watchlist routes', () => {
       .send({ symbol: 'invalid' });
 
     expect(response.status).toBe(400);
-    expect(response.body.error).toMatch(/invalid symbol/i);
+    expect(response.headers['x-trace-id']).toMatch(/\S+/);
+    expect(response.body).toEqual({
+      code: 'REQUEST_ERROR',
+      message: expect.stringMatching(/invalid symbol/i),
+      provider: 'gateway',
+      traceId: response.headers['x-trace-id']
+    });
+  });
+
+  it('falls back to 500 when a route error has an invalid status code', async () => {
+    const app = createApp({
+      watchlistService: {
+        list() {
+          const error = new Error('broken watchlist');
+          error.statusCode = 700;
+          throw error;
+        },
+        add() {
+          throw new Error('not used');
+        },
+        remove() {
+          throw new Error('not used');
+        }
+      }
+    });
+
+    const response = await request(app).get('/api/hqchart/watchlist');
+
+    expect(response.status).toBe(500);
+    expect(response.headers['x-trace-id']).toMatch(/\S+/);
+    expect(response.body).toEqual({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'broken watchlist',
+      provider: 'gateway',
+      traceId: response.headers['x-trace-id']
+    });
   });
 
   it('persists watchlist items across app and database recreation for file-backed sqlite', async () => {

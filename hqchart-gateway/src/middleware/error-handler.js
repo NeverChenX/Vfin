@@ -1,5 +1,9 @@
 function resolveStatusCode(error) {
-  if (Number.isInteger(error?.statusCode)) {
+  if (
+    Number.isInteger(error?.statusCode) &&
+    error.statusCode >= 400 &&
+    error.statusCode <= 599
+  ) {
     return error.statusCode;
   }
 

@@ -28,8 +28,8 @@ export function createApp({ watchlistService, hqchartDataService } = {}) {
     return defaultHqchartDataService;
   });
 
-  app.use(express.json());
   app.use(traceIdMiddleware);
+  app.use(express.json());
 
   app.get('/api/hqchart/health/live', (_req, res) => {
     res.status(200).json({ ok: true });
