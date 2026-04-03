@@ -63,4 +63,34 @@ describe('gateway health smoke', () => {
     expect(response.headers['x-request-id']).toBe('trace-a');
     expect(response.body.traceId).toBe('trace-a');
   });
+
+  it('adds CORS headers to api responses for browser-based demos', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .get('/api/hqchart/stock')
+      .set('Origin', 'http://127.0.0.1:5500')
+      .query({ symbol: '600000', providerMode: 'mock' });
+
+    expect(response.status).toBe(200);
+    expect(response.headers['access-control-allow-origin']).toBe('*');
+    expect(response.headers['access-control-allow-methods']).toContain('GET');
+    expect(response.headers['access-control-allow-headers']).toContain('Content-Type');
+  });
+
+  it('handles CORS preflight for watchlist mutations', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .options('/api/hqchart/watchlist')
+      .set('Origin', 'http://127.0.0.1:5500')
+      .set('Access-Control-Request-Method', 'POST')
+      .set('Access-Control-Request-Headers', 'content-type');
+
+    expect(response.status).toBe(204);
+    expect(response.headers['access-control-allow-origin']).toBe('*');
+    expect(response.headers['access-control-allow-methods']).toContain('POST');
+    expect(response.headers['access-control-allow-methods']).toContain('DELETE');
+    expect(response.headers['access-control-allow-headers']).toContain('content-type');
+  });
 });

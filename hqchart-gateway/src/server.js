@@ -9,6 +9,21 @@ import { createWatchlistRouter } from './routes/watchlist-routes.js';
 import { createHqchartDataService } from './services/hqchart-data-service.js';
 import { createWatchlistService } from './services/watchlist-service.js';
 
+function corsMiddleware(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
+  res.header(
+    'Access-Control-Allow-Headers',
+    req.header('Access-Control-Request-Headers') || 'Content-Type, X-Request-Id, X-Trace-Id'
+  );
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  return next();
+}
+
 export function createApp({ watchlistService, hqchartDataService } = {}) {
   const app = express();
   let defaultWatchlistService;
@@ -28,6 +43,7 @@ export function createApp({ watchlistService, hqchartDataService } = {}) {
     return defaultHqchartDataService;
   });
 
+  app.use(corsMiddleware);
   app.use(traceIdMiddleware);
   app.use(express.json());
 
