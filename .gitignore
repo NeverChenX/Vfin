@@ -58,3 +58,4 @@ typings/
 .env
 
 vue.demo/infoHqdemo/package-lock.json
+.worktrees/
