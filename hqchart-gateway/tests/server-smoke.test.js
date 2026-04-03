@@ -48,4 +48,19 @@ describe('gateway health smoke', () => {
     expect(response.headers['x-trace-id']).toMatch(/\S+/);
     expect(response.body.traceId).toBe(response.headers['x-trace-id']);
   });
+
+  it('prefers an incoming trace id over request id on error responses', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .post('/api/hqchart/watchlist')
+      .set('X-Trace-Id', 'trace-a')
+      .set('X-Request-Id', 'req-b')
+      .send({ symbol: 'invalid' });
+
+    expect(response.status).toBe(400);
+    expect(response.headers['x-trace-id']).toBe('trace-a');
+    expect(response.headers['x-request-id']).toBe('trace-a');
+    expect(response.body.traceId).toBe('trace-a');
+  });
 });
