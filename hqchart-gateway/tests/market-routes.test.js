@@ -24,9 +24,10 @@ describe('market routes', () => {
     });
     expect(response.body.provider).toBeDefined();
     expect(response.body.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(response.headers['x-trace-id']).toMatch(/\S+/);
   });
 
-  it('returns 502 for stock requests when providers fail upstream', async () => {
+  it('returns unified upstream error payload with trace id when providers fail', async () => {
     const app = createApp();
 
     const response = await request(app)
@@ -34,6 +35,13 @@ describe('market routes', () => {
       .query({ symbol: '600000', providerMode: 'force-error' });
 
     expect(response.status).toBe(502);
+    expect(response.headers['x-trace-id']).toMatch(/\S+/);
+    expect(response.body).toEqual({
+      code: 'ALL_PROVIDERS_FAILED',
+      message: 'All providers failed for quote',
+      provider: 'gateway',
+      traceId: response.headers['x-trace-id']
+    });
   });
 
   it('returns 400 for invalid provider mode requests', async () => {

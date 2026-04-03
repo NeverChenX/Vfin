@@ -18,15 +18,13 @@ export function createMarketRouter({ hqchartDataService } = {}) {
   }
 
   function createHandler(methodName) {
-    return async (req, res) => {
-      try {
-        const data = await resolveService()[methodName](req.query);
-        res.status(200).json(data);
-      } catch (error) {
-        res.status(error.statusCode ?? 500).json({
-          error: error.message
-        });
-      }
+    return (req, res, next) => {
+      Promise.resolve()
+        .then(() => resolveService()[methodName](req.query))
+        .then((data) => {
+          res.status(200).json(data);
+        })
+        .catch(next);
     };
   }
 

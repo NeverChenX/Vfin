@@ -1,8 +1,9 @@
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { v4 as uuidv4 } from 'uuid';
 import { loadConfig } from './config.js';
+import { errorHandler } from './middleware/error-handler.js';
+import { traceIdMiddleware } from './middleware/trace-id.js';
 import { createMarketRouter } from './routes/market-routes.js';
 import { createWatchlistRouter } from './routes/watchlist-routes.js';
 import { createHqchartDataService } from './services/hqchart-data-service.js';
@@ -28,12 +29,7 @@ export function createApp({ watchlistService, hqchartDataService } = {}) {
   });
 
   app.use(express.json());
-
-  app.use((req, res, next) => {
-    const requestId = req.get('X-Request-Id') ?? uuidv4();
-    res.setHeader('X-Request-Id', requestId);
-    next();
-  });
+  app.use(traceIdMiddleware);
 
   app.get('/api/hqchart/health/live', (_req, res) => {
     res.status(200).json({ ok: true });
@@ -41,6 +37,7 @@ export function createApp({ watchlistService, hqchartDataService } = {}) {
 
   app.use('/api/hqchart', createMarketRouter({ hqchartDataService: marketDataService }));
   app.use('/api/hqchart/watchlist', createWatchlistRouter({ watchlistService: service }));
+  app.use(errorHandler);
 
   return app;
 }
