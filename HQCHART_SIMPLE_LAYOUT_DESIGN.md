@@ -9,12 +9,12 @@ Restructure the repo into three clear top-level folders (frontend/backend/servic
 ## Progress
 
 - [x] Requirements confirmed (structure, URL, live data sources)
-- [ ] Create new directory layout (frontend/backend/services)
-- [ ] Move demo page to `frontend/hqchart/index.html`
-- [ ] Move gateway service to `backend/gateway`
-- [ ] Keep python tool under `services/python`
-- [ ] Move all other existing projects to `services/legacy` (no code changes)
-- [ ] Update all internal paths, scripts, and docs
+- [x] Create new directory layout (frontend/backend/services)
+- [x] Move demo page to `frontend/hqchart/index.html`
+- [x] Move gateway service to `backend/gateway`
+- [x] Keep python tool under `services/python`
+- [x] Move all other existing projects to `services/legacy` (no code changes)
+- [x] Update all internal paths, scripts, and docs
 - [ ] Verify demo loads at `/hqchart` and API at `/api`
 
 ## Directory Layout (Final)

@@ -6,9 +6,9 @@ This document records the backendized HQChart demo verification scope for 2026-0
 
 - Backend service: `hqchart-gateway`
 - Verified routes:
-  - `/api/hqchart/watchlist`
-  - `/api/hqchart/stock`
-  - `/api/hqchart/kline`
+  - `/api/watchlist`
+  - `/api/stock`
+  - `/api/kline`
 - Validation methods:
   - full backend test suite
   - local API smoke against a running server
@@ -33,9 +33,9 @@ This document records the backendized HQChart demo verification scope for 2026-0
 
 - `npm test` completed successfully with `6` passed files and `29` passed tests
 - Local smoke returned:
-  - `/api/hqchart/watchlist` -> `200`, body `{ "items": [] }`
-  - `/api/hqchart/stock` -> `200`, mock payload for `600000.sh`
-  - `/api/hqchart/kline` -> `200`, mock payload for `00700.hk`
+  - `/api/watchlist` -> `200`, body `{ "items": [] }`
+  - `/api/stock` -> `200`, mock payload for `600000.sh`
+  - `/api/kline` -> `200`, mock payload for `00700.hk`
 
 ### Not Executed in This Task
 
