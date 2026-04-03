@@ -26,13 +26,33 @@ describe('market routes', () => {
     expect(response.body.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 
-  it('returns an error status for stock requests when providers fail', async () => {
+  it('returns 502 for stock requests when providers fail upstream', async () => {
     const app = createApp();
 
     const response = await request(app)
       .get('/api/hqchart/stock')
       .query({ symbol: '600000', providerMode: 'force-error' });
 
-    expect(response.status).toBeGreaterThanOrEqual(500);
+    expect(response.status).toBe(502);
+  });
+
+  it('returns 400 for invalid provider mode requests', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .get('/api/hqchart/stock')
+      .query({ symbol: '600000', providerMode: 'bad' });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('returns 400 for unknown provider requests', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .get('/api/hqchart/stock')
+      .query({ symbol: '600000', provider: 'unknown', providerMode: 'mock' });
+
+    expect(response.status).toBe(400);
   });
 });

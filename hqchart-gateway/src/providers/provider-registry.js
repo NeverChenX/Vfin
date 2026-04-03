@@ -9,6 +9,10 @@ function createRegistryError(message, { statusCode = 502, code = 'PROVIDER_REGIS
   return error;
 }
 
+function isClientError(error) {
+  return Number.isInteger(error?.statusCode) && error.statusCode >= 400 && error.statusCode < 500;
+}
+
 export function createProviderRegistry({
   primary = 'sina',
   fallback = ['tencent'],
@@ -19,13 +23,13 @@ export function createProviderRegistry({
     ['tencent', createTencentProvider()]
   ]);
 
-  function getProvider(name) {
+  function getProvider(name, { statusCode = 500, code = 'UNKNOWN_PROVIDER' } = {}) {
     const provider = providerMap instanceof Map ? providerMap.get(name) : providerMap[name];
 
     if (!provider) {
       throw createRegistryError(`Provider "${name}" is not registered`, {
-        statusCode: 500,
-        code: 'UNKNOWN_PROVIDER'
+        statusCode,
+        code
       });
     }
 
@@ -33,9 +37,18 @@ export function createProviderRegistry({
   }
 
   function listProviders(preferredProvider) {
-    const names = preferredProvider
-      ? [preferredProvider, primary, ...fallback]
-      : [primary, ...fallback];
+    const names = [];
+
+    if (preferredProvider) {
+      names.push(
+        getProvider(preferredProvider, {
+          statusCode: 400,
+          code: 'INVALID_PROVIDER'
+        }).name
+      );
+    }
+
+    names.push(primary, ...fallback);
 
     return [...new Set(names)].map((name) => getProvider(name));
   }
@@ -53,6 +66,11 @@ export function createProviderRegistry({
           attempts
         };
       } catch (error) {
+        if (isClientError(error)) {
+          error.attempts = attempts;
+          throw error;
+        }
+
         attempts.push({
           provider: provider.name,
           message: error.message,
