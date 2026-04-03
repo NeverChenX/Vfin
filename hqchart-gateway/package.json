@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "node src/server.js",
+    "preinstall": "node scripts/check-node-version.js",
     "test": "vitest run"
   },
   "dependencies": {
