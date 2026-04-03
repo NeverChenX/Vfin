@@ -9,7 +9,7 @@ describe('loadConfig', () => {
   it('uses the default port when PORT is missing', () => {
     expect(loadConfig({})).toEqual({
       port: 18080,
-      providerOrder: ['sina', 'tencent'],
+      providerOrder: ['tencent', 'sina', 'eastmoney'],
       providerMode: 'live'
     });
   });
@@ -17,7 +17,7 @@ describe('loadConfig', () => {
   it('uses a valid numeric port', () => {
     expect(loadConfig({ PORT: '18081' })).toEqual({
       port: 18081,
-      providerOrder: ['sina', 'tencent'],
+      providerOrder: ['tencent', 'sina', 'eastmoney'],
       providerMode: 'live'
     });
   });
@@ -32,9 +32,10 @@ describe('loadConfig', () => {
 
     expect(loadConfig({ PORT: port })).toEqual({
       port: 18080,
-      providerOrder: ['sina', 'tencent'],
+      providerOrder: ['tencent', 'sina', 'eastmoney'],
       providerMode: 'live'
     });
     expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 });
+

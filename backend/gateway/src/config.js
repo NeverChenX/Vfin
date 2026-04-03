@@ -1,6 +1,6 @@
 export function loadConfig(env = process.env) {
   const rawPort = env.PORT;
-  const providerOrderRaw = env.HQ_PROVIDER_ORDER || 'sina,tencent';
+  const providerOrderRaw = env.HQ_PROVIDER_ORDER || 'tencent,sina,eastmoney';
   const providerOrder = providerOrderRaw
     .split(',')
     .map((item) => item.trim())
@@ -22,3 +22,4 @@ export function loadConfig(env = process.env) {
     providerMode
   };
 }
+
