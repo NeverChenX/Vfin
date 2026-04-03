@@ -52,8 +52,28 @@ http://127.0.0.1:8080/samples/hqchart_demo.html?apiBase=http://127.0.0.1:18080/a
 ## 页面行为
 
 - 左侧报价列表改为读取 `GET /watchlist`
-- 左上 `+` 按钮会弹窗输入 symbol，并调用 `POST /watchlist`
+- 左侧工具栏提供显式输入框，输入 symbol 后点击 `+` 调用 `POST /watchlist`
 - 点击左侧报价行会切换主图 symbol
+
+## HTML 语法验证
+
+可在仓库根目录执行下面命令，对页面内联 script 做可复现语法校验：
+
+```bash
+@'
+const fs = require('fs');
+const html = fs.readFileSync('webhqchart.demo/samples/hqchart_demo.html', 'utf8');
+const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+new Function(scripts[scripts.length - 1]);
+console.log('inline-script-ok');
+'@ | node
+```
+
+期望结果：
+
+```text
+inline-script-ok
+```
 
 ## 常见排查
 
@@ -65,7 +85,7 @@ http://127.0.0.1:8080/samples/hqchart_demo.html?apiBase=http://127.0.0.1:18080/a
 2. 左侧列表为空
 
 - 这是正常情况，说明当前 watchlist 还没有数据
-- 点击左上 `+`，输入 `600000`、`600000.sh`、`700` 或 `00700.hk`
+- 在左侧输入框输入 `600000`、`600000.sh`、`700` 或 `00700.hk`，再点击 `+`
 
 3. 添加自选失败
 

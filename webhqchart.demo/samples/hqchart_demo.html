@@ -93,6 +93,7 @@
         <div id="LeftPanel">
             <div id="WatchlistToolbar">
                 <div id="WatchlistTitle">自选列表</div>
+                <input id="WatchlistInput" type="text" placeholder="600000.sh / 700" />
                 <button id="WatchlistAddButton" type="button">+</button>
             </div>
             <div id="Report">
@@ -1927,6 +1928,10 @@
                 this.SelfReport.Create();
 
                 document.getElementById('WatchlistAddButton').onclick=()=>{ this.AddWatchlistSymbol(); };
+                document.getElementById('WatchlistInput').onkeydown=(e)=>
+                {
+                    if (e.key==='Enter') this.AddWatchlistSymbol();
+                };
 
                 var divKLine=document.getElementById('KLine');
                 divKLine.style["visibility"]="visible";
@@ -2072,12 +2077,15 @@
 
             this.AddWatchlistSymbol=async function()
             {
-                var symbol=window.prompt('输入要添加的 symbol，例如 600000、600000.sh、700、00700.hk');
+                var input=document.getElementById('WatchlistInput');
+                if (!input) return;
+                var symbol=input.value ? input.value.trim() : '';
                 if (!symbol) return;
 
                 try
                 {
-                    var response=await apiPost('/watchlist', { symbol:symbol.trim() });
+                    var response=await apiPost('/watchlist', { symbol:symbol });
+                    input.value='';
                     this.RefreshWatchlist();
                     if (response && response.item && response.item.symbol)
                         this.ChangeSymbol(response.item.symbol);
@@ -2219,7 +2227,7 @@ body
 {
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    gap:8px;
     height:42px;
     padding:0 8px 0 12px;
     border-bottom:solid 1px var(--BorderColor);
@@ -2232,10 +2240,24 @@ body
     font-size:13px;
     font-weight:600;
     letter-spacing:1px;
+    flex-shrink:0;
+}
+
+#WatchlistInput
+{
+    flex:1 1 auto;
+    min-width:0;
+    height:28px;
+    padding:0 8px;
+    border:solid 1px var(--BorderColor);
+    border-radius:4px;
+    background-color:var(--BGColor);
+    color:var(--TabTextColor);
 }
 
 #WatchlistAddButton
 {
+    flex-shrink:0;
     width:28px;
     height:28px;
     border:none;
