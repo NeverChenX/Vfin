@@ -96,6 +96,7 @@
                 <input id="WatchlistInput" type="text" placeholder="600000.sh / 700" />
                 <button id="WatchlistAddButton" type="button">+</button>
             </div>
+            <div id="WatchlistStatus"></div>
             <div id="Report">
                 <div id="ReportCtrl"></div>
             </div>
@@ -162,6 +163,14 @@
             if (API_PROVIDER) data.provider=API_PROVIDER;
             if (API_PROVIDER_MODE) data.providerMode=API_PROVIDER_MODE;
             return data;
+        }
+
+        function setWatchlistStatus(message, isError)
+        {
+            var dom=document.getElementById('WatchlistStatus');
+            if (!dom) return;
+            dom.innerText=message || '';
+            dom.setAttribute('data-state', isError ? 'error' : 'normal');
         }
 
         function buildApiUrl(path, query)
@@ -305,7 +314,7 @@
         function createReportKLineData(row)
         {
             var data=[row[3], row[4], row[5], row[6]];
-            return { Data:data, AryData:[data, data, data, data, data] };
+            return { Data:data, AryData:[data.slice(), data.slice(), data.slice(), data.slice(), data.slice()] };
         }
 
         function createReportRow(quote)
@@ -700,6 +709,7 @@
                             console.error(`[DemoBackendDataSource] ${data.Name}`, error);
                             if (requestOption.emptyResponse)
                             {
+                                setWatchlistStatus(`${data.Explain || data.Name} 使用空回退数据`, true);
                                 callback(requestOption.emptyResponse);
                                 return;
                             }
@@ -2072,6 +2082,7 @@
 
             this.RefreshWatchlist=function()
             {
+                setWatchlistStatus('', false);
                 if (this.SelfReport) this.SelfReport.RefreshWatchlist();
             }
 
@@ -2086,12 +2097,14 @@
                 {
                     var response=await apiPost('/watchlist', { symbol:symbol });
                     input.value='';
+                    setWatchlistStatus('', false);
                     this.RefreshWatchlist();
                     if (response && response.item && response.item.symbol)
                         this.ChangeSymbol(response.item.symbol);
                 }
                 catch(error)
                 {
+                    setWatchlistStatus(error.message || '添加自选失败', true);
                     alert(error.message || '添加自选失败');
                 }
             }
@@ -2105,10 +2118,6 @@
     
 
     </script>
-</body>
-</html>
-
-
 <style>
 
 html,body
@@ -2213,7 +2222,7 @@ body
 #Report
 {
     width: 100%;
-    height: calc(100% - 42px);
+    height: calc(100% - 62px);
 }
 
 #ReportCtrl
@@ -2269,6 +2278,24 @@ body
     cursor:pointer;
 }
 
+#WatchlistStatus
+{
+    height:20px;
+    padding:0 12px;
+    line-height:20px;
+    font-size:12px;
+    color:var(--TabTextColor);
+    background-color:var(--BGColor);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+#WatchlistStatus[data-state='error']
+{
+    color:var(--AccentColor);
+}
+
 :root 
 {
     --BGColor:rgb(255,255,255);
@@ -2304,3 +2331,6 @@ body
 }
 
 </style>
+
+</body>
+</html>
