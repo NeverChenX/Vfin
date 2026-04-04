@@ -15,8 +15,8 @@ Restructure the repo into three clear top-level folders (frontend/backend/servic
 - [x] Keep python tool under `services/python`
 - [x] Move all other existing projects to `services/legacy` (no code changes)
 - [x] Update all internal paths, scripts, and docs
-- [ ] Implement live providers (A股 + 港股, multi-source)
-- [ ] Verify demo loads at `/hqchart` and API at `/api`
+- [x] Implement live providers (A股 + 港股, multi-source)
+- [x] Verify demo loads at `/hqchart` and API at `/api`
 
 ## Directory Layout (Final)
 
