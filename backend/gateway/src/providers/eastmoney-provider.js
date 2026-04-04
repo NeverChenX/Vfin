@@ -49,20 +49,29 @@ export class EastmoneyProvider extends BaseProvider {
     }
 
     const url = `https://push2.eastmoney.com/api/qt/stock/fflow/kline/get?secid=${secid}&klt=101&lmt=1&fields1=f1,f2,f3&fields2=f51,f52,f53,f54,f55`;
-    const json = await fetchJson(url);
-    const parsed = parseEastmoneyCapital(json?.data ?? {});
+    try {
+      const json = await fetchJson(url);
+      const parsed = parseEastmoneyCapital(json?.data ?? {});
 
-    return {
-      code: context.symbol,
-      market: context.market,
-      flows: {
-        main: parsed.mainNetInflow,
-        large: parsed.largeNetInflow,
-        medium: parsed.mediumNetInflow,
-        small: parsed.smallNetInflow
-      },
-      time: createTimestamp()
-    };
+      return {
+        code: context.symbol,
+        market: context.market,
+        flows: {
+          main: parsed.mainNetInflow,
+          large: parsed.largeNetInflow,
+          medium: parsed.mediumNetInflow,
+          small: parsed.smallNetInflow
+        },
+        time: createTimestamp()
+      };
+    } catch (_error) {
+      return {
+        code: context.symbol,
+        market: context.market,
+        flows: { main: 0, large: 0, medium: 0, small: 0 },
+        time: createTimestamp()
+      };
+    }
   }
 
   async fetchTradeDetail(context) {
@@ -86,15 +95,19 @@ export class EastmoneyProvider extends BaseProvider {
     }
 
     const url = `https://push2.eastmoney.com/api/qt/stock/details/get?secid=${secid}&fields1=f1,f2,f3&fields2=f51,f52,f53,f54,f55`;
-    const json = await fetchJson(url);
-    const parsed = parseEastmoneyTradeDetail(json?.data ?? {});
+    try {
+      const json = await fetchJson(url);
+      const parsed = parseEastmoneyTradeDetail(json?.data ?? {});
 
-    return {
-      code: context.symbol,
-      market: context.market,
-      records: parsed.records,
-      time: createTimestamp()
-    };
+      return {
+        code: context.symbol,
+        market: context.market,
+        records: parsed.records,
+        time: createTimestamp()
+      };
+    } catch (_error) {
+      return { code: context.symbol, market: context.market, records: [], time: createTimestamp() };
+    }
   }
 
   async fetchAnnouncements(context) {
@@ -121,15 +134,19 @@ export class EastmoneyProvider extends BaseProvider {
 
     const code = context.symbol?.split('.')[0];
     const url = `https://np-anotice-stock.eastmoney.com/api/security/ann?sr=-1&page_size=10&page_index=1&ann_type=A&client_source=web&stock_list=${code}`;
-    const json = await fetchJson(url);
-    const parsed = parseEastmoneyAnnouncements(json?.data ?? {});
+    try {
+      const json = await fetchJson(url);
+      const parsed = parseEastmoneyAnnouncements(json?.data ?? {});
 
-    return {
-      code: context.symbol,
-      market: context.market,
-      announcements: parsed.items,
-      time: createTimestamp()
-    };
+      return {
+        code: context.symbol,
+        market: context.market,
+        announcements: parsed.items,
+        time: createTimestamp()
+      };
+    } catch (_error) {
+      return { code: context.symbol, market: context.market, announcements: [], time: createTimestamp() };
+    }
   }
 
   async fetchNews(context) {
