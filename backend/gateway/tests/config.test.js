@@ -7,11 +7,19 @@ describe('loadConfig', () => {
   });
 
   it('uses the default port when PORT is missing', () => {
-    expect(loadConfig({})).toEqual({ port: 18080 });
+    expect(loadConfig({})).toEqual({
+      port: 18080,
+      providerOrder: ['tencent', 'sina', 'eastmoney'],
+      providerMode: 'live'
+    });
   });
 
   it('uses a valid numeric port', () => {
-    expect(loadConfig({ PORT: '18081' })).toEqual({ port: 18081 });
+    expect(loadConfig({ PORT: '18081' })).toEqual({
+      port: 18081,
+      providerOrder: ['tencent', 'sina', 'eastmoney'],
+      providerMode: 'live'
+    });
   });
 
   it.each([
@@ -22,7 +30,12 @@ describe('loadConfig', () => {
   ])('falls back for invalid PORT value %s and warns', (port) => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    expect(loadConfig({ PORT: port })).toEqual({ port: 18080 });
+    expect(loadConfig({ PORT: port })).toEqual({
+      port: 18080,
+      providerOrder: ['tencent', 'sina', 'eastmoney'],
+      providerMode: 'live'
+    });
     expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 });
+

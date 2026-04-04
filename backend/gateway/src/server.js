@@ -8,6 +8,7 @@ import { createMarketRouter } from './routes/market-routes.js';
 import { createWatchlistRouter } from './routes/watchlist-routes.js';
 import { createHqchartDataService } from './services/hqchart-data-service.js';
 import { createWatchlistService } from './services/watchlist-service.js';
+import { createProviderRegistry } from './providers/provider-registry.js';
 
 function corsMiddleware(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -24,7 +25,7 @@ function corsMiddleware(req, res, next) {
   return next();
 }
 
-export function createApp({ watchlistService, hqchartDataService } = {}) {
+export function createApp({ watchlistService, hqchartDataService, providerOrder, providerMode } = {}) {
   const app = express();
   let defaultWatchlistService;
   let defaultHqchartDataService;
@@ -37,7 +38,9 @@ export function createApp({ watchlistService, hqchartDataService } = {}) {
   });
   const marketDataService = hqchartDataService ?? (() => {
     if (!defaultHqchartDataService) {
-      defaultHqchartDataService = createHqchartDataService();
+      const order = providerOrder && providerOrder.length ? providerOrder : ['sina', 'tencent'];
+      const registry = createProviderRegistry({ primary: order[0], fallback: order.slice(1) });
+      defaultHqchartDataService = createHqchartDataService({ providerRegistry: registry, providerMode });
     }
 
     return defaultHqchartDataService;
@@ -47,19 +50,22 @@ export function createApp({ watchlistService, hqchartDataService } = {}) {
   app.use(traceIdMiddleware);
   app.use(express.json());
 
-  app.get('/api/hqchart/health/live', (_req, res) => {
+  app.get('/api/health/live', (_req, res) => {
     res.status(200).json({ ok: true });
   });
 
-  app.use('/api/hqchart', createMarketRouter({ hqchartDataService: marketDataService }));
-  app.use('/api/hqchart/watchlist', createWatchlistRouter({ watchlistService: service }));
+  app.use('/api', createMarketRouter({ hqchartDataService: marketDataService }));
+  app.use('/api/watchlist', createWatchlistRouter({ watchlistService: service }));
   app.use(errorHandler);
 
   return app;
 }
 
 export function startServer(config = loadConfig()) {
-  const app = createApp(config);
+  const app = createApp({
+    providerOrder: config.providerOrder,
+    providerMode: config.providerMode
+  });
   return app.listen(config.port, () => {
     console.log(`hqchart-gateway listening on port ${config.port}`);
   });

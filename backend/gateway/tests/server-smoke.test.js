@@ -6,7 +6,7 @@ describe('gateway health smoke', () => {
   it('returns ok on live health endpoint', async () => {
     const app = createApp();
 
-    const response = await request(app).get('/api/hqchart/health/live');
+    const response = await request(app).get('/api/health/live');
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ ok: true });
@@ -16,7 +16,7 @@ describe('gateway health smoke', () => {
     const app = createApp();
 
     const response = await request(app)
-      .get('/api/hqchart/health/live')
+      .get('/api/health/live')
       .set('X-Request-Id', 'incoming-request-id');
 
     expect(response.status).toBe(200);
@@ -27,7 +27,7 @@ describe('gateway health smoke', () => {
   it('generates a request id when one is missing', async () => {
     const app = createApp();
 
-    const response = await request(app).get('/api/hqchart/health/live');
+    const response = await request(app).get('/api/health/live');
 
     expect(response.status).toBe(200);
     expect(response.headers['x-request-id']).toMatch(
@@ -40,7 +40,7 @@ describe('gateway health smoke', () => {
     const app = createApp();
 
     const response = await request(app)
-      .post('/api/hqchart/watchlist')
+      .post('/api/watchlist')
       .set('Content-Type', 'application/json')
       .send('{"symbol":');
 
@@ -53,7 +53,7 @@ describe('gateway health smoke', () => {
     const app = createApp();
 
     const response = await request(app)
-      .post('/api/hqchart/watchlist')
+      .post('/api/watchlist')
       .set('X-Trace-Id', 'trace-a')
       .set('X-Request-Id', 'req-b')
       .send({ symbol: 'invalid' });
@@ -68,7 +68,7 @@ describe('gateway health smoke', () => {
     const app = createApp();
 
     const response = await request(app)
-      .get('/api/hqchart/stock')
+      .get('/api/stock')
       .set('Origin', 'http://127.0.0.1:5500')
       .query({ symbol: '600000', providerMode: 'mock' });
 
@@ -82,7 +82,7 @@ describe('gateway health smoke', () => {
     const app = createApp();
 
     const response = await request(app)
-      .options('/api/hqchart/watchlist')
+      .options('/api/watchlist')
       .set('Origin', 'http://127.0.0.1:5500')
       .set('Access-Control-Request-Method', 'POST')
       .set('Access-Control-Request-Headers', 'content-type');

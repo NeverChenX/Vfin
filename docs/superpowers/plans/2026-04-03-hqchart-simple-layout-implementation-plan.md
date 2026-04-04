@@ -21,7 +21,7 @@
 - Modify: `backend/gateway/src/config.js` (provider order + default mode)
 - Modify: `backend/gateway/src/services/hqchart-data-service.js` (default provider mode)
 - Modify: `frontend/hqchart/samples/hqchart_demo.html` (API base to `/api`, remove local testdata fallback)
-- Modify: any README/docs that reference old paths or `/api/hqchart`
+- Modify: any README/docs that reference old paths or `/api`
 
 ---
 
@@ -134,7 +134,7 @@ git add frontend/hqchart/index.html
 
 Replace:
 ```js
-const DEFAULT_API_BASE='http://127.0.0.1:18080/api/hqchart';
+const DEFAULT_API_BASE='http://127.0.0.1:18080/api';
 ```
 With:
 ```js

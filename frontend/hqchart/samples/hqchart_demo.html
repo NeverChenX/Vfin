@@ -34,61 +34,6 @@
     <script src="../jscommon/umychart.DialogSearchIndex.js"></script>
     <script src="../jscommon/umychart.version.js"></script>
 
-   
-    <!-- 财务,公告,衍生数据 -->
-    <script src="../jscommon/umychart.testdata/60000.sh.capital.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.NewsInteract.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.BlockTrading.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.TradeDetal.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.finance_7.js"></script>
-
-    <script src="../jscommon/umychart.testdata/symbollist_shsz.js"></script>
-
-    <!-- 分钟K线 -->
-    <script src="../jscommon/umychart.testdata/M1KLine/600000.sh.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/000001.sh.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/000300.sh.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/399001.sz.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/000001.sz.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/399006.sz.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/399005.sz.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/000151.sz.minute.kline.js"></script>
-
-    <script src="../jscommon/umychart.testdata/M1KLine/ICL8.cfe.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/IML8.cfe.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/M1KLine/IFL8.cfe.minute.kline.js"></script>
-
-    <!--日K -->
-    <script src="../jscommon/umychart.testdata/DayKLine/600000.sh.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/000001.sh.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/000300.sh.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/399001.sz.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/000001.sz.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/399006.sz.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/399005.sz.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/000151.sz.day.kline.js"></script>
-
-    <script src="../jscommon/umychart.testdata/DayKLine/ICL8.cfe.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/IML8.cfe.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/DayKLine/IFL8.cfe.day.kline.js"></script>
-
-    <!-- 单日分时数据 -->
-    <script src="../jscommon/umychart.testdata/DayMinute/000151.sz.1day.minute.js"></script>
-    <script src="../jscommon/umychart.testdata/DayMinute/000001.sz.1day.minute.js"></script>
-    <script src="../jscommon/umychart.testdata/DayMinute/600000.sh.1day.minute.js"></script>
-    <script src="../jscommon/umychart.testdata/DayMinute/im2503.cf.1day.minute.js"></script>
-
-
-    <!-- 多日分时数据 -->
-    <script src="../jscommon/umychart.testdata/Day5Minute/600000.sh.5day.minute.js"></script>
-    <script src="../jscommon/umychart.testdata/Day5Minute/000001.sz.5day.minute.js"></script>
-    <script src="../jscommon/umychart.testdata/Day5Minute/000151.sz.5day.minute.js"></script>
-
-    <!-- 码表-->
-    <script src="../jscommon/umychart.testdata/shsz_stock_data.js"></script>
-
-    <script src="../jscommon/umychart.testdata.js"></script>
-
     <div id="FullDemo">
         <div id="LeftPanel">
             <div id="WatchlistToolbar">
@@ -140,12 +85,11 @@
     <script>
         MARKET_SUFFIX_NAME.GetMarketStatus = function (symbol)  { return 2; }
 
-        const DEFAULT_API_BASE='http://127.0.0.1:18080/api/hqchart';
+        const DEFAULT_API_BASE='http://127.0.0.1:18080/api';
         const PAGE_QUERY=new URLSearchParams(window.location.search);
         const API_BASE=(PAGE_QUERY.get('apiBase') || DEFAULT_API_BASE).replace(/\/+$/,'');
         const API_PROVIDER=PAGE_QUERY.get('provider');
         const API_PROVIDER_MODE=PAGE_QUERY.get('providerMode');
-        const LocalDemoHQData=window.HQData;
 
         function appendRequestOptions(query)
         {
@@ -693,7 +637,7 @@
             };
         }
 
-        function createDemoBackendDataSource(localHQData)
+        function createDemoBackendDataSource()
         {
             return {
                 Explain:`后端 API 数据 (${API_BASE})`,
@@ -711,12 +655,6 @@
                             {
                                 setWatchlistStatus(`${data.Explain || data.Name} 使用空回退数据`, true);
                                 callback(requestOption.emptyResponse);
-                                return;
-                            }
-
-                            if (requestOption.allowFallback!==false && localHQData && typeof(localHQData.NetworkFilter)=='function')
-                            {
-                                localHQData.NetworkFilter(data, callback);
                                 return;
                             }
 
@@ -970,15 +908,13 @@
                         case 'AnnouncementInfo::RequestData':
                             return this.RequestAnnouncementsData(data, callback);
                         default:
-                            if (localHQData && typeof(localHQData.NetworkFilter)=='function')
-                                return localHQData.NetworkFilter(data, callback);
                             break;
                     }
                 }
             };
         }
 
-        var DemoHQChartDataSource=createDemoBackendDataSource(LocalDemoHQData);
+        var DemoHQChartDataSource=createDemoBackendDataSource();
        
         //简单的把K线控件封装下
         function KLineChart(divKLine)

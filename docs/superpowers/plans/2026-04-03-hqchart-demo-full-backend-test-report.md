@@ -32,9 +32,9 @@ Result: PASS
 Commands:
 
 ```bash
-curl "http://127.0.0.1:18080/api/hqchart/watchlist"
-curl "http://127.0.0.1:18080/api/hqchart/stock?symbol=600000.sh"
-curl "http://127.0.0.1:18080/api/hqchart/kline?symbol=00700.hk&period=day&count=200"
+curl "http://127.0.0.1:18080/api/watchlist"
+curl "http://127.0.0.1:18080/api/stock?symbol=600000.sh"
+curl "http://127.0.0.1:18080/api/kline?symbol=00700.hk&period=day&count=200"
 ```
 
 Results (sample):
