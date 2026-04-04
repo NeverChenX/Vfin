@@ -68,6 +68,38 @@ describe('live mappers', () => {
     });
   });
 
+  it('parses tencent kline string rows', () => {
+    const raw = {
+      day: ['2026-04-03,10.250,10.120,10.250,10.080,411518.000,417211984.00']
+    };
+    const parsed = parseTencentKline(raw, 'day');
+    expect(parsed.list[0]).toMatchObject({
+      date: '2026-04-03',
+      open: 10.25,
+      close: 10.12,
+      high: 10.25,
+      low: 10.08,
+      volume: 411518,
+      amount: 417211984
+    });
+  });
+
+  it('parses tencent minute kline datetime', () => {
+    const raw = {
+      m1: ['202604031431,5.20,5.20,5.21,5.20,41174.00']
+    };
+    const parsed = parseTencentKline(raw, 'm1');
+    expect(parsed.list[0]).toMatchObject({
+      date: '2026-04-03',
+      time: '14:31',
+      open: 5.2,
+      close: 5.2,
+      high: 5.21,
+      low: 5.2,
+      volume: 41174
+    });
+  });
+
   it('parses eastmoney trade detail', () => {
     const raw = {
       details: ['14:56:35,10.13,153,26,2', '14:56:38,10.12,180,32,1']

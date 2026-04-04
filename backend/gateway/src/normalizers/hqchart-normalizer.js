@@ -45,6 +45,7 @@ function normalizeKlineItems(raw) {
   if (Array.isArray(raw.list)) {
     return raw.list.map((item) => ({
       date: item.date,
+      time: item.time,
       open: toNumber(item.open),
       high: toNumber(item.high),
       low: toNumber(item.low),
@@ -54,8 +55,9 @@ function normalizeKlineItems(raw) {
     }));
   }
 
-  return (raw.candles ?? []).map(([date, open, high, low, close, volume, amount]) => ({
+  return (raw.candles ?? []).map(([date, open, high, low, close, volume, amount, time]) => ({
     date,
+    time,
     open: toNumber(open),
     high: toNumber(high),
     low: toNumber(low),

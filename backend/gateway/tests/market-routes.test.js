@@ -63,4 +63,17 @@ describe('market routes', () => {
 
     expect(response.status).toBe(400);
   });
+
+  it('supports allHistory flag for kline requests', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .get('/api/kline')
+      .query({ symbol: '601390.sh', period: 'day', providerMode: 'mock', allHistory: 'true' });
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body.items)).toBe(true);
+    expect(response.body.items.length).toBeGreaterThan(1);
+    expect(response.body.period).toBe('day');
+  });
 });
