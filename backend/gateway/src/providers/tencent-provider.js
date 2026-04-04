@@ -15,9 +15,20 @@ function buildTencentSymbol({ market, symbol }) {
 }
 
 function resolveTencentPeriod(period) {
-  if (!period) return 'day';
-  if (['day', 'week', 'month', 'year'].includes(period)) return period;
-  return 'day';
+  if (!period) {
+    return { queryPeriod: 'day', responsePeriod: 'day', normalizedPeriod: 'day' };
+  }
+
+  if (['day', 'week', 'month', 'year'].includes(period)) {
+    return { queryPeriod: period, responsePeriod: period, normalizedPeriod: period };
+  }
+
+  if (period === '1m') return { queryPeriod: 'm1', responsePeriod: 'm1', normalizedPeriod: '1m' };
+  if (period === '5m') return { queryPeriod: 'm5', responsePeriod: 'm5', normalizedPeriod: '5m' };
+  if (period === '15m') return { queryPeriod: 'm15', responsePeriod: 'm15', normalizedPeriod: '15m' };
+  if (period === '30m') return { queryPeriod: 'm30', responsePeriod: 'm30', normalizedPeriod: '30m' };
+
+  return { queryPeriod: 'day', responsePeriod: 'day', normalizedPeriod: 'day' };
 }
 
 export class TencentProvider extends BaseProvider {
@@ -110,15 +121,20 @@ export class TencentProvider extends BaseProvider {
       try {
         const code = buildTencentSymbol(context);
         const period = resolveTencentPeriod(context.period);
-        const count = context.count ?? 200;
-        const url = `https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=${code},${period},,,${count}`;
+        const count = Number(context.count ?? 200);
+        const offset = Number(context.offset ?? 0);
+        const isMinutePeriod = /^m\d+$/.test(period.queryPeriod);
+        const url = isMinutePeriod
+          ? `https://ifzq.gtimg.cn/appstock/app/kline/mkline?param=${code},${period.queryPeriod},,${count},${offset}`
+          : `https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=${code},${period.queryPeriod},,,${count},${offset}`;
         const json = await fetchJson(url);
         const data = json?.data?.[code] ?? {};
-        const parsed = parseTencentKline(data, period);
+        const parsed = parseTencentKline(data, period.responsePeriod);
         return {
           code: context.symbol,
           market: context.market,
-          cycle: period,
+          cycle: period.normalizedPeriod,
+          list: parsed.list,
           candles: parsed.list.map((item) => [
             item.date,
             item.open,
@@ -138,7 +154,12 @@ export class TencentProvider extends BaseProvider {
     return {
       code: context.symbol,
       market: context.market,
-      cycle: context.period ?? 'day',
+      cycle: resolveTencentPeriod(context.period).normalizedPeriod,
+      list: [
+        { date: '2026-04-01', time: '09:30', open: 12, high: 12.5, low: 11.9, close: 12.2, volume: 110000, amount: 1342000 },
+        { date: '2026-04-02', time: '09:31', open: 12.2, high: 12.4, low: 12.1, close: 12.28, volume: 98000, amount: 1204800 },
+        { date: '2026-04-03', time: '09:32', open: 12.28, high: 12.6, low: 12.18, close: 12.34, volume: 123456, amount: 1523456 }
+      ],
       candles: [
         ['2026-04-01', 12, 12.5, 11.9, 12.2, 110000, 1342000],
         ['2026-04-02', 12.2, 12.4, 12.1, 12.28, 98000, 1204800],

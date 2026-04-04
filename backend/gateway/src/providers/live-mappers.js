@@ -83,18 +83,40 @@ export function parseTencentMinute(raw) {
 }
 
 export function parseTencentKline(raw, period) {
-  const list = raw?.[period] ?? [];
+  const keyCandidates = [period, `${period}qfq`, `${period}hfq`];
+  const list = keyCandidates
+    .map((key) => raw?.[key])
+    .find((item) => Array.isArray(item)) ?? [];
+
+  function parseRow(row) {
+    if (Array.isArray(row)) return row;
+    if (typeof row === 'string') return row.split(',');
+    return [];
+  }
+
   return {
     period,
-    list: list.map(([date, open, close, high, low, volume]) => ({
-      date,
-      open: toNumber(open),
-      high: toNumber(high),
-      low: toNumber(low),
-      close: toNumber(close),
-      volume: toNumber(volume),
-      amount: 0
-    }))
+    list: list.map((row) => {
+      const [dateRaw, open, close, high, low, volume, amount] = parseRow(row);
+      let date = dateRaw;
+      let time;
+
+      if (typeof dateRaw === 'string' && /^\d{12}$/.test(dateRaw)) {
+        date = `${dateRaw.slice(0, 4)}-${dateRaw.slice(4, 6)}-${dateRaw.slice(6, 8)}`;
+        time = `${dateRaw.slice(8, 10)}:${dateRaw.slice(10, 12)}`;
+      }
+
+      return {
+        date,
+        time,
+        open: toNumber(open),
+        high: toNumber(high),
+        low: toNumber(low),
+        close: toNumber(close),
+        volume: toNumber(volume),
+        amount: toNumber(amount)
+      };
+    })
   };
 }
 

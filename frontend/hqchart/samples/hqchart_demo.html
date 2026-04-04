@@ -445,6 +445,13 @@
         function buildKLineHistoryResponse(symbol, quote, kline)
         {
             var items=Array.isArray(kline.items) ? kline.items : [];
+            if (items.length<=1)
+            {
+                setWatchlistStatus(`K线数据不足: ${symbol} ${kline.period || 'day'} (${items.length})`, true);
+                return { symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
+            }
+
+            setWatchlistStatus('', false);
             var response={ symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
             var prevClose=items.length>0 ? toNumber(items[0].open, items[0].close) : toNumber(quote.open, quote.price);
             for(var i=0;i<items.length;++i)
@@ -777,12 +784,15 @@
                 {
                     var symbol=data.Request.Data.symbol;
                     var period=getKLinePeriod(data.Request.Data.period);
+                    var isLongCycle=(period=='day' || period=='week' || period=='month' || period=='year');
                     return this.RunRequest(
                         data,
                         callback,
                         ()=> Promise.all([
                             apiGet('/stock', { symbol:symbol }),
-                            apiGet('/kline', { symbol:symbol, period:period, count:data.Request.Data.count || 200 })
+                            apiGet('/kline', isLongCycle
+                                ? { symbol:symbol, period:period, allHistory:true }
+                                : { symbol:symbol, period:period, count:data.Request.Data.count || 200 })
                         ]).then((response)=> buildKLineHistoryResponse(symbol, response[0], response[1]))
                     );
                 },
