@@ -47,7 +47,20 @@ export function createWatchlistService({ db, dbPath } = {}) {
     },
 
     list() {
-      return listItemsQuery.all().map(toWatchlistItem);
+      const rows = listItemsQuery.all();
+      const items = [];
+
+      for (const row of rows) {
+        try {
+          normalizeSymbol(row.symbol);
+          items.push(toWatchlistItem(row));
+        } catch (_error) {
+          // Clean up legacy/invalid symbols so frontend quote polling won't fail repeatedly.
+          deleteItem.run(row.symbol);
+        }
+      }
+
+      return items;
     },
 
     remove(symbolInput) {

@@ -5,12 +5,12 @@ function toNumber(value, fallback = 0) {
 
 function toTimestamp(value) {
   if (!value) {
-    return new Date('2026-04-03T09:30:00.000Z').toISOString();
+    return new Date().toISOString();
   }
 
   const date = new Date(value);
   return Number.isNaN(date.getTime())
-    ? new Date('2026-04-03T09:30:00.000Z').toISOString()
+    ? new Date().toISOString()
     : date.toISOString();
 }
 

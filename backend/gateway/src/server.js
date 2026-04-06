@@ -50,6 +50,10 @@ export function createApp({ watchlistService, hqchartDataService, providerOrder,
   app.use(traceIdMiddleware);
   app.use(express.json());
 
+  // 静态文件服务：以项目根目录为根
+  const projectRoot = path.resolve(fileURLToPath(import.meta.url), '../../../../');
+  app.use(express.static(projectRoot));
+
   app.get('/api/health/live', (_req, res) => {
     res.status(200).json({ ok: true });
   });

@@ -36,7 +36,7 @@ export function errorHandler(error, req, res, next) {
   }
 
   const statusCode = resolveStatusCode(error);
-  const traceId = req.traceId ?? req.requestId;
+  const traceId = req.traceId;
 
   if (statusCode >= 500) {
     console.error(`[traceId=${traceId}]`, error);

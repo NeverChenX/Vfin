@@ -11,6 +11,15 @@ describe('normalizeSymbol', () => {
       market: 'sz',
       symbol: '000001.sz'
     });
+    // 带明确后缀的指数代码也应被接受（如上证综指 000001.sh、上证 50 000016.sh）
+    expect(normalizeSymbol('000001.sh')).toEqual({
+      market: 'sh',
+      symbol: '000001.sh'
+    });
+    expect(normalizeSymbol('000016.sh')).toEqual({
+      market: 'sh',
+      symbol: '000016.sh'
+    });
   });
 
   it('keeps fully qualified Hong Kong symbols unchanged', () => {
@@ -46,8 +55,19 @@ describe('normalizeSymbol', () => {
     });
   });
 
+  it('normalizes US symbols', () => {
+    expect(normalizeSymbol('AAPL')).toEqual({
+      market: 'us',
+      symbol: 'AAPL.us'
+    });
+    expect(normalizeSymbol('msft.us')).toEqual({
+      market: 'us',
+      symbol: 'MSFT.us'
+    });
+  });
+
   it('throws a 400 error for invalid symbols', () => {
-    for (const input of ['', 'abc', '123456', '600000.xx', '00700.sz']) {
+    for (const input of ['', '123456', '600000.xx', '00700.sz']) {
       expect(() => normalizeSymbol(input)).toThrowError(/invalid symbol/i);
 
       try {

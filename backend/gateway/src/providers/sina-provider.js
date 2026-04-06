@@ -4,7 +4,7 @@ import { fetchText } from './http-client.js';
 import { parseSinaQuote } from './live-mappers.js';
 
 function createTimestamp() {
-  return '2026-04-03T09:30:00.000Z';
+  return new Date().toISOString();
 }
 
 function buildSinaSymbol({ market, symbol }) {

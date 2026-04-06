@@ -76,6 +76,34 @@ describe('watchlist routes', () => {
     });
   });
 
+  it('filters and cleans legacy invalid symbols during list', async () => {
+    const db = createDatabaseConnection({ dbPath: ':memory:' });
+    db.prepare(
+      `
+        INSERT INTO watchlist_items (symbol, market, display_name)
+        VALUES (?, ?, ?)
+      `
+    ).run('INVALID.us', 'us', 'INVALID.us');
+    db.prepare(
+      `
+        INSERT INTO watchlist_items (symbol, market, display_name)
+        VALUES (?, ?, ?)
+      `
+    ).run('00700.hk', 'hk', '00700.hk');
+
+    watchlistService = createWatchlistService({ db });
+    const app = createApp({ watchlistService });
+
+    const listed = await request(app).get('/api/watchlist');
+    expect(listed.status).toBe(200);
+    expect(listed.body.items.map((item) => item.symbol)).toEqual(['00700.hk']);
+
+    const persisted = db
+      .prepare('SELECT symbol FROM watchlist_items ORDER BY symbol ASC')
+      .all();
+    expect(persisted).toEqual([{ symbol: '00700.hk' }]);
+  });
+
   it('falls back to 500 when a route error has an invalid status code', async () => {
     const app = createApp({
       watchlistService: {

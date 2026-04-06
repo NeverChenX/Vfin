@@ -102,3 +102,26 @@ inline-script-ok
 5. 图表数据和本地 demo 数据不一致
 
 - 本页仅使用后端数据，不再回退本地 demo testdata
+
+## 验收标准（强制）
+
+每次修改 demo 页面后，必须至少通过以下检查，不能只看页面返回 200：
+
+1. 页面入口可访问
+- `http://127.0.0.1:8080/demo/` 返回 200
+
+2. 关键静态资源可访问（全部 200）
+- `/frontend/hqchart/jscommon/umychart.js`
+- `/frontend/hqchart/jscommon/umychart.style.js`
+- `/frontend/hqchart/jscommon/umychart.resource/font/iconfont.css`
+
+3. 页面脚本语法通过
+- 对 `frontend/demo/index.html` 的内联 script 执行 `new Function(...)` 不报错
+
+4. 关键运行对象存在（浏览器控制台）
+- `typeof MARKET_SUFFIX_NAME !== 'undefined'`
+- `typeof JSChart !== 'undefined'`
+
+5. 后端数据连通
+- `http://127.0.0.1:18080/api/health/live` 返回 `{"ok":true}`
+- `http://127.0.0.1:18080/api/kline?symbol=601390.sh&period=day&allHistory=true` 返回多根 K 线

@@ -20,7 +20,6 @@ describe('gateway health smoke', () => {
       .set('X-Request-Id', 'incoming-request-id');
 
     expect(response.status).toBe(200);
-    expect(response.headers['x-request-id']).toBe('incoming-request-id');
     expect(response.headers['x-trace-id']).toBe('incoming-request-id');
   });
 
@@ -30,10 +29,9 @@ describe('gateway health smoke', () => {
     const response = await request(app).get('/api/health/live');
 
     expect(response.status).toBe(200);
-    expect(response.headers['x-request-id']).toMatch(
+    expect(response.headers['x-trace-id']).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     );
-    expect(response.headers['x-trace-id']).toBe(response.headers['x-request-id']);
   });
 
   it('returns a trace id for invalid json requests', async () => {
@@ -60,7 +58,6 @@ describe('gateway health smoke', () => {
 
     expect(response.status).toBe(400);
     expect(response.headers['x-trace-id']).toBe('trace-a');
-    expect(response.headers['x-request-id']).toBe('trace-a');
     expect(response.body.traceId).toBe('trace-a');
   });
 

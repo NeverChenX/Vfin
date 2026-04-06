@@ -1,7 +1,0 @@
-var PAGE_MESSAGE_KEY="PAGE_MESSAGE_KEY";
-
-var PAGE_MESSAGE_ID=
-{
-    CLICK_REPORT_ROW_ID:1,      //点击报表行
-    CLICK_TREPORT_ROW_ID:10,    //点击T型报价
-}

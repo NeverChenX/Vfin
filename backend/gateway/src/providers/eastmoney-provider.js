@@ -119,9 +119,9 @@ export class EastmoneyProvider extends BaseProvider {
         announcements: [
           {
             id: `${context.symbol}-announcement-1`,
-            title: `Tencent mock announcement for ${context.symbol}`,
+            title: `Eastmoney mock announcement for ${context.symbol}`,
             publishedAt: createTimestamp(),
-            url: `https://example.test/tencent/announcements/${context.symbol}`
+            url: `https://example.test/announcements/${context.symbol}`
           }
         ],
         time: createTimestamp()
@@ -158,7 +158,7 @@ export class EastmoneyProvider extends BaseProvider {
         news: [
           {
             id: `${context.symbol}-news-1`,
-            title: `Tencent mock news for ${context.symbol}`,
+            title: `Eastmoney mock news for ${context.symbol}`,
             publishedAt: createTimestamp(),
             summary: 'Stable fallback news payload for tests.'
           }

@@ -1,9 +1,10 @@
 import { BaseProvider } from './base-provider.js';
 import { fetchJson, fetchText } from './http-client.js';
 import { parseTencentQuote, parseTencentMinute, parseTencentKline } from './live-mappers.js';
+import iconv from 'iconv-lite';
 
 function createTimestamp() {
-  return '2026-04-03T09:30:00.000Z';
+  return new Date().toISOString();
 }
 
 function buildTencentSymbol({ market, symbol }) {
@@ -43,12 +44,14 @@ export class TencentProvider extends BaseProvider {
       try {
         const code = buildTencentSymbol(context);
         const url = `https://qt.gtimg.cn/q=${code}`;
-        const text = await fetchText(url, {
+        const buffer = await fetchText(url, {
           headers: {
             Referer: 'https://finance.qq.com/',
             'User-Agent': 'Mozilla/5.0'
-          }
+          },
+          responseType: 'arrayBuffer'
         });
+        const text = iconv.decode(Buffer.from(buffer), 'gbk');
         const data = parseTencentQuote(text);
         return {
           code: context.symbol,
@@ -135,15 +138,6 @@ export class TencentProvider extends BaseProvider {
           market: context.market,
           cycle: period.normalizedPeriod,
           list: parsed.list,
-          candles: parsed.list.map((item) => [
-            item.date,
-            item.open,
-            item.high,
-            item.low,
-            item.close,
-            item.volume,
-            item.amount
-          ]),
           time: new Date().toISOString()
         };
       } catch (error) {
@@ -159,11 +153,6 @@ export class TencentProvider extends BaseProvider {
         { date: '2026-04-01', time: '09:30', open: 12, high: 12.5, low: 11.9, close: 12.2, volume: 110000, amount: 1342000 },
         { date: '2026-04-02', time: '09:31', open: 12.2, high: 12.4, low: 12.1, close: 12.28, volume: 98000, amount: 1204800 },
         { date: '2026-04-03', time: '09:32', open: 12.28, high: 12.6, low: 12.18, close: 12.34, volume: 123456, amount: 1523456 }
-      ],
-      candles: [
-        ['2026-04-01', 12, 12.5, 11.9, 12.2, 110000, 1342000],
-        ['2026-04-02', 12.2, 12.4, 12.1, 12.28, 98000, 1204800],
-        ['2026-04-03', 12.28, 12.6, 12.18, 12.34, 123456, 1523456]
       ],
       time: createTimestamp()
     };

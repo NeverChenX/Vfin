@@ -36,8 +36,6 @@ export function createResilienceService({
       state.openedAt = 0;
     }
 
-    let lastError;
-
     for (let attempt = 1; attempt <= attempts; attempt += 1) {
       try {
         const value = await operation();
@@ -45,7 +43,6 @@ export function createResilienceService({
         state.openedAt = 0;
         return value;
       } catch (error) {
-        lastError = error;
         state.failures += 1;
 
         if (state.failures >= failureThreshold) {
@@ -57,8 +54,6 @@ export function createResilienceService({
         }
       }
     }
-
-    throw lastError;
   }
 
   return {
