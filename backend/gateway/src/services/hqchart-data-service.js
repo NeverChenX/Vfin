@@ -134,9 +134,13 @@ export function createHqchartDataService({
     return cacheService.getOrSet(
       cacheKey,
       async () => {
+        // 熔断 key 含周期，避免分钟线失败影响日线熔断器
+        const circuitKey = context.period
+          ? `${operation}:${context.symbol}:${context.period}`
+          : `${operation}:${context.symbol}`;
         const result = await resilienceService.execute(
           () => providerRegistry.execute(operation, context),
-          { key: `${operation}:${context.symbol}` }
+          { key: circuitKey }
         );
 
         const methodName = NORMALIZER_METHODS[operation];

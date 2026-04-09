@@ -89,8 +89,15 @@ export class SinaProvider extends BaseProvider {
   async fetchKline(context) {
     this.ensureMockableMode(context.providerMode, 'kline');
     if (context.providerMode === 'live') {
-      // 新浪支持美股日线K线
+      // 新浪只支持美股日线，分钟周期不支持
       if (context.market === 'us') {
+        const minutePeriods = ['1m', '5m', '15m', '30m', '60m'];
+        if (minutePeriods.includes(context.period)) {
+          throw this.createError('Sina US kline only supports daily period', {
+            statusCode: 502,
+            code: 'UNSUPPORTED_PROVIDER_OPERATION'
+          });
+        }
         return this._fetchUSKline(context);
       }
       throw this.createError('Sina kline not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });

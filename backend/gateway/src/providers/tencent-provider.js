@@ -173,6 +173,15 @@ export class TencentProvider extends BaseProvider {
           const minuteJson = await fetchJson(minuteUrl);
           const minuteRaw = minuteJson?.data?.[code]?.data ?? {};
           const parsed = parseTencentMinuteToKline(minuteRaw, period.normalizedPeriod);
+
+          // 美股分钟线腾讯不支持：只能拿到1条收盘价（休市占位符），触发 fallback 让其他 provider 尝试
+          if (parsed.list.length <= 1 && context.market === 'us') {
+            throw this.createError(
+              `Tencent minute kline has no intraday data for US stock ${context.symbol}`,
+              { statusCode: 502, code: 'INSUFFICIENT_DATA' }
+            );
+          }
+
           return {
             code: context.symbol,
             market: context.market,

@@ -43,10 +43,12 @@ export function createResilienceService({
         state.openedAt = 0;
         return value;
       } catch (error) {
-        state.failures += 1;
-
-        if (state.failures >= failureThreshold) {
-          state.openedAt = now();
+        // UNSUPPORTED 类错误是预期行为，不应触发熔断
+        if (error.code !== 'UNSUPPORTED_PROVIDER_OPERATION' && error.code !== 'CIRCUIT_OPEN') {
+          state.failures += 1;
+          if (state.failures >= failureThreshold) {
+            state.openedAt = now();
+          }
         }
 
         if (attempt === attempts) {
