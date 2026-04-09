@@ -92,6 +92,78 @@ export function parseTencentMinute(raw) {
   return { points };
 }
 
+export function parseTencentMultiDayMinuteToKline(raw, period) {
+  // 腾讯5日分时数据格式: { "0": { data: ["0930 price vol amt", ...], date: "20260408" }, ... }
+  const intervalMinutes = { '1m': 1, '5m': 5, '15m': 15, '30m': 30 }[period] ?? 5;
+  const klineBars = [];
+
+  // 按日期排序处理每天的数据
+  const dayKeys = Object.keys(raw).sort((a, b) => {
+    const dateA = raw[a]?.date || a;
+    const dateB = raw[b]?.date || b;
+    return dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
+  });
+
+  for (const dayKey of dayKeys) {
+    const dayData = raw[dayKey];
+    if (!dayData?.data || !Array.isArray(dayData.data)) continue;
+    const dateRaw = dayData.date || '';
+    const date = dateRaw.length === 8
+      ? `${dateRaw.slice(0, 4)}-${dateRaw.slice(4, 6)}-${dateRaw.slice(6, 8)}`
+      : beijingToday();
+
+    const points = dayData.data.map((item) => {
+      const [timeRaw, price, cumVolume, cumAmount] = item.split(' ');
+      const hour = Number(timeRaw.slice(0, 2));
+      const minute = Number(timeRaw.slice(2, 4));
+      return {
+        minuteIndex: hour * 60 + minute,
+        timeStr: `${timeRaw.slice(0, 2)}:${timeRaw.slice(2, 4)}`,
+        price: toNumber(price),
+        cumVolume: toNumber(cumVolume),
+        cumAmount: toNumber(cumAmount)
+      };
+    });
+
+    if (points.length === 0) continue;
+
+    // 按 intervalMinutes 分组
+    const firstMinuteIndex = points[0].minuteIndex;
+    const groups = [];
+    for (const p of points) {
+      const groupIndex = Math.floor((p.minuteIndex - firstMinuteIndex) / intervalMinutes);
+      if (!groups[groupIndex]) groups[groupIndex] = [];
+      groups[groupIndex].push(p);
+    }
+
+    let prevCumVolume = 0;
+    let prevCumAmount = 0;
+    let prevClose = points[0].price;
+
+    for (const group of groups) {
+      if (!group || group.length === 0) continue;
+      const firstP = group[0];
+      const lastP = group[group.length - 1];
+      const allPrices = group.map((p) => p.price);
+      klineBars.push({
+        date,
+        time: firstP.timeStr,
+        open: firstP.price,
+        high: Math.max(prevClose, ...allPrices),
+        low: Math.min(prevClose, ...allPrices),
+        close: lastP.price,
+        volume: lastP.cumVolume - prevCumVolume,
+        amount: lastP.cumAmount - prevCumAmount
+      });
+      prevClose = lastP.price;
+      prevCumVolume = lastP.cumVolume;
+      prevCumAmount = lastP.cumAmount;
+    }
+  }
+
+  return { period, list: klineBars };
+}
+
 export function parseTencentMinuteToKline(raw, period) {
   const list = raw?.data ?? [];
   const intervalMinutes = { '1m': 1, '5m': 5, '15m': 15, '30m': 30 }[period] ?? 1;

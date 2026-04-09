@@ -1,6 +1,6 @@
 import { BaseProvider } from './base-provider.js';
 import { fetchJson, fetchText } from './http-client.js';
-import { parseTencentQuote, parseTencentMinute, parseTencentKline, parseTencentMinuteToKline } from './live-mappers.js';
+import { parseTencentQuote, parseTencentMinute, parseTencentKline, parseTencentMinuteToKline, parseTencentMultiDayMinuteToKline } from './live-mappers.js';
 import iconv from 'iconv-lite';
 
 function createTimestamp() {
@@ -60,6 +60,7 @@ export class TencentProvider extends BaseProvider {
           market: context.market,
           title: data.name,
           price: data.now,
+          prevClose: data.prevClose,
           openPrice: data.open,
           maxPrice: data.high,
           minPrice: data.low,
@@ -155,8 +156,24 @@ export class TencentProvider extends BaseProvider {
             };
           }
 
-          // mkline not supported for this market — fall back to intraday minute data
-          // Note: this fallback only provides today's data, not historical data
+          // mkline not supported for this market (港股/美股) — fall back to 5-day minute data
+          // day/query?p=5 returns 5 days of 1-minute data, which we aggregate into N-minute bars
+          const dayUrl = `https://web.ifzq.gtimg.cn/appstock/app/day/query?code=${code}&p=5`;
+          const dayJson = await fetchJson(dayUrl);
+          const dayData = dayJson?.data?.[code]?.data ?? {};
+
+          if (Object.keys(dayData).length > 0) {
+            const parsed = parseTencentMultiDayMinuteToKline(dayData, period.normalizedPeriod);
+            return {
+              code: context.symbol,
+              market: context.market,
+              cycle: period.normalizedPeriod,
+              list: parsed.list,
+              time: createTimestamp()
+            };
+          }
+
+          // Final fallback: today-only minute data (美股可能连5日分时也没有)
           const minuteUrl = `https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=${code}`;
           const minuteJson = await fetchJson(minuteUrl);
           const minuteRaw = minuteJson?.data?.[code]?.data ?? {};

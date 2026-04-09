@@ -98,6 +98,7 @@ export function createHqchartNormalizer() {
         ...basePayload(raw, context),
         name: raw.name ?? raw.title ?? `Mock ${context.symbol}`,
         price: toNumber(raw.now ?? raw.price),
+        yclose: toNumber(raw.prevClose ?? raw.yclose, 0),
         open: toNumber(raw.open ?? raw.openPrice),
         high: toNumber(raw.high ?? raw.maxPrice),
         low: toNumber(raw.low ?? raw.minPrice),
