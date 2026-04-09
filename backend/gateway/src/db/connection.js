@@ -15,7 +15,7 @@ const ENSURE_MIGRATIONS_TABLE_SQL = `
 `;
 
 export function getDefaultDatabasePath(env = process.env) {
-  return env.HQCHART_GATEWAY_DB_PATH ?? path.resolve(process.cwd(), 'data', 'hqchart-gateway.sqlite');
+  return env.VFIN_GATEWAY_DB_PATH ?? path.resolve(process.cwd(), 'data', 'vfin-gateway.sqlite');
 }
 
 export function createDatabaseConnection({ dbPath = getDefaultDatabasePath() } = {}) {

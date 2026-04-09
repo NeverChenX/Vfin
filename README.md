@@ -34,7 +34,7 @@ npm run dev          # starts on http://localhost:18080
 
 Open in browser:
 ```
-http://localhost:18080/frontend/demo/
+http://localhost:18080/frontend/app/
 ```
 
 ### Environment Variables
@@ -72,7 +72,7 @@ Vfin/
 │   │   └── routes/           # REST API routes
 │   └── tests/                # 43 unit tests
 │
-└── frontend/demo/index.html  # PC web client (single HTML)
+└── frontend/app/index.html   # PC web client (single HTML)
 ```
 
 ---
@@ -110,7 +110,7 @@ npm run dev          # 启动于 http://localhost:18080
 
 浏览器访问：
 ```
-http://localhost:18080/frontend/demo/
+http://localhost:18080/frontend/app/
 ```
 
 ---

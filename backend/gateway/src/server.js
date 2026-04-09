@@ -71,7 +71,7 @@ export function startServer(config = loadConfig()) {
     providerMode: config.providerMode
   });
   return app.listen(config.port, () => {
-    console.log(`hqchart-gateway listening on port ${config.port}`);
+    console.log(`vfin-gateway listening on port ${config.port}`);
   });
 }
 

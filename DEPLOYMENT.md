@@ -1,4 +1,4 @@
-# HQChart PC版 - 部署和配置指南
+# VFin PC版 - 部署和配置指南
 
 ## 快速开始
 
@@ -26,12 +26,12 @@ PORT=3000 npm run dev
 
 **本地访问：**
 ```
-http://localhost:18080/frontend/demo/
+http://localhost:18080/frontend/app/
 ```
 
 **自定义 API 地址（可选）：**
 ```
-http://localhost:18080/frontend/demo/?apiBase=http://other-host:3000/api
+http://localhost:18080/frontend/app/?apiBase=http://other-host:3000/api
 ```
 
 ## 路径配置说明
@@ -83,11 +83,11 @@ CMD ["node", "src/server.js"]
 ```nginx
 server {
     listen 80;
-    server_name hqchart.example.com;
+    server_name vfin.example.com;
 
     # 前端静态文件
     location /frontend/ {
-        alias /var/www/hqchart/frontend/;
+        alias /var/www/vfin/frontend/;
         expires 1h;
     }
 
@@ -101,7 +101,7 @@ server {
 
     # 前端入口
     location / {
-        rewrite ^/(.*)$ /frontend/demo/ permanent;
+        rewrite ^/(.*)$ /frontend/app/ permanent;
     }
 }
 ```
@@ -221,9 +221,9 @@ backend/gateway/
   ├── tests/                     # 测试用例
   ├── package.json
   └── data/
-      └── hqchart-gateway.sqlite # 自选股数据库
+      └── vfin-gateway.sqlite    # 自选股数据库
 
-frontend/demo/
+frontend/app/
   └── index.html                 # PC 版主页面（2678 行）
 
 frontend/hqchart/

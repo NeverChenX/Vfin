@@ -23,7 +23,7 @@ npm run dev
 ### 3. 打开前端
 访问浏览器：
 ```
-http://localhost:18080/frontend/demo/
+http://localhost:18080/frontend/app/
 ```
 
 ✅ 完成！股票行情界面应该已经加载。
@@ -44,7 +44,7 @@ HQ_PROVIDER_MODE=mock npm run dev
 ### 自定义 API 地址
 在 URL 中添加 `apiBase` 参数：
 ```
-http://localhost:18080/frontend/demo/?apiBase=http://api.example.com:8080/api
+http://localhost:18080/frontend/app/?apiBase=http://api.example.com:8080/api
 ```
 
 ### 运行测试
@@ -58,7 +58,7 @@ npm test
 ## 🏗️ 项目结构
 
 ```
-HQChart/
+VFin/
 ├── backend/gateway/          # Node.js API 网关
 │   ├── src/
 │   │   ├── server.js         # Express 应用
@@ -67,7 +67,7 @@ HQChart/
 │   │   └── routes/           # API 路由
 │   └── tests/                # 自动化测试
 │
-├── frontend/demo/index.html  # PC 版主界面
+├── frontend/app/index.html  # PC 版主界面
 └── frontend/hqchart/
     ├── jscommon/             # K 线图表核心库
     ├── samples/              # 示例页面

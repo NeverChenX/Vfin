@@ -134,7 +134,7 @@ describe('watchlist routes', () => {
   });
 
   it('persists watchlist items across app and database recreation for file-backed sqlite', async () => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hqchart-gateway-watchlist-'));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vfin-gateway-watchlist-'));
     const dbPath = path.join(tempDir, 'watchlist.sqlite');
 
     watchlistService = createWatchlistService({ dbPath });
@@ -159,7 +159,7 @@ describe('watchlist routes', () => {
   });
 
   it('can start migrations repeatedly without breaking the schema', () => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hqchart-gateway-migrations-'));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vfin-gateway-migrations-'));
     const dbPath = path.join(tempDir, 'watchlist.sqlite');
 
     const firstDb = createDatabaseConnection({ dbPath });

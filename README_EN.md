@@ -69,7 +69,7 @@ Default server: http://localhost:18080
 ### Open in Browser
 
 ```
-http://localhost:18080/frontend/demo/
+http://localhost:18080/frontend/app/
 ```
 
 ✅ Done! The stock chart interface should load.
@@ -87,7 +87,7 @@ Vfin/
 │   │   └── routes/           # REST API routes
 │   └── tests/                # 43 unit tests
 │
-└── frontend/demo/index.html  # PC web client (single HTML, 2678 lines)
+└── frontend/app/index.html  # PC web client (single HTML, 2678 lines)
 ```
 
 ---
@@ -137,7 +137,7 @@ curl -X POST http://localhost:18080/api/watchlist \
 ### Custom API Base URL
 
 ```
-http://localhost:18080/frontend/demo/?apiBase=http://api.example.com:8080/api
+http://localhost:18080/frontend/app/?apiBase=http://api.example.com:8080/api
 ```
 
 ---

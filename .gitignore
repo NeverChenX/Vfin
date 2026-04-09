@@ -60,4 +60,5 @@ typings/
 vue.demo/infoHqdemo/package-lock.json
 .worktrees/
 data/
-hqchart-gateway/data/
+vfin-gateway/data/
+.gstack/
