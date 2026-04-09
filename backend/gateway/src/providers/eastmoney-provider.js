@@ -6,12 +6,7 @@ import {
   parseEastmoneyCapital,
   parseEastmoneyKline
 } from './live-mappers.js';
-
-function createTimestamp() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
-}
+import { createTimestamp } from '../utils/time.js';
 
 function buildEastmoneySecId({ market, symbol }) {
   const code = symbol?.includes('.') ? symbol.split('.')[0] : symbol;
@@ -121,7 +116,8 @@ export class EastmoneyProvider extends BaseProvider {
         },
         time: createTimestamp()
       };
-    } catch (_error) {
+    } catch (error) {
+      console.warn(`[EastmoneyProvider] ${error.message}`);
       return {
         code: context.symbol,
         market: context.market,
@@ -162,7 +158,8 @@ export class EastmoneyProvider extends BaseProvider {
         records: parsed.records,
         time: createTimestamp()
       };
-    } catch (_error) {
+    } catch (error) {
+      console.warn(`[EastmoneyProvider] ${error.message}`);
       return { code: context.symbol, market: context.market, records: [], time: createTimestamp() };
     }
   }
@@ -201,7 +198,8 @@ export class EastmoneyProvider extends BaseProvider {
         announcements: parsed.items,
         time: createTimestamp()
       };
-    } catch (_error) {
+    } catch (error) {
+      console.warn(`[EastmoneyProvider] ${error.message}`);
       return { code: context.symbol, market: context.market, announcements: [], time: createTimestamp() };
     }
   }

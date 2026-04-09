@@ -2,12 +2,7 @@ import iconv from 'iconv-lite';
 import { BaseProvider } from './base-provider.js';
 import { fetchText } from './http-client.js';
 import { parseSinaQuote, parseSinaUSKline } from './live-mappers.js';
-
-function createTimestamp() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
-}
+import { createTimestamp } from '../utils/time.js';
 
 function buildSinaSymbol({ market, symbol }) {
   if (symbol?.includes('.')) {

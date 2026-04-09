@@ -3,17 +3,7 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : 0;
 }
 
-function beijingNow() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
-}
-
-function beijingToday() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
+import { createTimestamp as beijingNow, beijingToday } from '../utils/time.js';
 
 function parseTencentTimestamp(value) {
   if (!value || value.length !== 14) {
@@ -45,7 +35,7 @@ export function parseTencentQuote(raw) {
     high: toNumber(parts[33]),
     low: toNumber(parts[34]),
     volume: toNumber(parts[6]),
-    turnover: toNumber(info[2]),
+    turnover: toNumber(info[2]) || toNumber(parts[37]),
     time: parseTencentTimestamp(parts[30])
   };
 }

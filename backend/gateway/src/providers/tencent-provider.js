@@ -2,12 +2,7 @@ import { BaseProvider } from './base-provider.js';
 import { fetchJson, fetchText } from './http-client.js';
 import { parseTencentQuote, parseTencentMinute, parseTencentKline, parseTencentMinuteToKline, parseTencentMultiDayMinuteToKline } from './live-mappers.js';
 import iconv from 'iconv-lite';
-
-function createTimestamp() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
-}
+import { createTimestamp } from '../utils/time.js';
 
 function buildTencentSymbol({ market, symbol }) {
   if (symbol?.includes('.')) {

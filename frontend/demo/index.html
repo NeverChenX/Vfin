@@ -838,32 +838,35 @@
                     );
                 },
 
+                _fetchMinuteWithAuction:function(symbol, callcation)
+                {
+                    return Promise.all([
+                        apiGet('/stock', { symbol:symbol }),
+                        apiGet('/minute', { symbol:symbol }),
+                        (callcation.Before || callcation.After) ? apiGet('/callauction', { symbol:symbol }) : Promise.resolve(null)
+                    ]).then((response)=>
+                    {
+                        var quote=response[0];
+                        var minute=response[1];
+                        var callauction=response[2];
+                        var auctionData=null;
+                        if (callauction)
+                        {
+                            auctionData={};
+                            if (callcation.Before) auctionData.before=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), true, toNumber(quote.open, quote.price));
+                            if (callcation.After) auctionData.after=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), false, toNumber(quote.price, quote.open));
+                        }
+                        return { quote:quote, minute:minute, auctionData:auctionData };
+                    });
+                },
+
                 RequestMinuteData:function(data, callback)
                 {
                     var symbol=data.Request.Data.symbol[0];
                     var callcation=data.Request.Data.callcation || {};
-                    return this.RunRequest(
-                        data,
-                        callback,
-                        ()=> Promise.all([
-                            apiGet('/stock', { symbol:symbol }),
-                            apiGet('/minute', { symbol:symbol }),
-                            (callcation.Before || callcation.After) ? apiGet('/callauction', { symbol:symbol }) : Promise.resolve(null)
-                        ]).then((response)=>
-                        {
-                            var quote=response[0];
-                            var minute=response[1];
-                            var callauction=response[2];
-                            var auctionData=null;
-                            if (callauction)
-                            {
-                                auctionData={};
-                                if (callcation.Before) auctionData.before=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), true, toNumber(quote.open, quote.price));
-                                if (callcation.After) auctionData.after=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), false, toNumber(quote.price, quote.open));
-                            }
-
-                            return buildSingleMinuteResponse(symbol, quote, minute, auctionData);
-                        })
+                    return this.RunRequest(data, callback,
+                        ()=> this._fetchMinuteWithAuction(symbol, callcation)
+                            .then((r)=> buildSingleMinuteResponse(symbol, r.quote, r.minute, r.auctionData))
                     );
                 },
 
@@ -872,28 +875,9 @@
                     var symbol=data.Request.Data.symbol;
                     var dayCount=data.Request.Data.daycount;
                     var callcation=data.Request.Data.callcation || {};
-                    return this.RunRequest(
-                        data,
-                        callback,
-                        ()=> Promise.all([
-                            apiGet('/stock', { symbol:symbol }),
-                            apiGet('/minute', { symbol:symbol }),
-                            (callcation.Before || callcation.After) ? apiGet('/callauction', { symbol:symbol }) : Promise.resolve(null)
-                        ]).then((response)=>
-                        {
-                            var quote=response[0];
-                            var minute=response[1];
-                            var callauction=response[2];
-                            var auctionData=null;
-                            if (callauction)
-                            {
-                                auctionData={};
-                                if (callcation.Before) auctionData.before=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), true, toNumber(quote.open, quote.price));
-                                if (callcation.After) auctionData.after=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), false, toNumber(quote.price, quote.open));
-                            }
-
-                            return buildHistoryMinuteResponse(symbol, quote, minute, dayCount, auctionData);
-                        })
+                    return this.RunRequest(data, callback,
+                        ()=> this._fetchMinuteWithAuction(symbol, callcation)
+                            .then((r)=> buildHistoryMinuteResponse(symbol, r.quote, r.minute, dayCount, r.auctionData))
                     );
                 },
 
@@ -1042,6 +1026,7 @@
                         case 'AnnouncementInfo::RequestData':
                             return this.RequestAnnouncementsData(data, callback);
                         default:
+                            console.warn(`[DemoBackendDataSource] unhandled: ${data.Name}`);
                             break;
                     }
                 }
@@ -1397,7 +1382,7 @@
 
             this.OnSplitXCoordinate=function(event, data, obj)
             {
-                
+                // HQChart回调接口，保留空实现以避免默认行为
             }
 
             this.OnSize=function(option)  //自适应大小调整
@@ -2338,6 +2323,7 @@
                     this.KLineCtrl.Hide();
 
                     this.MinuteCtrl.ChangeDayCount(period);
+                    if (this.CurrentSymbol) this.MinuteCtrl.ChangeSymbol(this.CurrentSymbol);
                     if (period===1) this.SetActivePeriodTab('MinuteDay');
                     else if (period===5) this.SetActivePeriodTab('Minute5Day');
                     this.UpdataToolbar(type);
