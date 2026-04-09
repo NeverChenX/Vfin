@@ -1,10 +1,12 @@
 import { BaseProvider } from './base-provider.js';
 import { fetchJson, fetchText } from './http-client.js';
-import { parseTencentQuote, parseTencentMinute, parseTencentKline } from './live-mappers.js';
+import { parseTencentQuote, parseTencentMinute, parseTencentKline, parseTencentMinuteToKline } from './live-mappers.js';
 import iconv from 'iconv-lite';
 
 function createTimestamp() {
-  return new Date().toISOString();
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
 }
 
 function buildTencentSymbol({ market, symbol }) {
@@ -98,7 +100,7 @@ export class TencentProvider extends BaseProvider {
           code: context.symbol,
           market: context.market,
           line: parsed.points.map((point) => [point.time, point.price, point.volume, point.avgPrice]),
-          time: new Date().toISOString()
+          time: createTimestamp()
         };
       } catch (error) {
         throw this.createError(`Tencent minute failed: ${error.message}`, { cause: error });
@@ -124,21 +126,70 @@ export class TencentProvider extends BaseProvider {
       try {
         const code = buildTencentSymbol(context);
         const period = resolveTencentPeriod(context.period);
-        const count = Number(context.count ?? 200);
-        const offset = Number(context.offset ?? 0);
         const isMinutePeriod = /^m\d+$/.test(period.queryPeriod);
-        const url = isMinutePeriod
-          ? `https://ifzq.gtimg.cn/appstock/app/kline/mkline?param=${code},${period.queryPeriod},,${count},${offset}`
-          : `https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=${code},${period.queryPeriod},,,${count},${offset}`;
+        // 分钟K线：腾讯API最大限制约800条
+        // 1分钟约4天, 5分钟约17天, 15分钟约50天, 30分钟约100天
+        const defaultCount = isMinutePeriod ? 800 : 200;
+        const count = Number(context.count ?? defaultCount);
+        const offset = Number(context.offset ?? 0);
+
+        if (isMinutePeriod) {
+          // 腾讯API限制：
+          // 1. offset参数无效，无法分页
+          // 2. count>800时会返回更少数据（约320条）
+          // 3. 最大有效count为800，可获取约800条数据
+          const maxCount = Math.min(count, 800);
+          const mklineUrl = `https://ifzq.gtimg.cn/appstock/app/kline/mkline?param=${code},${period.queryPeriod},,${maxCount},${offset}`;
+          const mklineJson = await fetchJson(mklineUrl);
+          const mklineData = mklineJson?.data?.[code] ?? {};
+
+          // 腾讯API正常返回
+          if (mklineJson?.code === 0) {
+            const parsed = parseTencentKline(mklineData, period.responsePeriod);
+            return {
+              code: context.symbol,
+              market: context.market,
+              cycle: period.normalizedPeriod,
+              list: parsed.list,
+              time: createTimestamp()
+            };
+          }
+
+          // mkline not supported for this market — fall back to intraday minute data
+          // Note: this fallback only provides today's data, not historical data
+          const minuteUrl = `https://web.ifzq.gtimg.cn/appstock/app/minute/query?code=${code}`;
+          const minuteJson = await fetchJson(minuteUrl);
+          const minuteRaw = minuteJson?.data?.[code]?.data ?? {};
+          const parsed = parseTencentMinuteToKline(minuteRaw, period.normalizedPeriod);
+          return {
+            code: context.symbol,
+            market: context.market,
+            cycle: period.normalizedPeriod,
+            list: parsed.list,
+            time: createTimestamp()
+          };
+        }
+
+        const url = `https://web.ifzq.gtimg.cn/appstock/app/kline/kline?param=${code},${period.queryPeriod},,,${count},${offset}`;
         const json = await fetchJson(url);
         const data = json?.data?.[code] ?? {};
         const parsed = parseTencentKline(data, period.responsePeriod);
+
+        // 腾讯API对美股只返回极少数据（如IPO点+最新点），数据不可用
+        // 仅对1-3条的"稀疏数据"触发fallback，0条可能是临时网络问题，走正常错误路径
+        if (parsed.list.length >= 1 && parsed.list.length <= 3 && count > 10 && context.market === 'us') {
+          throw this.createError(
+            `Tencent kline returned only ${parsed.list.length} bars for ${context.symbol} (expected ~${count})`,
+            { statusCode: 502, code: 'INSUFFICIENT_DATA' }
+          );
+        }
+
         return {
           code: context.symbol,
           market: context.market,
           cycle: period.normalizedPeriod,
           list: parsed.list,
-          time: new Date().toISOString()
+          time: createTimestamp()
         };
       } catch (error) {
         throw this.createError(`Tencent kline failed: ${error.message}`, { cause: error });

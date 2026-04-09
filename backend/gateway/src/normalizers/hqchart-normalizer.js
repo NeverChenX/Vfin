@@ -3,15 +3,21 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
-function toTimestamp(value) {
-  if (!value) {
-    return new Date().toISOString();
-  }
+function beijingNow() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
+}
 
+function toTimestamp(value) {
+  if (!value) return beijingNow();
   const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? new Date().toISOString()
-    : date.toISOString();
+  if (Number.isNaN(date.getTime())) return beijingNow();
+  // If value already has timezone info, preserve it; otherwise assume Beijing time
+  if (typeof value === 'string' && (value.includes('+') || value.endsWith('Z'))) {
+    return value;
+  }
+  return beijingNow();
 }
 
 function basePayload(raw, context) {

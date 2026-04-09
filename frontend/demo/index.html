@@ -551,6 +551,17 @@
                 setWatchlistStatus(`K线数据不足: ${symbol} ${kline.period || 'day'} (${items.length})`, true);
                 return { symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
             }
+            // 过滤掉明显异常的稀疏数据：条数少但时间跨度超过两年（如腾讯美股API只返回IPO点+最新点）
+            if (items.length<=3)
+            {
+                var firstDate=toDateNumber(items[0].date);
+                var lastDate=toDateNumber(items[items.length-1].date);
+                if (lastDate - firstDate > 20000) // 跨度超过约2年（20000 in YYYYMMDD terms）
+                {
+                    setWatchlistStatus(`${symbol} 历史K线数据不可用`, true);
+                    return { symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
+                }
+            }
 
             setWatchlistStatus('', false);
             var response={ symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
@@ -580,7 +591,7 @@
             var items=Array.isArray(kline.items) ? kline.items : [];
             var lastItem=items.length>0 ? items[items.length-1] : null;
             var prevItem=items.length>1 ? items[items.length-2] : null;
-            var close=lastItem ? toNumber(lastItem.close, quote.price) : toNumber(quote.price);
+            var close=toNumber(quote.price, lastItem ? toNumber(lastItem.close) : 0);
             return {
                 code:0,
                 stock:[
@@ -590,8 +601,8 @@
                         date:lastItem ? toDateNumber(lastItem.date) : toDateNumber(quote.timestamp || new Date()),
                         open:lastItem ? toNumber(lastItem.open, close) : toNumber(quote.open, close),
                         yclose:prevItem ? toNumber(prevItem.close, close) : toNumber(quote.open, close),
-                        high:lastItem ? toNumber(lastItem.high, close) : toNumber(quote.high, close),
-                        low:lastItem ? toNumber(lastItem.low, close) : toNumber(quote.low, close),
+                        high:lastItem ? Math.max(toNumber(lastItem.high), close) : toNumber(quote.high, close),
+                        low:lastItem ? Math.min(toNumber(lastItem.low), close) : toNumber(quote.low, close),
                         price:close,
                         vol:lastItem ? toNumber(lastItem.volume) : toNumber(quote.volume),
                         amount:lastItem ? toNumber(lastItem.amount) : toNumber(quote.amount)
@@ -634,22 +645,25 @@
         {
             var items=Array.isArray(kline.items) ? kline.items : [];
             var lastItem=items.length>0 ? items[items.length-1] : null;
+            var prevItem=items.length>1 ? items[items.length-2] : null;
             var date=toDateNumber(lastItem ? lastItem.date : (quote.timestamp || new Date()));
             var time=toTimeNumber(lastItem && lastItem.time ? lastItem.time : '09:30', false);
-            var close=lastItem ? toNumber(lastItem.close, quote.price) : toNumber(quote.price);
+            var close=toNumber(quote.price, lastItem ? toNumber(lastItem.close) : 0);
+            var yclose=prevItem ? toNumber(prevItem.close, close) : toNumber(quote.open, close);
             return {
                 symbol:symbol,
                 name:quote.name || symbol,
                 data:[
                     [
                         date,
-                        time,
+                        yclose,
                         lastItem ? toNumber(lastItem.open, close) : toNumber(quote.open, close),
-                        lastItem ? toNumber(lastItem.high, close) : toNumber(quote.high, close),
-                        lastItem ? toNumber(lastItem.low, close) : toNumber(quote.low, close),
+                        lastItem ? Math.max(toNumber(lastItem.high), close) : toNumber(quote.high, close),
+                        lastItem ? Math.min(toNumber(lastItem.low), close) : toNumber(quote.low, close),
                         close,
                         lastItem ? toNumber(lastItem.volume) : toNumber(quote.volume),
-                        lastItem ? toNumber(lastItem.amount) : toNumber(quote.amount)
+                        lastItem ? toNumber(lastItem.amount) : toNumber(quote.amount),
+                        time
                     ]
                 ],
                 ver:2.0
@@ -754,19 +768,17 @@
                 {
                     var requestOption=option || {};
                     data.PreventDefault=true;
+                    var safeCallback=function(response)
+                    {
+                        try { callback(response); }
+                        catch(e) { console.warn(`[DemoBackendDataSource] callback error in ${data.Name}:`, e.message); }
+                    };
                     requestFn()
-                        .then((response)=> callback(response))
+                        .then((response)=> safeCallback(response))
                         .catch((error)=>
                         {
-                            console.error(`[DemoBackendDataSource] ${data.Name}`, error);
-                            if (requestOption.emptyResponse)
-                            {
-                                setWatchlistStatus(`${data.Explain || data.Name} 使用空回退数据`, true);
-                                callback(requestOption.emptyResponse);
-                                return;
-                            }
-
-                            alert(error.message || `${data.Name} 请求失败`);
+                            console.warn(`[DemoBackendDataSource] ${data.Name}:`, error.message || error);
+                            safeCallback(requestOption.emptyResponse || null);
                         });
                 },
 
@@ -933,12 +945,19 @@
                 {
                     var symbol=data.Request.Data.symbol;
                     var period=getKLinePeriod(data.Request.Data.period);
+                    // HQChart传递的是天数，需要转换为数据条数
+                    // 5分钟K线：每天约48条（4小时交易时间/5分钟）
+                    // 15分钟K线：每天约16条
+                    // 30分钟K线：每天约8条
+                    var dayCount=data.Request.Data.count || 5;
+                    var barsPerDay={ '1m':240, '5m':48, '15m':16, '30m':8 }[period] || 48;
+                    var count=Math.min(dayCount * barsPerDay, 800); // 腾讯API最大800条
                     return this.RunRequest(
                         data,
                         callback,
                         ()=> Promise.all([
                             apiGet('/stock', { symbol:symbol }),
-                            apiGet('/kline', { symbol:symbol, period:period, count:data.Request.Data.count || 200 })
+                            apiGet('/kline', { symbol:symbol, period:period, count:count })
                         ]).then((response)=> buildMinuteKLineHistoryResponse(symbol, response[0], response[1]))
                     );
                 },
@@ -1449,7 +1468,14 @@
 
             this.ChangePeriod=function(value)
             {
-                if (this.Chart) this.Chart.JSChartContainer.ChangePeriod(value);
+                if (this.Chart)
+                {
+                    // API已经返回目标周期的数据(5m/15m/30m), 设置IsApiPeriod=true
+                    // 防止HQChart再次聚合导致数据量大幅减少(如800条5m→160条25m)
+                    // 日线/周线/月线保持false以支持本地复权计算
+                    this.Chart.JSChartContainer.IsApiPeriod=(value>=5 && value<=7);
+                    this.Chart.JSChartContainer.ChangePeriod(value);
+                }
             }
 
             this.ChangeSymbol=function(symbol)
@@ -2068,6 +2094,67 @@
                 }
             }
 
+            // 周期到URL参数的映射
+            this.PeriodToUrlParam=function(type, period)
+            {
+                if (type===0) {
+                    switch(period) {
+                        case 0: return 'day';
+                        case 1: return 'week';
+                        case 2: return 'month';
+                        case 3: return 'year';
+                        case 4: return '1m';
+                        case 5: return '5m';
+                        case 6: return '15m';
+                        case 7: return '30m';
+                    }
+                } else if (type===1) {
+                    switch(period) {
+                        case 1: return 'minute1';
+                        case 5: return 'minute5';
+                    }
+                }
+                return 'day';
+            }
+
+            // 从URL参数获取周期
+            this.UrlParamToPeriod=function(param)
+            {
+                switch(param) {
+                    case 'day': return { type: 0, period: 0 };
+                    case 'week': return { type: 0, period: 1 };
+                    case 'month': return { type: 0, period: 2 };
+                    case 'year': return { type: 0, period: 3 };
+                    case '1m': return { type: 0, period: 4 };
+                    case '5m': return { type: 0, period: 5 };
+                    case '15m': return { type: 0, period: 6 };
+                    case '30m': return { type: 0, period: 7 };
+                    case 'minute1': return { type: 1, period: 1 };
+                    case 'minute5': return { type: 1, period: 5 };
+                    default: return { type: 0, period: 0 };
+                }
+            }
+
+            // 更新URL中的周期参数
+            this.UpdateUrlPeriod=function(type, period)
+            {
+                var param=this.PeriodToUrlParam(type, period);
+                var url=new URL(window.location.href);
+                url.searchParams.set('period', param);
+                window.history.replaceState({}, '', url.toString());
+            }
+
+            // 从URL读取周期并应用
+            this.ApplyPeriodFromUrl=function()
+            {
+                var url=new URL(window.location.href);
+                var param=url.searchParams.get('period');
+                if (param) {
+                    return this.UrlParamToPeriod(param);
+                }
+                return null;
+            }
+
 
             this.Create=function()
             {
@@ -2198,8 +2285,15 @@
                 window.__HQ_RISE_FALL_MODE=this.RiseFallMode;
                 this.UpdateSettingsPanel();
                 document.documentElement.setAttribute('data-rise-fall-mode', this.RiseFallMode);
-                this.SetActivePeriodTab('KLineDay');
-                this.UpdataToolbar(0);
+                
+                // 从URL读取周期参数并应用
+                var periodFromUrl=this.ApplyPeriodFromUrl();
+                if (periodFromUrl) {
+                    this.Show(periodFromUrl.type, periodFromUrl.period);
+                } else {
+                    this.SetActivePeriodTab('KLineDay');
+                    this.UpdataToolbar(0);
+                }
             }
 
             //type 1=分时图     0=K线图
@@ -2217,7 +2311,9 @@
                     this.MinuteCtrl.Hide();
 
                     this.KLineCtrl.Hide();
-                    this.KLineCtrl.ChangePeriod(period)
+                    var isMinutePeriod=(period>=4 && period<=7);
+                    this.KLineCtrl.ChangePeriod(period);
+                    if (isMinutePeriod && this.CurrentSymbol) this.KLineCtrl.ChangeSymbol(this.CurrentSymbol);
 
                     if (period===0) this.SetActivePeriodTab('KLineDay');
                     else if (period===1) this.SetActivePeriodTab('KLineWeek');
@@ -2228,6 +2324,7 @@
                     else if (period===6) this.SetActivePeriodTab('KLine15Minute');
                     else if (period===7) this.SetActivePeriodTab('KLine30Minute');
                     this.UpdataToolbar(type);
+                    this.UpdateUrlPeriod(0, period);
                 }
                 else if (type===1)
                 {
@@ -2244,6 +2341,7 @@
                     if (period===1) this.SetActivePeriodTab('MinuteDay');
                     else if (period===5) this.SetActivePeriodTab('Minute5Day');
                     this.UpdataToolbar(type);
+                    this.UpdateUrlPeriod(1, period);
                 }
             }
 

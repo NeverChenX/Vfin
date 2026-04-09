@@ -3,23 +3,80 @@ import { fetchJson } from './http-client.js';
 import {
   parseEastmoneyTradeDetail,
   parseEastmoneyAnnouncements,
-  parseEastmoneyCapital
+  parseEastmoneyCapital,
+  parseEastmoneyKline
 } from './live-mappers.js';
 
 function createTimestamp() {
-  return new Date().toISOString();
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
 }
 
 function buildEastmoneySecId({ market, symbol }) {
   const code = symbol?.includes('.') ? symbol.split('.')[0] : symbol;
   if (market === 'sh') return `1.${code}`;
   if (market === 'sz') return `0.${code}`;
+  if (market === 'us') return `105.${code}`;
+  if (market === 'hk') return `116.${code.padStart(5, '0')}`;
   return null;
+}
+
+function resolveEastmoneyPeriod(period) {
+  // klt: 101=日线 102=周线 103=月线 104=年线
+  //       1=1分钟 5=5分钟 15=15分钟 30=30分钟 60=60分钟
+  const map = {
+    'day': 101, 'week': 102, 'month': 103, 'year': 104,
+    '1m': 1, '5m': 5, '15m': 15, '30m': 30, '60m': 60
+  };
+  return map[period] || 101;
 }
 
 export class EastmoneyProvider extends BaseProvider {
   constructor() {
     super({ name: 'eastmoney' });
+  }
+
+  async fetchKline(context) {
+    this.ensureMockableMode(context.providerMode, 'kline');
+    if (context.providerMode !== 'live') {
+      return {
+        code: context.symbol,
+        market: context.market,
+        cycle: context.period ?? 'day',
+        list: [
+          { date: '2026-04-01', open: 12, high: 12.5, low: 11.9, close: 12.2, volume: 110000, amount: 1342000 },
+          { date: '2026-04-02', open: 12.2, high: 12.4, low: 12.1, close: 12.28, volume: 98000, amount: 1204800 }
+        ],
+        time: createTimestamp()
+      };
+    }
+
+    const secid = buildEastmoneySecId(context);
+    if (!secid) {
+      throw this.createError(`Eastmoney kline: unsupported market "${context.market}"`, {
+        statusCode: 502,
+        code: 'UNSUPPORTED_PROVIDER_OPERATION'
+      });
+    }
+
+    const klt = resolveEastmoneyPeriod(context.period);
+    const count = Number(context.count ?? 200);
+    // fqt: 0=不复权 1=前复权 2=后复权
+    const url = `https://push2his.eastmoney.com/api/qt/stock/kline/get?secid=${secid}&fields1=f1,f2,f3,f4,f5,f6&fields2=f51,f52,f53,f54,f55,f56,f57,f58&klt=${klt}&fqt=0&end=20500101&lmt=${count}`;
+    try {
+      const json = await fetchJson(url);
+      const parsed = parseEastmoneyKline(json?.data ?? {});
+      return {
+        code: context.symbol,
+        market: context.market,
+        cycle: context.period ?? 'day',
+        list: parsed.list,
+        time: createTimestamp()
+      };
+    } catch (error) {
+      throw this.createError(`Eastmoney kline failed: ${error.message}`, { cause: error });
+    }
   }
 
   async fetchCapital(context) {

@@ -3,18 +3,29 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : 0;
 }
 
+function beijingNow() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
+}
+
+function beijingToday() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 function parseTencentTimestamp(value) {
   if (!value || value.length !== 14) {
-    return new Date().toISOString();
+    return beijingNow();
   }
-
   const year = value.slice(0, 4);
   const month = value.slice(4, 6);
   const day = value.slice(6, 8);
   const hour = value.slice(8, 10);
   const minute = value.slice(10, 12);
   const second = value.slice(12, 14);
-  return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}Z`).toISOString();
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}+08:00`;
 }
 
 export function parseTencentQuote(raw) {
@@ -57,19 +68,18 @@ export function parseSinaQuote(raw) {
     low: toNumber(parts[5]),
     volume: toNumber(parts[8]),
     turnover: toNumber(parts[9]),
-    time: date && time ? new Date(`${date}T${time}Z`).toISOString() : new Date().toISOString()
+    time: date && time ? `${date}T${time}+08:00` : beijingNow()
   };
 }
 
 export function parseTencentMinute(raw) {
-  const data = raw?.data ?? {};
-  const list = data.data ?? [];
+  const list = raw?.data ?? [];
   const points = list.map((item) => {
     const [timeRaw, price, volume, amount] = item.split(' ');
     const time = `${timeRaw.slice(0, 2)}:${timeRaw.slice(2, 4)}`;
     const vol = toNumber(volume);
     const amt = toNumber(amount);
-    const avgPrice = vol > 0 ? amt / (vol * 100) : toNumber(price);
+    const avgPrice = vol > 0 ? amt / vol / 100 : toNumber(price);
 
     return {
       time,
@@ -80,6 +90,97 @@ export function parseTencentMinute(raw) {
   });
 
   return { points };
+}
+
+export function parseTencentMinuteToKline(raw, period) {
+  const list = raw?.data ?? [];
+  const intervalMinutes = { '1m': 1, '5m': 5, '15m': 15, '30m': 30 }[period] ?? 1;
+
+  const points = list.map((item) => {
+    const [timeRaw, price, cumVolume, cumAmount] = item.split(' ');
+    const hour = Number(timeRaw.slice(0, 2));
+    const minute = Number(timeRaw.slice(2, 4));
+    return {
+      minuteIndex: hour * 60 + minute,
+      timeStr: `${timeRaw.slice(0, 2)}:${timeRaw.slice(2, 4)}`,
+      price: toNumber(price),
+      cumVolume: toNumber(cumVolume),
+      cumAmount: toNumber(cumAmount)
+    };
+  });
+
+  if (points.length === 0) return { period, list: [] };
+
+  const today = beijingToday();
+  const klineBars = [];
+
+  if (intervalMinutes === 1) {
+    // Each Tencent minute point records the close price at that minute mark.
+    // Bar "T" covers the interval [T, T+1): open = price[T], close = price[T+1].
+    // Label the bar with the START time (point[i].timeStr), not the end time.
+    for (let i = 0; i < points.length - 1; i++) {
+      const openP = points[i];
+      const closeP = points[i + 1];
+      klineBars.push({
+        date: today,
+        time: openP.timeStr,
+        open: openP.price,
+        high: Math.max(openP.price, closeP.price),
+        low: Math.min(openP.price, closeP.price),
+        close: closeP.price,
+        volume: closeP.cumVolume - openP.cumVolume,
+        amount: closeP.cumAmount - openP.cumAmount
+      });
+    }
+    // Add the in-progress bar using the last data point as its open
+    const lastP = points[points.length - 1];
+    klineBars.push({
+      date: today,
+      time: lastP.timeStr,
+      open: lastP.price,
+      high: lastP.price,
+      low: lastP.price,
+      close: lastP.price,
+      volume: 0,
+      amount: 0
+    });
+  } else {
+    // For N-minute bars: group consecutive minute points into intervals.
+    // Label each bar with the START time of its interval (firstP.timeStr).
+    const firstMinuteIndex = points[0].minuteIndex;
+    const groups = [];
+    for (const p of points) {
+      const groupIndex = Math.floor((p.minuteIndex - firstMinuteIndex) / intervalMinutes);
+      if (!groups[groupIndex]) groups[groupIndex] = [];
+      groups[groupIndex].push(p);
+    }
+
+    let prevCumVolume = 0;
+    let prevCumAmount = 0;
+    let prevClose = points[0].price;
+
+    for (const group of groups) {
+      if (!group || group.length === 0) continue;
+      const firstP = group[0];
+      const lastP = group[group.length - 1];
+      const allPrices = group.map((p) => p.price);
+      klineBars.push({
+        date: today,
+        time: firstP.timeStr,
+        open: firstP.price,
+        high: Math.max(prevClose, ...allPrices),
+        low: Math.min(prevClose, ...allPrices),
+        close: lastP.price,
+        volume: lastP.cumVolume - prevCumVolume,
+        amount: lastP.cumAmount - prevCumAmount
+      });
+      prevClose = lastP.price;
+      prevCumVolume = lastP.cumVolume;
+      prevCumAmount = lastP.cumAmount;
+    }
+  }
+
+  return { period, list: klineBars };
 }
 
 export function parseTencentKline(raw, period) {
@@ -143,6 +244,42 @@ export function parseEastmoneyAnnouncements(raw) {
         url: stockCode && item.art_code
           ? `https://data.eastmoney.com/notices/detail/${stockCode}/${item.art_code}.html`
           : ''
+      };
+    })
+  };
+}
+
+export function parseSinaUSKline(items) {
+  // 新浪美股K线格式: { d: "2026-04-08", o: "258.45", h: "259.75", l: "256.53", c: "258.90", v: "41016009", a: "10593200000" }
+  if (!Array.isArray(items)) return { list: [] };
+  return {
+    list: items.map((item) => ({
+      date: item.d,
+      open: toNumber(item.o),
+      high: toNumber(item.h),
+      low: toNumber(item.l),
+      close: toNumber(item.c),
+      volume: toNumber(item.v),
+      amount: toNumber(item.a)
+    }))
+  };
+}
+
+export function parseEastmoneyKline(raw) {
+  const klines = raw?.klines ?? [];
+  return {
+    list: klines.map((row) => {
+      const parts = row.split(',');
+      // 东方财富格式: 日期,开盘,收盘,最高,最低,成交量,成交额,振幅
+      const [date, open, close, high, low, volume, amount] = parts;
+      return {
+        date,
+        open: toNumber(open),
+        high: toNumber(high),
+        low: toNumber(low),
+        close: toNumber(close),
+        volume: toNumber(volume),
+        amount: toNumber(amount)
       };
     })
   };

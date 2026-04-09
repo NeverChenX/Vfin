@@ -1,10 +1,12 @@
 import iconv from 'iconv-lite';
 import { BaseProvider } from './base-provider.js';
 import { fetchText } from './http-client.js';
-import { parseSinaQuote } from './live-mappers.js';
+import { parseSinaQuote, parseSinaUSKline } from './live-mappers.js';
 
 function createTimestamp() {
-  return new Date().toISOString();
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
 }
 
 function buildSinaSymbol({ market, symbol }) {
@@ -92,6 +94,10 @@ export class SinaProvider extends BaseProvider {
   async fetchKline(context) {
     this.ensureMockableMode(context.providerMode, 'kline');
     if (context.providerMode === 'live') {
+      // 新浪支持美股日线K线
+      if (context.market === 'us') {
+        return this._fetchUSKline(context);
+      }
       throw this.createError('Sina kline not supported', { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' });
     }
 
@@ -100,36 +106,39 @@ export class SinaProvider extends BaseProvider {
       market: context.market,
       period: context.period ?? 'day',
       list: [
-        {
-          date: '2026-04-01',
-          open: 12,
-          high: 12.5,
-          low: 11.9,
-          close: 12.2,
-          volume: 110000,
-          amount: 1342000
-        },
-        {
-          date: '2026-04-02',
-          open: 12.2,
-          high: 12.4,
-          low: 12.1,
-          close: 12.28,
-          volume: 98000,
-          amount: 1204800
-        },
-        {
-          date: '2026-04-03',
-          open: 12.28,
-          high: 12.6,
-          low: 12.18,
-          close: 12.34,
-          volume: 123456,
-          amount: 1523456
-        }
+        { date: '2026-04-01', open: 12, high: 12.5, low: 11.9, close: 12.2, volume: 110000, amount: 1342000 },
+        { date: '2026-04-02', open: 12.2, high: 12.4, low: 12.1, close: 12.28, volume: 98000, amount: 1204800 },
+        { date: '2026-04-03', open: 12.28, high: 12.6, low: 12.18, close: 12.34, volume: 123456, amount: 1523456 }
       ],
       timestamp: createTimestamp()
     };
+  }
+
+  async _fetchUSKline(context) {
+    const code = context.symbol?.includes('.') ? context.symbol.split('.')[0] : context.symbol;
+    const count = Number(context.count ?? 200);
+    const url = `https://stock.finance.sina.com.cn/usstock/api/json_v2.php/US_MinKService.getDailyK?symbol=${code}&type=daily`;
+    try {
+      const text = await fetchText(url, {
+        headers: {
+          Referer: 'https://finance.sina.com.cn',
+          'User-Agent': 'Mozilla/5.0'
+        }
+      });
+      const items = JSON.parse(text);
+      const parsed = parseSinaUSKline(items);
+      // 只返回最近 count 条数据
+      const list = parsed.list.length > count ? parsed.list.slice(-count) : parsed.list;
+      return {
+        code: context.symbol,
+        market: context.market,
+        cycle: context.period ?? 'day',
+        list,
+        time: createTimestamp()
+      };
+    } catch (error) {
+      throw this.createError(`Sina US kline failed: ${error.message}`, { cause: error });
+    }
   }
 
   async fetchCapital(context) {

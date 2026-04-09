@@ -28,9 +28,8 @@ export function createMarketRouter({ hqchartDataService } = {}) {
       const q = (req.query.q || '').trim();
       if (!q) return res.json({ items: [] });
 
-      // 新浪 suggest API，GBK 编码；不限 type 以支持 A股/指数/基金/美股
-      // type: 11=A股 12=指数 13=板块 14=沪基金 15=深基金 41=美股
-      const url = `https://suggest3.sinajs.cn/suggest/type=11,12,13,14,15,41&key=${encodeURIComponent(q)}`;
+      // 新浪 suggest API; type: 11=A股 12=指数 13=板块 14=沪基金 15=深基金 31=港股 41=美股
+      const url = `https://suggest3.sinajs.cn/suggest/type=11,12,13,14,15,31,41&key=${encodeURIComponent(q)}`;
       const buf = await fetchText(url, {
         headers: { Referer: 'https://finance.sina.com.cn/', 'User-Agent': 'Mozilla/5.0' },
         responseType: 'arrayBuffer'
@@ -41,7 +40,7 @@ export function createMarketRouter({ hqchartDataService } = {}) {
       const match = text.match(/suggestvalue="([^"]*)"/);
       if (!match) return res.json({ items: [] });
 
-      const TYPE_LABEL = { '11': '', '12': '指数', '13': '板块', '14': '基金', '15': '基金', '41': '美股' };
+      const TYPE_LABEL = { '11': '', '12': '指数', '13': '板块', '14': '基金', '15': '基金', '31': '港股', '41': '美股' };
 
       const items = match[1].split(';').filter(Boolean).slice(0, 12).map(part => {
         const cols = part.split(',');
@@ -56,6 +55,10 @@ export function createMarketRouter({ hqchartDataService } = {}) {
           // 美股：code 是小写 symbol，转为 AAPL.us 格式
           symbol = `${code.toUpperCase()}.us`;
           market = 'us';
+        } else if (type === '31') {
+          // 港股：code 即为港股代码
+          symbol = `${code}.hk`;
+          market = 'hk';
         } else {
           market = fullCode.slice(0, 2);  // sh / sz
           if (!market) return null;
