@@ -128,7 +128,6 @@ export function parseTencentMultiDayMinuteToKline(raw, period) {
 
     let prevCumVolume = 0;
     let prevCumAmount = 0;
-    let prevClose = points[0].price;
 
     for (const group of groups) {
       if (!group || group.length === 0) continue;
@@ -139,13 +138,12 @@ export function parseTencentMultiDayMinuteToKline(raw, period) {
         date,
         time: firstP.timeStr,
         open: firstP.price,
-        high: Math.max(prevClose, ...allPrices),
-        low: Math.min(prevClose, ...allPrices),
+        high: Math.max(...allPrices),
+        low: Math.min(...allPrices),
         close: lastP.price,
         volume: lastP.cumVolume - prevCumVolume,
         amount: lastP.cumAmount - prevCumAmount
       });
-      prevClose = lastP.price;
       prevCumVolume = lastP.cumVolume;
       prevCumAmount = lastP.cumAmount;
     }
@@ -219,7 +217,6 @@ export function parseTencentMinuteToKline(raw, period) {
 
     let prevCumVolume = 0;
     let prevCumAmount = 0;
-    let prevClose = points[0].price;
 
     for (const group of groups) {
       if (!group || group.length === 0) continue;
@@ -230,13 +227,12 @@ export function parseTencentMinuteToKline(raw, period) {
         date: today,
         time: firstP.timeStr,
         open: firstP.price,
-        high: Math.max(prevClose, ...allPrices),
-        low: Math.min(prevClose, ...allPrices),
+        high: Math.max(...allPrices),
+        low: Math.min(...allPrices),
         close: lastP.price,
         volume: lastP.cumVolume - prevCumVolume,
         amount: lastP.cumAmount - prevCumAmount
       });
-      prevClose = lastP.price;
       prevCumVolume = lastP.cumVolume;
       prevCumAmount = lastP.cumAmount;
     }
@@ -263,11 +259,18 @@ export function parseTencentKline(raw, period) {
       const [dateRaw, open, close, high, low, volume, amount] = parseRow(row);
       let date = dateRaw;
       let time;
+      const isMinute = typeof dateRaw === 'string' && /^\d{12}$/.test(dateRaw);
 
-      if (typeof dateRaw === 'string' && /^\d{12}$/.test(dateRaw)) {
+      if (isMinute) {
         date = `${dateRaw.slice(0, 4)}-${dateRaw.slice(4, 6)}-${dateRaw.slice(6, 8)}`;
         time = `${dateRaw.slice(8, 10)}:${dateRaw.slice(10, 12)}`;
       }
+
+      const vol = toNumber(volume);
+      const cls = toNumber(close);
+      const amt = toNumber(amount);
+      // 腾讯mkline分钟K线第7字段为{}(空对象)，amount无效；用 close×volume×100 估算（A股1手=100股）
+      const finalAmount = amt > 0 ? amt : (isMinute && vol > 0 ? parseFloat((cls * vol * 100).toFixed(2)) : 0);
 
       return {
         date,
@@ -275,9 +278,9 @@ export function parseTencentKline(raw, period) {
         open: toNumber(open),
         high: toNumber(high),
         low: toNumber(low),
-        close: toNumber(close),
-        volume: toNumber(volume),
-        amount: toNumber(amount)
+        close: cls,
+        volume: vol,
+        amount: finalAmount
       };
     })
   };
