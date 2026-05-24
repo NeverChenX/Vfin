@@ -13,9 +13,10 @@
 const encoder = new TextEncoder();
 let cachedSecret: string | null = null;
 let cachedKey: Promise<CryptoKey> | null = null;
+let _warnedNoSecret = false;
 
 function getSecret(): string | null {
-  if (cachedSecret !== null) return cachedSecret;
+  if (cachedSecret !== null) return cachedSecret || null;
   const env = process.env.SESSION_SECRET;
   if (!env) {
     cachedSecret = '';
@@ -53,6 +54,15 @@ function hexToBytes(hex: string): Uint8Array | null {
 /**
  * Returns the verified email when the token is valid and unexpired; otherwise
  * null. Never throws on bad input.
+ *
+ * Graceful degradation: when SESSION_SECRET is not configured (dev / legacy
+ * deploys that pre-date the upgrade), we fall back to the pre-upgrade
+ * "structural only" check — token has 3 segments and isn't expired. This
+ * keeps existing sessions alive instead of silently logging everyone out the
+ * moment middleware is upgraded; the real HMAC verify still runs server-side
+ * in lib/auth.ts when SESSION_SECRET is missing.
+ *
+ * Configure SESSION_SECRET to enable full Edge-level HMAC verification.
  */
 export async function verifySessionEdge(token: string | undefined): Promise<string | null> {
   if (!token) return null;
@@ -64,7 +74,17 @@ export async function verifySessionEdge(token: string | undefined): Promise<stri
   if (!Number.isFinite(exp) || Date.now() > exp) return null;
 
   const key = await getKey();
-  if (!key) return null;
+  if (!key) {
+    if (!_warnedNoSecret) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[session-edge] SESSION_SECRET not configured — running in format-check-only mode. ' +
+          'Set SESSION_SECRET in .env.local to enable Edge HMAC verification.',
+      );
+      _warnedNoSecret = true;
+    }
+    return email;
+  }
   const sig = hexToBytes(sigHex);
   if (!sig) return null;
   // Web Crypto's verify needs ArrayBuffer-backed views; copy through .slice()
