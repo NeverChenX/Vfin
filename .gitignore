@@ -5,5 +5,8 @@ node_modules/
 *.log
 gateway/data/*.db
 gateway/data/*.db-journal
+# WAL files (created at runtime after C6 WAL mode switch)
+gateway/data/*.sqlite-wal
+gateway/data/*.sqlite-shm
 .env
 .env.local
