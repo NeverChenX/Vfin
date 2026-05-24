@@ -5,11 +5,17 @@ function createCircuitError(key) {
   return error;
 }
 
+// H10: maxAttempts bumped 1 -> 2 with a 250ms gap so single Sina/Tencent 503
+// blips no longer push state.failures toward the 3-failure circuit threshold.
+// retryDelayMs is configurable for tests.
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function createResilienceService({
   now = () => Date.now(),
-  maxAttempts = 1,
+  maxAttempts = 2,
   failureThreshold = 3,
-  resetTimeoutMs = 30_000
+  resetTimeoutMs = 30_000,
+  retryDelayMs = 250,
 } = {}) {
   const states = new Map();
 
@@ -53,6 +59,11 @@ export function createResilienceService({
 
         if (attempt === attempts) {
           throw error;
+        }
+        // H10: brief backoff between attempts so we don't immediately re-hit
+        // a flapping upstream.
+        if (retryDelayMs > 0) {
+          await sleep(retryDelayMs);
         }
       }
     }

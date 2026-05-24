@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { writeFileSync, existsSync, mkdirSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 import { fetchSinaCompany } from '@/lib/fetchers/sina';
 import { fetchSECCompany, US_TICKER_CIK } from '@/lib/fetchers/sec';
@@ -86,7 +86,7 @@ function guessIndustry(name: string): string {
 export async function POST(req: Request) {
   const guard = await requireAuth();
   if (guard instanceof NextResponse) return guard;
-  let body: { query?: string; force?: boolean };
+  let body: { query?: string; force?: boolean; strict?: boolean | string | number };
   try {
     body = await req.json();
   } catch {
@@ -94,12 +94,25 @@ export async function POST(req: Request) {
   }
   const query = (body.query ?? '').trim();
   const force = !!body.force;
+  // C5: when set, single-source (validation.passed=false) data is REFUSED
+  // with 422 instead of being written to disk. Use this in environments
+  // that enforce the project's "at least 2 cross-checked sources" rule.
+  const strict = body.strict === true || body.strict === '1' || body.strict === 1;
   if (!query) return NextResponse.json({ error: '请提供公司名称或代码' }, { status: 400 });
 
   const { ticker, market, reason } = resolveTicker(query);
   if (!ticker) return NextResponse.json({ error: reason ?? '无法解析代码' }, { status: 400 });
 
-  const outDir = join(process.cwd(), 'src', 'data', 'companies');
+  // C4: defense-in-depth ticker whitelist before any filesystem op. resolveTicker
+  // already canonicalises, but a regex here guarantees nothing pathological
+  // (slashes, '..', null bytes, control chars) ever reaches join().
+  if (!/^[A-Z0-9._-]{1,16}$/i.test(ticker)) {
+    return NextResponse.json({ error: '代码格式非法' }, { status: 400 });
+  }
+
+  // C4: outDir env-overridable so prod containers with read-only src/ work.
+  const outDir =
+    process.env.VFIN_COMPANIES_DIR ?? join(process.cwd(), 'src', 'data', 'companies');
   mkdirSync(outDir, { recursive: true });
   const outPath = join(outDir, `${ticker}.json`);
 
@@ -148,15 +161,42 @@ export async function POST(req: Request) {
       ],
     };
 
+    // C5: strict mode refuses to write single-source data. Default mode
+    // still writes (compatibility) but flags _quarantined so the frontend
+    // can hide / badge it instead of showing it as plain "fetched".
+    if (strict && !validation.passed) {
+      return NextResponse.json(
+        {
+          error: '⚠️ 单源数据未通过 cross-check 校验，strict 模式拒绝写盘',
+          code: 'single_source_unverified',
+          ticker,
+          name: company.name,
+          source: company._sourceName,
+          selfConsistency: {
+            passed: consistencyPassed,
+            ratio: `${consistency.filter((c) => c.passed).length}/${consistency.length}`,
+          },
+          requires_second_source: true,
+        },
+        { status: 422 },
+      );
+    }
+
     const out = {
       ...company,
       industry,
       _source: company._sourceName,
       _fetchedAt: new Date().toISOString(),
       _validation: validation,
+      // C5: explicit on-disk quarantine flag so any consumer can detect
+      // "this row is single-source unverified" without re-running validation.
+      _quarantined: !validation.passed,
     };
     delete (out as { _sourceName?: string })._sourceName;
-    writeFileSync(outPath, JSON.stringify(out, null, 2));
+    // Atomic write so concurrent readers never see a half-written JSON.
+    const tmp = `${outPath}.${process.pid}.tmp`;
+    writeFileSync(tmp, JSON.stringify(out, null, 2));
+    renameSync(tmp, outPath);
     invalidateCompanyListCache();
     return NextResponse.json({
       ticker,
@@ -165,11 +205,13 @@ export async function POST(req: Request) {
       market,
       mode: 'live',
       source: company._sourceName,
-      message: '抓取成功',
+      message: validation.passed ? '抓取成功' : '抓取成功（已隔离：等待辅源接入）',
+      quarantined: !validation.passed,
+      requires_second_source: !validation.passed,
       validation: {
         passed: validation.passed,
         selfConsistency: { passed: consistencyPassed, ratio: `${consistency.filter((c) => c.passed).length}/${consistency.length}` },
-        warning: validation.passed ? null : '⚠️ 单源数据未达项目"至少 2 源交叉校验"硬性要求 — 请手动接入辅源后重跑',
+        warning: validation.passed ? null : '⚠️ 单源数据未达项目"至少 2 源交叉校验"硬性要求 — 已写入但标记为 _quarantined，请手动接入辅源后重跑',
       },
     });
   } catch (e) {

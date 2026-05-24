@@ -34,13 +34,31 @@ export function createWatchlistRouter({ watchlistService, projectRoot }) {
     }
   });
 
+  // H14: in-flight dedup — user clicks "sync" twice in a row would otherwise
+  // race two independent reads-and-writes against watchlist DB. One flag per
+  // process is enough; multi-process deployments should add a Redis lock.
+  let syncInFlight = false;
   // 真同步：把"我的持仓"分类与 portfolio_data.json 对齐 —— 多余的删，缺失的加，其他分类不动
   router.post('/sync-portfolio', (req, res, next) => {
+    if (syncInFlight) {
+      return res.status(409).json({ error: 'sync already in progress' });
+    }
+    syncInFlight = true;
     try {
-      const portfolioPath =
-        process.env.PORTFOLIO_DATA_PATH || '/home/Neverchen/project/invest/portfolio_data.json';
+      // C2: ENV-only — was hard-coded to a sibling project path. Endpoint
+      // now 400s if PORTFOLIO_DATA_PATH is not configured, so we never read
+      // /home/Neverchen/project/invest/* by accident on a fresh deploy.
+      const portfolioPath = process.env.PORTFOLIO_DATA_PATH;
+      if (!portfolioPath) {
+        return res.status(400).json({
+          error: 'PORTFOLIO_DATA_PATH env not configured; sync-portfolio disabled',
+        });
+      }
+      if (portfolioPath.includes('\0') || portfolioPath.includes('..')) {
+        return res.status(400).json({ error: 'invalid PORTFOLIO_DATA_PATH' });
+      }
       if (!fs.existsSync(portfolioPath)) {
-        return res.status(404).json({ error: `portfolio file not found: ${portfolioPath}` });
+        return res.status(404).json({ error: `portfolio file not found` });
       }
 
       const data = JSON.parse(fs.readFileSync(portfolioPath, 'utf-8'));
@@ -67,6 +85,9 @@ export function createWatchlistRouter({ watchlistService, projectRoot }) {
       });
     } catch (error) {
       return next(error);
+    } finally {
+      // H14: always release the in-flight flag, even on errors / early returns.
+      syncInFlight = false;
     }
   });
 

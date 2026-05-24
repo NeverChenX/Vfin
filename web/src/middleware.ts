@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifySessionEdge } from '@/lib/session-edge';
 
-// 注意：middleware 跑在 Edge runtime，不能直接 import 用 fs 的 lib/auth.ts。
-// 这里仅做 cookie 存在性 + 签名格式简单校验，深度校验在页面/路由处理。
-// 默认拦截：除登录/注册/静态资源/auth API 外都需要 session cookie。
+// H6: middleware previously only checked that the cookie was 3 |-separated
+// segments. Now it actually verifies the HMAC signature so unauthenticated
+// callers cannot reach protected pages by writing `aaa|0|bbb` into their
+// cookie jar. We use an edge-safe verifier (Web Crypto) because Edge runtime
+// forbids node:crypto / node:fs.
 
 const PUBLIC_PATHS = [
   '/login',
@@ -15,7 +18,20 @@ const PUBLIC_PATHS = [
   '/hq-classic', // 经典版 HQChart 单页（保留全部原功能）
 ];
 
-export function middleware(req: NextRequest) {
+function unauthorized(req: NextRequest): NextResponse {
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return new NextResponse(JSON.stringify({ error: '未登录，请先登录' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  const url = req.nextUrl.clone();
+  url.pathname = '/login';
+  url.search = '';
+  return NextResponse.redirect(url);
+}
+
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   if (
     pathname.startsWith('/_next') ||
@@ -27,19 +43,9 @@ export function middleware(req: NextRequest) {
   }
 
   const session = req.cookies.get('vfin_session')?.value;
-  // 简单校验：必须是 3 段 | 分隔
-  if (!session || session.split('|').length !== 3) {
-    if (pathname.startsWith('/api/')) {
-      return new NextResponse(JSON.stringify({ error: '未登录，请先登录' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    const url = req.nextUrl.clone();
-    url.pathname = '/login';
-    url.search = '';
-    return NextResponse.redirect(url);
-  }
+  if (!session) return unauthorized(req);
+  const email = await verifySessionEdge(session);
+  if (!email) return unauthorized(req);
 
   return NextResponse.next();
 }

@@ -10,16 +10,34 @@ import { createHqchartDataService } from './services/hqchart-data-service.js';
 import { createWatchlistService } from './services/watchlist-service.js';
 import { createProviderRegistry } from './providers/provider-registry.js';
 
+// C1: strict CORS.
+// Under the unified server (web/server.mjs), browsers see the gateway on the
+// same origin (:3816) and need no CORS header at all. Cross-origin callers
+// must be explicitly whitelisted via GATEWAY_ALLOW_ORIGINS (comma-separated)
+// or GATEWAY_ALLOW_ALL=1 (only for trusted private LAN deployments).
+const ALLOWED_ORIGINS = new Set(
+  (process.env.GATEWAY_ALLOW_ORIGINS || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean)
+);
+const ALLOW_ALL = process.env.GATEWAY_ALLOW_ALL === '1';
+
 function corsMiddleware(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
-  res.header(
-    'Access-Control-Allow-Headers',
-    req.header('Access-Control-Request-Headers') || 'Content-Type, X-Request-Id, X-Trace-Id'
-  );
+  const origin = req.header('Origin') || '';
+  const allowed = ALLOW_ALL || (origin && ALLOWED_ORIGINS.has(origin));
+  if (allowed) {
+    res.header('Access-Control-Allow-Origin', ALLOW_ALL ? '*' : origin);
+    res.header('Vary', 'Origin');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
+    res.header(
+      'Access-Control-Allow-Headers',
+      req.header('Access-Control-Request-Headers') || 'Content-Type, X-Request-Id, X-Trace-Id'
+    );
+  }
 
   if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
+    return res.sendStatus(allowed ? 204 : 403);
   }
 
   return next();
@@ -46,9 +64,11 @@ export function createApp({ watchlistService, hqchartDataService, providerOrder,
     return defaultHqchartDataService;
   });
 
+  app.disable('x-powered-by');
   app.use(corsMiddleware);
   app.use(traceIdMiddleware);
-  app.use(express.json());
+  // M13: 64kb body limit — terminal-style API never sends large payloads.
+  app.use(express.json({ limit: '64kb' }));
 
   // ⚠ 不再挂载 express.static — 原本指向 path.resolve(..., '../../../../') 实际是
   //   /home/Neverchen/project，会把整个 VFin 同级目录（含 .env / 其他项目源码 / 用户数据）
@@ -60,13 +80,12 @@ export function createApp({ watchlistService, hqchartDataService, providerOrder,
     res.status(200).json({ ok: true });
   });
 
-  // 根路径：直接 302 到 web 前端，避免用户误访问看到 "Cannot GET /"
-  app.get('/', (req, res) => {
-    const target =
-      process.env.WEB_URL ||
-      `http://${(req.hostname || 'localhost').replace(/:\d+$/, '')}:3816`;
-    res.redirect(302, target);
-  });
+  // H3: removed the GET / 302 redirect. Under the unified server the root path
+  // is owned by Next.js (web/server.mjs only forwards /api/hq/* here), so this
+  // route was unreachable in production and harmful when the gateway was
+  // accidentally exposed standalone (it would 302 callers to a hardcoded
+  // host:3816 — wrong on reverse-proxy / cloudflared deployments). Standalone
+  // health check is /api/health/live; the rest is not a public surface.
 
   app.use('/api', createMarketRouter({ hqchartDataService: marketDataService }));
   app.use('/api/watchlist', createWatchlistRouter({ watchlistService: service, projectRoot }));

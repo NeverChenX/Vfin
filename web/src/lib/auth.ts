@@ -1,10 +1,14 @@
 import 'server-only';
 import { cookies } from 'next/headers';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import crypto from 'node:crypto';
 
-const USERS_FILE = join(process.cwd(), 'src', 'data', 'users.json');
+// C4 / H4: prefer external mutable location (env-configurable) so prod
+// containers with read-only src/ still work, and so we don't pollute the
+// Next build cache when registering users.
+const USERS_FILE =
+  process.env.VFIN_USERS_FILE ?? join(process.cwd(), 'src', 'data', 'users.json');
 const SESSION_COOKIE = 'vfin_session';
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 天
 
@@ -42,7 +46,13 @@ function loadUsers(): UserRecord[] {
 
 function saveUsers(users: UserRecord[]): void {
   mkdirSync(dirname(USERS_FILE), { recursive: true });
-  writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+  // H4: atomic write (tmp + rename) so a partial write never leaves
+  // users.json corrupted, and so concurrent readers see all-or-nothing.
+  // V8 is single-threaded so registerUser itself is atomic; this guards
+  // against torn writes on process crash mid-write.
+  const tmp = `${USERS_FILE}.${process.pid}.tmp`;
+  writeFileSync(tmp, JSON.stringify(users, null, 2));
+  renameSync(tmp, USERS_FILE);
 }
 
 function hashPassword(password: string, salt: string): string {

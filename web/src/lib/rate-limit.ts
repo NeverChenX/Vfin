@@ -12,7 +12,20 @@ interface Entry {
   resetAt: number;
 }
 
+// H7: hard cap on bucket cardinality. An attacker spamming distinct fake
+// X-Forwarded-For values could otherwise grow `buckets` unboundedly between
+// cleanup intervals. When over-cap we drop the oldest entry (Map preserves
+// insertion order so iterator.next() gives the oldest key).
+const MAX_BUCKETS = 100_000;
 const buckets = new Map<string, Entry>();
+
+function evictIfOverCap(): void {
+  while (buckets.size > MAX_BUCKETS) {
+    const oldest = buckets.keys().next().value;
+    if (oldest === undefined) break;
+    buckets.delete(oldest);
+  }
+}
 
 export interface RateLimitConfig {
   /** 时间窗口内的最大次数 */
@@ -30,6 +43,7 @@ export function checkRateLimit(key: string, cfg: RateLimitConfig): boolean {
   const entry = buckets.get(key);
   if (!entry || entry.resetAt <= now) {
     buckets.set(key, { count: 1, resetAt: now + cfg.windowMs });
+    evictIfOverCap();
     return false;
   }
   entry.count += 1;
@@ -37,12 +51,25 @@ export function checkRateLimit(key: string, cfg: RateLimitConfig): boolean {
   return false;
 }
 
-/** 从 Request 拿 client IP（容忍代理头） */
+/**
+ * 从 Request 拿 client IP（容忍代理头）
+ *
+ * H5: only trust proxy headers when RATE_LIMIT_TRUST_PROXY=1. Otherwise an
+ * attacker can spoof X-Forwarded-For per request to bypass IP-based limits;
+ * a misconfigured reverse proxy collapses all real IPs into 'unknown' which
+ * effectively shares one bucket among real users.
+ */
+const TRUST_PROXY_HEADERS = process.env.RATE_LIMIT_TRUST_PROXY === '1';
+
 export function clientIp(req: Request): string {
-  const xf = req.headers.get('x-forwarded-for');
-  if (xf) return xf.split(',')[0]?.trim() || 'unknown';
-  const real = req.headers.get('x-real-ip');
-  if (real) return real.trim();
+  if (TRUST_PROXY_HEADERS) {
+    const xf = req.headers.get('x-forwarded-for');
+    if (xf) return xf.split(',')[0]?.trim() || 'unknown';
+    const real = req.headers.get('x-real-ip');
+    if (real) return real.trim();
+    const cf = req.headers.get('cf-connecting-ip');
+    if (cf) return cf.trim();
+  }
   return 'unknown';
 }
 
