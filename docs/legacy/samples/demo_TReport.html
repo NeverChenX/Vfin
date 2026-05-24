@@ -1,0 +1,451 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<title>T型报价</title>  
+    <link rel="stylesheet" href="../jscommon/umychart.resource/css/tools.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/font/iconfont.css" />
+</head>  
+<body>
+    <div id="report" style="width: 900px;height:400px; overflow:hidden">
+    </div>
+
+    <div class="line-box">
+        
+    </div>
+
+    <script src="../jscommon/umychart.resource/js/jquery.min.js"></script>
+    <script src="../jscommon/umychart.resource/js/webfont.js"></script>
+    <script src="../jscommon/umychart.network.js"></script>
+    <script src="../jscommon/umychart.js"></script>             <!-- K线图形 -->
+    <script src="../jscommon/umychart.TReport.js"></script>    <!-- 麦语言解析执行器 -->
+    <script src="../jscommon/umychart.style.js"></script>       <!-- 白色风格和黑色风格配置信息 -->
+
+    <script>
+
+        //JSConsole.Chart.Log=() =>{}
+        //JSConsole.Complier.Log=()=>{}
+
+        MARKET_SUFFIX_NAME.GetMarketStatus = function (symbol)  { return 2; }
+
+        //简单的把K线控件封装下
+        function ReportChart(divDeal)
+        {
+            this.DivDeal=divDeal;
+            this.Chart=JSTReportChart.Init(divDeal);   //把报价列表绑定到一个Div上
+            this.MapMemberCache;           //板块缓存
+            
+            //配置信息
+            this.Option= 
+            {
+                Type:'T型报价列表',   //创建图形类型
+                
+                Symbol:"HO2404",  //板块代码
+                Name:"HO2404",
+
+                IsAutoUpdate:true,          //是自动更新数据
+                AutoUpdateFrequency:1000,   //数据更新频率
+ 
+                //显示列
+                Column:
+                [
+                    { Type:TREPORT_COLUMN_ID.PRICE_ID ,MaxText:"888.88"},
+                    { Type:TREPORT_COLUMN_ID.INCREASE_ID },
+                    { Type:TREPORT_COLUMN_ID.BUY_PRICE_ID ,MaxText:"888.88" },
+                    { Type:TREPORT_COLUMN_ID.BUY_VOL_ID, MaxText:"888" },
+
+                    { Type:TREPORT_COLUMN_ID.SELL_PRICE_ID, MaxText:"888.88"},
+                    { Type:TREPORT_COLUMN_ID.SELL_VOL_ID, MaxText:"888" },
+
+                    { Type:TREPORT_COLUMN_ID.POSITION_ID, MaxText:"8888"},
+
+                    { Type:TREPORT_COLUMN_ID.NAME_ID},
+                ],
+                
+                //IsShowHeader:false,
+
+                //KeyDown:false,
+                //Wheel:false,
+               
+                Border: //边框
+                {
+                    Left:20,        //左边间距
+                    Right:20,       //右边间距
+                    Bottom:20,      //底部间距
+                    Top:20          //顶部间距
+                },
+            };
+                 
+            this.Create=function()  //创建图形
+            {
+                $(window).resize(()=> { this.OnSize(); });    //绑定窗口大小变化事件
+
+                this.OnSize();  //全屏
+
+                //黑色风格
+                var blackStyle=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取黑色风格配置
+                JSChart.SetStyle(blackStyle);
+                this.DivDeal.style.backgroundColor=blackStyle.BGColor; //设置最外面的div背景
+
+                this.Option.NetworkFilter=(data, callback)=>{ this.NetworkFilter(data, callback); };
+
+                this.Option.EventCallback= 
+                [ 
+                    {   //单击
+                        event:JSCHART_EVENT_ID.ON_CLICK_TREPORT_ROW, 
+                        callback:(event, data, obj)=>{ this.OnClickRow(event, data, obj); }  
+                    },
+                    {   //右键单击
+                        event:JSCHART_EVENT_ID.ON_RCLICK_TREPORT_ROW, 
+                        callback:(event, data, obj)=>{ this.OnRClickRow(event, data, obj); }  
+                    },
+
+                    {   //双击
+                        event:JSCHART_EVENT_ID.ON_DBCLICK_TREPORT_ROW, 
+                        callback:(event, data, obj)=>{ this.OnDBClickRow(event, data, obj); }  
+                        
+                    },
+
+                    {   //单击表头
+                        event:JSCHART_EVENT_ID.ON_CLICK_TREPORT_HEADER, 
+                        callback:(event, data, obj)=>{ this.OnClickHeader(event, data, obj); }  
+                    },
+                    {   //右键单击表头
+                        event:JSCHART_EVENT_ID.ON_RCLICK_TREPORT_HEADER, 
+                        callback:(event, data, obj)=>{ this.OnRClickHeader(event, data, obj); }  
+                    },
+                ];
+
+                this.Chart.SetOption(this.Option);  //设置配置
+            }
+
+            this.OnSize=function()  //自适应大小调整
+            {
+                var height= $(window).height()-80;
+                var width = $(window).width();
+                this.DivDeal.style.top='0px';
+                this.DivDeal.style.left='0px';
+                this.DivDeal.style.width=width+'px';
+                this.DivDeal.style.height=height+'px';
+                this.Chart.OnSize();
+            }
+
+            this.NetworkFilter=function(data, callback)
+            {
+                console.log('[ReportChart::NetworkFilter] data', data);
+
+                switch(data.Name)
+                {
+                    case "JSTReportChartContainer::RequestStockData":          //股票数据更新
+                        this.RequestStockData(data, callback);
+                        break;
+                    case "JSTReportChartContainer::RequestStockListData":
+                        this.RequestStockListData(data, callback);             //列表
+                        break;
+                }
+            }
+
+            this.RequestStockListData=function(data, callback)
+            {
+                data.PreventDefault=true;
+                var recvData=
+                {
+                    data: 
+                    [
+                        [2000.0, "HO2404-C-2000.CFE", "HO2404-P-2000.CFE","HO2404-C-2000", "HO2404-P-2000"],
+                        [2025.0, "HO2404-C-2025.CFE", "HO2404-P-2025.CFE","HO2404-C-2025", "HO2404-P-2025"],
+                        [2050.0, "HO2404-C-2050.CFE", "HO2404-P-2050.CFE","HO2404-C-2050", "HO2404-P-2050"],
+                        [2075.0, "HO2404-C-2075.CFE", "HO2404-P-2075.CFE","HO2404-C-2075", "HO2404-P-2075"],
+                        [2100.0, "HO2404-C-2100.CFE", "HO2404-P-2100.CFE","HO2404-C-2100", "HO2404-P-2100"],
+                        [2125.0, "HO2404-C-2125.CFE", "HO2404-P-2125.CFE","HO2404-C-2125", "HO2404-P-2125"],
+                        [2150.0, "HO2404-C-2150.CFE", "HO2404-P-2150.CFE","HO2404-C-2150", "HO2404-P-2150"],
+                        [2175.0, "HO2404-C-2175.CFE", "HO2404-P-2175.CFE","HO2404-C-2175", "HO2404-P-2175"],
+                        [2200.0, "HO2404-C-2200.CFE", "HO2404-P-2200.CFE","HO2404-C-2200", "HO2404-P-2200"],
+                        [2225.0, "HO2404-C-2225.CFE", "HO2404-P-2225.CFE","HO2404-C-2225", "HO2404-P-2225"],
+                        [2250.0, "HO2404-C-2250.CFE", "HO2404-P-2250.CFE","HO2404-C-2250", "HO2404-P-2250"],
+                        [2275.0, "HO2404-C-2275.CFE", "HO2404-P-2275.CFE","HO2404-C-2275", "HO2404-P-2275"],
+                        [2300.0, "HO2404-C-2300.CFE", "HO2404-P-2300.CFE","HO2404-C-2300", "HO2404-P-2300"],
+                        [2325.0, "HO2404-C-2325.CFE", "HO2404-P-2325.CFE","HO2404-C-2325", "HO2404-P-2325"],
+                        [2350.0, "HO2404-C-2350.CFE", "HO2404-P-2350.CFE","HO2404-C-2350", "HO2404-P-2350"],
+                        [2375.0, "HO2404-C-2375.CFE", "HO2404-P-2375.CFE","HO2404-C-2375", "HO2404-P-2375"],
+                        [2400.0, "HO2404-C-2400.CFE", "HO2404-P-2400.CFE","HO2404-C-2400", "HO2404-P-2400"],
+                        [2425.0, "HO2404-C-2425.CFE", "HO2404-P-2425.CFE","HO2404-C-2425", "HO2404-P-2425"],
+                        [2450.0, "HO2404-C-2450.CFE", "HO2404-P-2450.CFE","HO2404-C-2450", "HO2404-P-2450"],
+                        [2475.0, "HO2404-C-2475.CFE", "HO2404-P-2475.CFE","HO2404-C-2475", "HO2404-P-2475"],
+                    ],
+
+                    price:2161.0,   //标的物市场价格
+                    symbol:"HO2404",
+                    name:"HO2404"
+                }
+
+                console.log("[ReportChart::RecvStockListData] recvData",recvData);
+
+                callback(recvData);
+                
+            }
+
+            this.RequestStockData=function(data, callback)
+            {
+                var stocks=data.Request.Data.stocks;    //股票列表
+                data.PreventDefault=true;
+                var hqChart=data.Self;
+                var aryData=[ ];
+                
+                var flashTest=[this.GetRandomTestData(0,stocks.length-1),this.GetRandomTestData(0,stocks.length-1),this.GetRandomTestData(0,stocks.length-1)];
+                for(var i=0;i<stocks.length;++i)
+                {
+                    var symbol=stocks[i];
+                    var aryPrice=
+                    [
+                        this.GetRandomTestData(100,150), this.GetRandomTestData(100,150), this.GetRandomTestData(100,150), this.GetRandomTestData(100,150),
+                        this.GetRandomTestData(100,150), this.GetRandomTestData(100,150),
+                    ];
+                    var yClose=this.GetRandomTestData(100,150);
+                    var open=aryPrice[0];
+                    var close=aryPrice[3];
+                    var high=Math.max(aryPrice[0],aryPrice[1],aryPrice[2],aryPrice[3],aryPrice[4],aryPrice[5]);
+                    var low=Math.min(aryPrice[0],aryPrice[1],aryPrice[2],aryPrice[3],aryPrice[4],aryPrice[5]);
+                    var buyPrice=aryPrice[4];
+                    var sellPrice=aryPrice[5];
+
+                    if (i==5) close=null;
+
+                    //0=证券代码 1=股票名称 2=昨收 3=开 4=高 5=低 6=收 7=成交量 8=成交金额, 9=买价 10=买量 11=卖价 12=卖量 13=均价
+                    var item=[symbol, symbol];
+                    item[2]=yClose;
+                    item[3]=open;
+                    item[4]=high;
+                    item[5]=low;
+                    item[6]=close;
+                    item[7]=this.GetRandomTestData(1,20);
+                    item[8]=this.GetRandomTestData(1000,1500);
+                    item[9]=buyPrice;
+                    item[10]=this.GetRandomTestData(1,20);
+                    item[11]=sellPrice;
+                    item[12]=this.GetRandomTestData(1,20);
+                    item[14]=this.GetRandomTestData(1,3000);
+
+                    aryData.push(item);
+
+                    if (i==flashTest[0] || i==flashTest[1])
+                        hqChart.SetFlashBGItem(symbol, { ID:TREPORT_COLUMN_ID.BUY_PRICE_ID, Color:"rgba(255,250,205, 0.3)", Count: 1});
+                    else if (i==flashTest[2])
+                        hqChart.SetFlashBGItem(symbol, { ID:TREPORT_COLUMN_ID.SELL_PRICE_ID, Color:"rgba(255,250,205, 0.3)", Count: 1});
+                }
+
+                var recvData=
+                {
+                    data:aryData,
+                    symbol:"HO2404",
+                    name:"HO2404",
+                    price:this.GetRandomTestData(2250,2325),                //标的物市场价格
+                }
+
+                console.log("[ReportChart::RecvStockListData] recvData",recvData);
+
+                callback(recvData);
+                
+            }
+
+            this.GetRandomTestData=function(min, max)   //测试数据
+            {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min + 1)) + min; //含最大值，含最小值 
+            }
+
+            this.RecvStockData=function(data, callback, hqChart)
+            {
+                var hqchartData={  data:this.ReadStockJsonData(data.stock) };
+
+                var count=hqchartData.data.length-1;
+
+                for(var i=0; i<5; ++i)
+                {
+                    var index=Math.round(Math.random()*count);
+                    var id=Math.ceil(Math.random()*6);
+
+
+                    var item=hqchartData.data[index];
+                    var symbol=item[0];
+
+                    hqChart.SetFlashBGItem(symbol, { ID:id, Color:"rgba(255,250,205, 0.5)", Count: 1});
+                }
+
+                console.log("[ReportChart::RecvStockData] hqchartData",hqchartData);
+                callback(hqchartData);
+            }
+
+            this.ReadStockJsonData=function(aryStock)
+            {
+                var aryData=[];
+                for(var i=0;i<aryStock.length;++i)
+                {
+                    var stockItem=aryStock[i];
+                    var newItem=
+                    [
+                        stockItem.symbol, 
+                        stockItem.name, 
+                        stockItem.yclose>0?stockItem.yclose:null,
+                        stockItem.open>0?stockItem.open:null, 
+                        stockItem.high>0?stockItem.high:null, 
+                        stockItem.low>0?stockItem.low:null, 
+                        stockItem.price>0?stockItem.price:null, 
+                        stockItem.open>0?stockItem.vol/100:null, 
+                        stockItem.amount
+                    ];
+
+                    if (stockItem.buy && stockItem.buy[0])
+                    {
+                        var item=stockItem.buy[0];
+                        newItem[9]=item.price>0?item.price:null;
+                        newItem[10]=item.vol;
+                    }
+
+                    if (stockItem.buy && stockItem.sell[0])
+                    {
+                        var item=stockItem.sell[0];
+                        newItem[11]=item.price>0?item.price:null;
+                        newItem[12]=item.vol;
+                    }
+
+                    newItem[13]=stockItem.price;        //均价
+                    newItem[14]=stockItem.folwequity;   //流通股本
+                    newItem[15]=stockItem.totalequity;  //总股本
+
+                    if (stockItem.limitprice)
+                    {
+                        newItem[16]=stockItem.limitprice.max;   //涨停价
+                        newItem[17]=stockItem.limitprice.min;  //跌停价
+                    }
+                   
+
+                    newItem[18]=stockItem.volin/100;   //内盘
+                    newItem[19]=stockItem.volout/100;  //外盘
+
+                    
+                    newItem[27]={ Text:stockItem.name };
+                    
+                    if (i%20==5)
+                        newItem[27].Symbol={ Family:'iconfont', Size:16,  Data:[ { Text:'\ue629', Color:'rgb(255,165,0)'}, { Text:'\ue627', Color:'#1c65db'} ] };
+                    else if (i%20==9)
+                        newItem[27].Symbol={ Family:'iconfont', Size:16,  Data:[ { Text:'\ue629', Color:'rgb(255,165,0)'}] } ;
+                    else if (i%20==18)
+                        newItem[27].Symbol={ Family:'iconfont', Size:16,  Data:[ { Text:'\ue627', Color:'#1c65db'}] } ;
+
+                    //扩展数据
+                    var extendData=[];
+                    newItem[30]=extendData;
+
+                    //行业
+                    if (stockItem.industry && stockItem.industry[0])
+                    {
+                        var item=stockItem.industry[0];
+                        var aryValue=item.name.split('-')
+                        extendData[0]=aryValue[1];
+                    }
+                    
+                    //地区
+                    if (stockItem.region && stockItem.region[0])
+                    {
+                        var item=stockItem.region[0];
+                        extendData[1]=item.name;
+                    }
+
+                    if (stockItem.pe) extendData[2]=stockItem.pe;
+                    if (stockItem.pe2) extendData[3]=stockItem.pe2;
+                    if (stockItem.pe3) extendData[4]=stockItem.pe3;
+                    if (stockItem.pb) extendData[5]=stockItem.pb;
+
+                    //周涨幅
+                    if (stockItem.week)
+                    {
+                        var item=stockItem.week;
+                        extendData[6]=item.week1;
+                        extendData[7]=item.week4;
+                        extendData[8]=item.week13;
+                    }
+
+
+                    aryData.push(newItem);
+                }
+
+                return aryData;
+            }
+
+
+            this.OnClickRow=function(event, data, obj)
+            {
+                console.log('[ReportChart::OnClickRow] event, data', event , data);
+            }
+
+            this.OnRClickRow=function(event, data, obj)
+            {
+                console.log('[ReportChart::OnRClickRow] event, data', event , data);
+            }
+
+            this.OnDBClickRow=function(event, data, obj)
+            {
+                console.log('[ReportChart::OnDBClickRow] event, data', event , data);
+            }
+
+            this.OnClickHeader=function(event, data, obj)
+            {
+                console.log('[ReportChart::OnClickHeader] event, data', event , data);
+            }
+
+            this.OnRClickHeader=function(event, data, obj)
+            {
+                console.log('[ReportChart::OnRClickHeader] event, data', event , data);
+            }  
+        }
+
+        
+        $(function () 
+        {
+            WebFont.load({ custom: { families: ['iconfont'] } });   //预加载下iconfont资源
+ 
+            var reportCtrl=new ReportChart(document.getElementById('report'));
+            reportCtrl.Create();
+        })
+
+    </script>  
+</body>  
+</html>
+
+
+<style>
+
+.line-box
+{
+    height: 25px;
+}
+
+.btn-style
+{
+    margin:5px,8px;
+    border: 1px solid #ececec;
+    background-color: #A9A9A9;
+    cursor: pointer;
+}
+
+.tab-menu
+{
+    min-width: 100px;
+    /* width: 100px; */
+    background-color: rgb(253,253,253);
+    position: absolute;
+    visibility:hidden;
+}
+
+.tab-menu-item
+{
+    cursor: pointer;
+    display: block;
+}
+    
+        
+</style>

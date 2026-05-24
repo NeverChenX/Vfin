@@ -1,0 +1,13 @@
+{
+  "name": "vfin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VFin — A 股个人研究终端，整合实时行情（HQChart）与财报研究（单端口 / 单进程）",
+  "scripts": {
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build",
+    "start": "npm --prefix web run start",
+    "install:all": "npm install --prefix gateway && npm install --prefix web && npm install",
+    "test:gateway": "npm --prefix gateway test"
+  }
+}

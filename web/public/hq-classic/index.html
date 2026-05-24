@@ -1,0 +1,3783 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+
+<title>VFin</title>
+    <link rel="icon" type="image/svg+xml" href="/frontend/favicon.svg" />
+    <!-- 加载资源 -->
+    <link rel="stylesheet" href="/hqchart/jscommon/umychart.resource/font/iconfont.css" />
+    <link rel="stylesheet" href="/hqchart/jscommon/umychart.resource/font/drawtool/iconfont.css" />
+    <link rel="stylesheet" href="/hqchart/jscommon/umychart.resource/css/tools.css" />
+    <link rel="stylesheet" href="/hqchart/jscommon/umychart.resource/js/codemirror/codemirror.css" />
+</head> 
+
+<body>
+
+    <script src="/hqchart/jscommon/umychart.resource/js/jquery.min.js"></script>
+    <script src="/hqchart/jscommon/umychart.resource/js/webfont.js"></script>
+    <script src='/hqchart/jscommon/umychart.console.js?v=2'></script>     <!-- 日志输出 -->
+    <script src="/hqchart/jscommon/umychart.network.js?v=2"></script>     <!-- 网络请求分装 -->
+    <script src="/hqchart/jscommon/umychart.js?v=2"></script>             <!-- K线图形 -->
+    <script src="/hqchart/jscommon/umychart.complier.js?v=2"></script>    <!-- 麦语言解析执行器 -->
+    <script src="/hqchart/jscommon/umychart.index.data.js?v=2"></script>  <!-- 基础指标库 -->
+    <script src="/hqchart/jscommon/umychart.style.js?v=2"></script>       <!-- 白色风格和黑色风格配置信息 -->
+    <script src="/hqchart/jscommon/umychart.popMenu.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.DialogDrawTool.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.PopMinuteChart.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.PopKLineChart.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.report.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.keyboard.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.PopKeyboard.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.DialogTooltip.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.DialogSelectRect.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.DialogSearchIndex.js?v=2"></script>
+    <script src="/hqchart/jscommon/umychart.version.js?v=2"></script>
+
+    <div id="FullDemo">
+        <div id="LeftPanel">
+            <div id="WatchlistToolbar">
+                <div id="WatchlistTitle">自选列表</div>
+                <button id="LeftPanelToggle" type="button" title="收起">‹</button>
+                <div id="WatchlistInputWrap">
+                    <input id="WatchlistInput" type="text" placeholder="请输入代码或者名称" autocomplete="off" />
+                    <div id="WatchlistDropdown"></div>
+                </div>
+                <button id="WatchlistAddButton" type="button">+</button>
+                <button id="SyncPortfolioButton" type="button" title="同步持仓">⟳</button>
+            </div>
+            <div id="WatchlistStatus"></div>
+            <div id="Report">
+                <div id="ReportCtrl"></div>
+            </div>
+        </div>
+
+        <div id="CenterPanel">
+            <!-- VFin · 当前股票财务指标条（PE / PB / ROE / 行业 / 财报数据期）-->
+            <div id="CompanyFinanceBar"></div>
+
+            <div id="PeriodTab">
+                <div id="MinuteDay" class="TabItem PeriodItem">分时</div>
+                <div id="Minute5Day" class="TabItem PeriodItem">5日</div>
+                <div id="KLineDay" class="TabItem PeriodItem">日线</div>
+                <div id="KLineWeek" class="TabItem PeriodItem">周线</div>
+                <div id="KLineMonth" class="TabItem PeriodItem">月线</div>
+                <div id="KLineYear" class="TabItem PeriodItem">年线</div>
+
+                <div id="KLineMinute" class="TabItem PeriodItem">1分钟</div>
+                <div id="KLine5Minute" class="TabItem PeriodItem">5分钟</div>
+                <div id="KLine15Minute" class="TabItem PeriodItem">15分钟</div>
+                <div id="KLine30Minute" class="TabItem PeriodItem">30分钟</div>
+            
+                <div class="SpaceItem"></div>
+                <div id="StockChip" class="TabItem">筹码</div>
+                <div id="BeforeOpen" class="TabItem">竞价</div>
+                <div id="DrawTool" class="TabItem">画线</div>
+                <div id="SettingsMenu" class="TabItem">设置</div>
+            </div>
+            <div id="SettingsPanel">
+                <button id="SettingRiseFall" class="SettingsItem" type="button">绿涨红跌</button>
+                <button id="SettingWhiteStyle" class="SettingsItem" type="button">白色风格</button>
+                <button id="SettingBlackStyle" class="SettingsItem" type="button">黑色风格</button>
+            </div>
+
+            <div id="ChartContainer">
+                <div id="Minute">
+                    <div id="MinuteCtrl"></div>
+                </div>
+                <div id="KLine">
+                    <div id="KLineCtrl"></div>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+
+    <script>
+        MARKET_SUFFIX_NAME.GetMarketStatus = function (symbol)  { return 2; }
+
+        // API 基础地址：支持查询参数覆盖，但只接受同源相对路径
+        // （之前未校验 → ?apiBase=https://attacker.com 可以把所有 API 转给攻击者，泄露 watchlist 数据）
+        const DEFAULT_API_BASE='/api/hq';
+        const PAGE_QUERY=new URLSearchParams(window.location.search);
+        function sanitizeApiBase(raw){
+            if (!raw) return DEFAULT_API_BASE;
+            try {
+                var u=new URL(raw, window.location.origin);
+                if (u.origin !== window.location.origin) return DEFAULT_API_BASE;
+                return u.pathname.replace(/\/+$/,'') || DEFAULT_API_BASE;
+            } catch(_){ return DEFAULT_API_BASE; }
+        }
+        const API_BASE=sanitizeApiBase(PAGE_QUERY.get('apiBase'));
+        const API_PROVIDER=PAGE_QUERY.get('provider');
+        const API_PROVIDER_MODE=PAGE_QUERY.get('providerMode');
+        const SYMBOL_NAME_ALIAS={
+            '中国中铁':'601390.sh'
+        };
+        const RISE_FALL_STORAGE_KEY='HQCHART_RISE_FALL_MODE';
+        const RISE_FALL_MODE=
+        {
+            GREEN_UP_RED_DOWN:'green-up-red-down',
+            RED_UP_GREEN_DOWN:'red-up-green-down'
+        };
+
+        function loadRiseFallMode()
+        {
+            try
+            {
+                var mode=localStorage.getItem(RISE_FALL_STORAGE_KEY);
+                if (mode===RISE_FALL_MODE.RED_UP_GREEN_DOWN || mode===RISE_FALL_MODE.GREEN_UP_RED_DOWN) return mode;
+            }
+            catch(error)
+            {
+            }
+            return RISE_FALL_MODE.GREEN_UP_RED_DOWN;
+        }
+
+        function saveRiseFallMode(mode)
+        {
+            try
+            {
+                localStorage.setItem(RISE_FALL_STORAGE_KEY, mode);
+            }
+            catch(error)
+            {
+            }
+        }
+
+        function getRiseFallPalette(mode)
+        {
+            if (mode===RISE_FALL_MODE.RED_UP_GREEN_DOWN)
+            {
+                return {
+                    up:'rgb(238,21,21)',
+                    down:'rgb(25,158,0)',
+                    upArea:'rgba(238,21,21,0.2)',
+                    downArea:'rgba(25,158,0,0.2)'
+                };
+            }
+
+            return {
+                up:'rgb(25,158,0)',
+                down:'rgb(238,21,21)',
+                upArea:'rgba(25,158,0,0.2)',
+                downArea:'rgba(238,21,21,0.2)'
+            };
+        }
+
+        function appendRequestOptions(query)
+        {
+            var data={};
+            if (query)
+            {
+                Object.keys(query).forEach((key)=>
+                {
+                    var value=query[key];
+                    if (value===undefined || value===null || value==='') return;
+                    data[key]=value;
+                });
+            }
+
+            if (API_PROVIDER) data.provider=API_PROVIDER;
+            if (API_PROVIDER_MODE) data.providerMode=API_PROVIDER_MODE;
+            return data;
+        }
+
+        function setWatchlistStatus(message, isError)
+        {
+            var dom=document.getElementById('WatchlistStatus');
+            if (!dom) return;
+            dom.innerText=message || '';
+            dom.setAttribute('data-state', isError ? 'error' : 'normal');
+        }
+
+        function buildApiUrl(path, query)
+        {
+            var url=new URL(`${API_BASE}${path}`, window.location.origin);
+            var data=appendRequestOptions(query);
+            Object.keys(data).forEach((key)=> url.searchParams.set(key, data[key]));
+            return url.toString();
+        }
+
+        async function apiRequest(method, path, option)
+        {
+            var requestOption=option || {};
+            var init={ method:method, headers:{ Accept:'application/json' } };
+            if (requestOption.body!==undefined)
+            {
+                init.headers['Content-Type']='application/json';
+                init.body=JSON.stringify(requestOption.body);
+            }
+
+            var response=await fetch(buildApiUrl(path, requestOption.query), init);
+            var text=await response.text();
+            var data={};
+            if (text)
+            {
+                try
+                {
+                    data=JSON.parse(text);
+                }
+                catch(error)
+                {
+                    data={ raw:text };
+                }
+            }
+            if (!response.ok)
+            {
+                var message=data && data.message ? data.message : `${method} ${path} failed`;
+                var error=new Error(message);
+                error.status=response.status;
+                error.payload=data;
+                throw error;
+            }
+
+            return data;
+        }
+
+        function apiGet(path, query) { return apiRequest('GET', path, { query:query }); }
+        function apiPost(path, body, query) { return apiRequest('POST', path, { body:body, query:query }); }
+        function apiDelete(path, query) { return apiRequest('DELETE', path, { query:query }); }
+
+        function toNumber(value, fallback)
+        {
+            var number=Number(value);
+            return isNaN(number) ? (fallback!==undefined ? fallback : 0) : number;
+        }
+
+        function padNumber(value, size)
+        {
+            return String(value).padStart(size, '0');
+        }
+
+        function parseDateParts(value)
+        {
+            if (!value) return null;
+            var text=String(value);
+            var match=text.match(/^(\d{4})[-\/]?(\d{2})[-\/]?(\d{2})/);
+            if (match)
+            {
+                return { year:parseInt(match[1]), month:parseInt(match[2]), day:parseInt(match[3]) };
+            }
+
+            var date=new Date(value);
+            if (isNaN(date.getTime())) return null;
+            return { year:date.getFullYear(), month:date.getMonth()+1, day:date.getDate() };
+        }
+
+        function toDateNumber(value)
+        {
+            var parts=parseDateParts(value);
+            if (!parts) return 0;
+            return parts.year*10000+parts.month*100+parts.day;
+        }
+
+        function shiftDateNumber(value, offset)
+        {
+            var parts=parseDateParts(value);
+            if (!parts) return 0;
+            var date=new Date(parts.year, parts.month-1, parts.day);
+            date.setDate(date.getDate()+offset);
+            return date.getFullYear()*10000+(date.getMonth()+1)*100+date.getDate();
+        }
+
+        function toTimeNumber(value, withSeconds)
+        {
+            if (value===undefined || value===null || value==='') return 0;
+            if (typeof(value)=='number') return value;
+            var text=String(value);
+            var match=text.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+            if (match)
+            {
+                var hour=parseInt(match[1]);
+                var minute=parseInt(match[2]);
+                var second=match[3] ? parseInt(match[3]) : 0;
+                if (withSeconds) return hour*10000+minute*100+second;
+                return hour*100+minute;
+            }
+
+            var compact=text.replace(/\D/g,'');
+            return compact ? parseInt(compact) : 0;
+        }
+
+        function getRequestSymbol(item)
+        {
+            if (!item) return null;
+            if (typeof(item)=='string') return item;
+            return item.OriginalSymbol || item.Symbol || item.symbol || null;
+        }
+
+        function normalizeInputSymbol(value)
+        {
+            if (value===undefined || value===null) return '';
+            var raw=String(value).trim();
+            if (!raw) return '';
+            if (SYMBOL_NAME_ALIAS[raw]) return SYMBOL_NAME_ALIAS[raw];
+
+            var lower=raw.toLowerCase();
+            if (/^\d{6}$/.test(lower))
+            {
+                if (/^(6|9)/.test(lower)) return `${lower}.sh`;
+                // 可转债: 110xxx/113xxx → 上交所
+                if (/^(110|113)/.test(lower)) return `${lower}.sh`;
+                return `${lower}.sz`;
+            }
+
+            if (/^\d{5}$/.test(lower)) return `${lower}.hk`;
+            if (/^(sh|sz|hk)\d{5,6}$/.test(lower)) return `${lower.slice(2)}.${lower.slice(0,2)}`;
+            return lower;
+        }
+
+        function getMarketLabel(symbol, market)
+        {
+            var code=(symbol || '').toLowerCase();
+            var marketCode=(market || '').toLowerCase();
+            if (!marketCode && code.includes('.')) marketCode=code.split('.').pop();
+
+            if (marketCode==='sh' || marketCode==='sz' || marketCode==='bj') return 'A股';
+            if (marketCode==='hk') return '港股';
+            if (marketCode==='us' || /^[a-z]{1,6}$/.test(code)) return '美股';
+            return '其他';
+        }
+
+        function appendMarketLabel(name, symbol, market)
+        {
+            var text=(name || symbol || '').trim();
+            if (!text) text=symbol || '';
+            return `[${getMarketLabel(symbol, market)}] ${text}`;
+        }
+
+        function createReportMinuteData(yClose, price)
+        {
+            var count=48;
+            var data=[];
+            var max=null, min=null;
+            var startPrice=toNumber(yClose, price);
+            var endPrice=toNumber(price, startPrice);
+            for(var i=0;i<count;++i)
+            {
+                var rate=(i+1)/count;
+                var value=startPrice+(endPrice-startPrice)*rate;
+                value=parseFloat(value.toFixed(2));
+                data.push(value);
+                if (max===null || value>max) max=value;
+                if (min===null || value<min) min=value;
+            }
+
+            var palette=getRiseFallPalette(window.__HQ_RISE_FALL_MODE || RISE_FALL_MODE.GREEN_UP_RED_DOWN);
+            var color=endPrice>=startPrice ? palette.up : palette.down;
+            var areaColor=endPrice>=startPrice ? palette.upArea : palette.downArea;
+            return { Data:data, Max:max, Min:min, Count:count, YClose:startPrice, Color:color, AreaColor:areaColor };
+        }
+
+        function createReportKLineData(row)
+        {
+            var data=[row[3], row[4], row[5], row[6]];
+            return { Data:data, AryData:[data.slice(), data.slice(), data.slice(), data.slice(), data.slice()] };
+        }
+
+        function createReportRow(quote)
+        {
+            var price=toNumber(quote.price);
+            var yClose=toNumber(quote.yclose, quote.open!==undefined ? quote.open : price);
+            var row=[];
+            row[0]=quote.symbol;
+            row[1]=(quote.name || quote.symbol || '').trim();
+            if (!row[1]) row[1]=quote.symbol;
+            row[2]=yClose;
+            row[3]=toNumber(quote.open, price);
+            row[4]=toNumber(quote.high, price);
+            row[5]=toNumber(quote.low, price);
+            row[6]=price;
+            row[7]=toNumber(quote.volume);
+            row[8]=toNumber(quote.amount);
+            row[9]=parseFloat((price-0.01).toFixed(2));
+            row[10]=Math.max(parseInt(row[7]/20), 1);
+            row[11]=parseFloat((price+0.01).toFixed(2));
+            row[12]=Math.max(parseInt(row[7]/18), 1);
+            row[13]=parseFloat(((row[3]+price)/2).toFixed(2));
+            row[14]=Math.max(row[7], 1);
+            row[15]=Math.max(parseInt(row[7]*1.2), row[14]);
+            row[23]=row[14]>0 ? parseFloat(((row[7]/row[14])*100).toFixed(2)) : 0;
+            row[27]={ Text:row[1] };
+            row[32]=createReportMinuteData(yClose, price);
+            row[33]=createReportKLineData(row);
+            return row;
+        }
+
+        function createCallAuctionPayload(snapshot, date, isBefore, yClose)
+        {
+            var price=toNumber(snapshot && snapshot.price, yClose);
+            var matched=Math.max(toNumber(snapshot && snapshot.matchedVolume, 3000), 1);
+            var unmatched=Math.max(toNumber(snapshot && snapshot.unmatchedVolume, 300), 0);
+            var direction=0;
+            if (snapshot && snapshot.direction=='buy') direction=1;
+            else if (snapshot && snapshot.direction=='sell') direction=2;
+
+            var timeRange=isBefore ? { start:91500, end:92459, last:92458 } : { start:145700, end:145959, last:145958 };
+            var midPrice=parseFloat(((price+yClose)/2).toFixed(2));
+            var series=
+            [
+                [timeRange.start+5, yClose, parseInt(matched*0.15), parseFloat((yClose*matched*0.15).toFixed(2)), direction, unmatched],
+                [timeRange.start+180, midPrice, parseInt(matched*0.45), parseFloat((midPrice*matched*0.45).toFixed(2)), direction, unmatched],
+                [timeRange.last, price, matched, parseFloat((price*matched).toFixed(2)), direction, unmatched]
+            ];
+
+            return {
+                data:series,
+                info:{ totalcount:60*10, ver:2.0, TimeConfig:{ AryTime:[{ Start:timeRange.start, End:timeRange.end, Date:date }]} }
+            };
+        }
+
+        function buildSingleMinuteResponse(symbol, quote, minute, auction)
+        {
+            var points=Array.isArray(minute.points) ? minute.points : [];
+            var date=toDateNumber(minute.timestamp || quote.timestamp || new Date());
+            var yClose=toNumber(quote.yclose, quote.open!==undefined ? quote.open : (points[0] ? points[0].price : quote.price));
+            var prevClose=yClose;
+            var minuteItems=[];
+            for(var i=0;i<points.length;++i)
+            {
+                var point=points[i];
+                var price=toNumber(point.price, prevClose);
+                var avPrice=toNumber(point.avgPrice, price);
+                minuteItems.push({
+                    time:toTimeNumber(point.time, false),
+                    open:prevClose,
+                    price:price,
+                    high:Math.max(prevClose, price),
+                    low:Math.min(prevClose, price),
+                    vol:toNumber(point.volume),
+                    amount:parseFloat((toNumber(point.volume)*price).toFixed(2)),
+                    avprice:avPrice
+                });
+                prevClose=price;
+            }
+
+            var stock=
+            {
+                symbol:symbol,
+                name:quote.name || symbol,
+                date:date,
+                time:minuteItems.length>0 ? minuteItems[minuteItems.length-1].time : 930,
+                yclose:yClose,
+                minute:minuteItems
+            };
+
+            if (auction)
+            {
+                if (auction.before)
+                {
+                    stock.before=auction.before.data;
+                    stock.beforeinfo=auction.before.info;
+                }
+
+                if (auction.after)
+                {
+                    stock.after=auction.after.data;
+                    stock.afterinfo=auction.after.info;
+                }
+            }
+
+            return { stock:[stock] };
+        }
+
+        function buildHistoryMinuteResponse(symbol, quote, minute, dayCount, auction)
+        {
+            var dayTotal=Math.max(parseInt(dayCount || 1), 1);
+            var baseDate=toDateNumber(minute.timestamp || quote.timestamp || new Date());
+            var points=Array.isArray(minute.points) ? minute.points : [];
+            var response={ symbol:symbol, name:quote.name || symbol, data:[], code:0 };
+
+            for(var offset=0; offset<dayTotal; ++offset)
+            {
+                var date=shiftDateNumber(baseDate, -offset);
+                var priceOffset=(dayTotal-offset-1)*0.02;
+                var yClose=parseFloat((toNumber(quote.open, quote.price)-priceOffset).toFixed(2));
+                var prevClose=yClose;
+                var minuteItems=[];
+                for(var i=0;i<points.length;++i)
+                {
+                    var point=points[i];
+                    var close=parseFloat((toNumber(point.price, prevClose)-priceOffset).toFixed(2));
+                    var open=prevClose;
+                    minuteItems.push([
+                        toTimeNumber(point.time, false),
+                        open,
+                        close,
+                        Math.max(open, close),
+                        Math.min(open, close),
+                        toNumber(point.volume),
+                        parseFloat((toNumber(point.volume)*close).toFixed(2)),
+                        parseFloat((toNumber(point.avgPrice, close)-priceOffset).toFixed(2))
+                    ]);
+                    prevClose=close;
+                }
+
+                var dayItem={ date:date, yclose:yClose, close:prevClose, minute:minuteItems };
+                if (auction)
+                {
+                    if (auction.before)
+                    {
+                        var before=createCallAuctionPayload({ price:auction.before.data[auction.before.data.length-1][1], matchedVolume:auction.before.data[auction.before.data.length-1][2], unmatchedVolume:auction.before.data[auction.before.data.length-1][5], direction:'buy' }, date, true, yClose);
+                        dayItem.before=before.data;
+                        dayItem.beforeinfo=before.info;
+                    }
+
+                    if (auction.after)
+                    {
+                        var after=createCallAuctionPayload({ price:auction.after.data[auction.after.data.length-1][1], matchedVolume:auction.after.data[auction.after.data.length-1][2], unmatchedVolume:auction.after.data[auction.after.data.length-1][5], direction:'buy' }, date, false, prevClose);
+                        dayItem.after=after.data;
+                        dayItem.afterinfo=after.info;
+                    }
+                }
+
+                response.data.push(dayItem);
+            }
+
+            if (response.data.length>0 && response.data[0].minute.length>0)
+            {
+                response.updatetime={ date:response.data[0].date, time:response.data[0].minute[response.data[0].minute.length-1][0] };
+            }
+
+            return response;
+        }
+
+        function getKLinePeriod(period)
+        {
+            switch(period)
+            {
+                case 1: return 'week';
+                case 2: return 'month';
+                case 3: return 'year';
+                case 4: return '1m';
+                case 5: return '5m';
+                case 6: return '15m';
+                case 7: return '30m';
+                default: return 'day';
+            }
+        }
+
+        function buildKLineHistoryResponse(symbol, quote, kline)
+        {
+            var items=Array.isArray(kline.items) ? kline.items : [];
+            if (items.length<=1)
+            {
+                setWatchlistStatus(`K线数据不足: ${symbol} ${kline.period || 'day'} (${items.length})`, true);
+                return { symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
+            }
+            // 过滤掉明显异常的稀疏数据：条数少但时间跨度超过两年（如腾讯美股API只返回IPO点+最新点）
+            if (items.length<=3)
+            {
+                var firstDate=toDateNumber(items[0].date);
+                var lastDate=toDateNumber(items[items.length-1].date);
+                if (lastDate - firstDate > 20000) // 跨度超过约2年（20000 in YYYYMMDD terms）
+                {
+                    setWatchlistStatus(`${symbol} 历史K线数据不可用`, true);
+                    return { symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
+                }
+            }
+
+            setWatchlistStatus('', false);
+            var response={ symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
+            var prevClose=items.length>0 ? toNumber(items[0].open, items[0].close) : toNumber(quote.open, quote.price);
+            for(var i=0;i<items.length;++i)
+            {
+                var item=items[i];
+                var close=toNumber(item.close, prevClose);
+                response.data.push([
+                    toDateNumber(item.date),
+                    prevClose,
+                    toNumber(item.open, close),
+                    toNumber(item.high, close),
+                    toNumber(item.low, close),
+                    close,
+                    toNumber(item.volume),
+                    toNumber(item.amount)
+                ]);
+                prevClose=close;
+            }
+
+            return response;
+        }
+
+        function buildKLineRealtimeResponse(symbol, quote, kline)
+        {
+            var items=Array.isArray(kline.items) ? kline.items : [];
+            var lastItem=items.length>0 ? items[items.length-1] : null;
+            var prevItem=items.length>1 ? items[items.length-2] : null;
+            var close=toNumber(quote.price, lastItem ? toNumber(lastItem.close) : 0);
+            return {
+                code:0,
+                stock:[
+                    {
+                        symbol:symbol,
+                        name:quote.name || symbol,
+                        date:lastItem ? toDateNumber(lastItem.date) : toDateNumber(quote.timestamp || new Date()),
+                        open:lastItem ? toNumber(lastItem.open, close) : toNumber(quote.open, close),
+                        yclose:prevItem ? toNumber(prevItem.close, close) : toNumber(quote.open, close),
+                        high:lastItem ? Math.max(toNumber(lastItem.high), close) : toNumber(quote.high, close),
+                        low:lastItem ? Math.min(toNumber(lastItem.low), close) : toNumber(quote.low, close),
+                        price:close,
+                        vol:lastItem ? toNumber(lastItem.volume) : toNumber(quote.volume),
+                        amount:lastItem ? toNumber(lastItem.amount) : toNumber(quote.amount)
+                    }
+                ],
+                LatestPointFlash:{ FlashCount:2 }
+            };
+        }
+
+        function buildMinuteKLineHistoryResponse(symbol, quote, kline)
+        {
+            var items=Array.isArray(kline.items) ? kline.items : [];
+            var response={ symbol:symbol, name:quote.name || symbol, data:[], ver:2.0 };
+            var prevClose=items.length>0 ? toNumber(items[0].open, items[0].close) : toNumber(quote.open, quote.price);
+            for(var i=0;i<items.length;++i)
+            {
+                var item=items[i];
+                var date=toDateNumber(item.date || kline.timestamp || new Date());
+                var timeValue=item.time || `${9+parseInt((30+i)/60)}:${padNumber((30+i)%60,2)}`;
+                var time=toTimeNumber(timeValue, false);
+                var close=toNumber(item.close, prevClose);
+                response.data.push([
+                    date,
+                    prevClose,
+                    toNumber(item.open, close),
+                    toNumber(item.high, close),
+                    toNumber(item.low, close),
+                    close,
+                    toNumber(item.volume),
+                    toNumber(item.amount),
+                    time
+                ]);
+                prevClose=close;
+            }
+
+            return response;
+        }
+
+        function buildMinuteKLineRealtimeResponse(symbol, quote, kline)
+        {
+            var items=Array.isArray(kline.items) ? kline.items : [];
+            var lastItem=items.length>0 ? items[items.length-1] : null;
+            var prevItem=items.length>1 ? items[items.length-2] : null;
+            var date=toDateNumber(lastItem ? lastItem.date : (quote.timestamp || new Date()));
+            var time=toTimeNumber(lastItem && lastItem.time ? lastItem.time : '09:30', false);
+            var close=toNumber(quote.price, lastItem ? toNumber(lastItem.close) : 0);
+            var yclose=prevItem ? toNumber(prevItem.close, close) : toNumber(quote.open, close);
+            return {
+                symbol:symbol,
+                name:quote.name || symbol,
+                data:[
+                    [
+                        date,
+                        yclose,
+                        lastItem ? toNumber(lastItem.open, close) : toNumber(quote.open, close),
+                        lastItem ? Math.max(toNumber(lastItem.high), close) : toNumber(quote.high, close),
+                        lastItem ? Math.min(toNumber(lastItem.low), close) : toNumber(quote.low, close),
+                        close,
+                        lastItem ? toNumber(lastItem.volume) : toNumber(quote.volume),
+                        lastItem ? toNumber(lastItem.amount) : toNumber(quote.amount),
+                        time
+                    ]
+                ],
+                ver:2.0
+            };
+        }
+
+        function buildCapitalResponse(symbol, capital, kline)
+        {
+            var items=Array.isArray(kline.items) ? kline.items : [];
+            var floatCapital=Math.max(
+                Math.abs(toNumber(capital.mainNetInflow))+
+                Math.abs(toNumber(capital.largeNetInflow))+
+                Math.abs(toNumber(capital.mediumNetInflow))+
+                Math.abs(toNumber(capital.smallNetInflow)),
+                1
+            );
+
+            return {
+                stock:[
+                    {
+                        symbol:symbol,
+                        stockday:items.map((item)=>
+                        {
+                            return {
+                                date:toDateNumber(item.date),
+                                capital:{ a:floatCapital, total:floatCapital, arate:1 }
+                            };
+                        })
+                    }
+                ]
+            };
+        }
+
+        function buildTradeDetailResponse(symbol, quote, tradeDetail)
+        {
+            var trades=Array.isArray(tradeDetail.trades) ? tradeDetail.trades : [];
+            var yClose=toNumber(quote.open, quote.price);
+            var date=toDateNumber(tradeDetail.timestamp || quote.timestamp || new Date());
+            return {
+                symbol:symbol,
+                name:quote.name || symbol,
+                ver:2.0,
+                data:trades.map((item)=>
+                {
+                    var flag=0;
+                    if (item.side=='buy') flag=1;
+                    else if (item.side=='sell') flag=2;
+                    return [
+                        date,
+                        toTimeNumber(item.time, true),
+                        yClose,
+                        toNumber(item.price, yClose),
+                        toNumber(item.volume),
+                        parseFloat((toNumber(item.price, yClose)*toNumber(item.volume)).toFixed(2)),
+                        flag
+                    ];
+                })
+            };
+        }
+
+        function buildNewsResponse(symbol, news)
+        {
+            var items=Array.isArray(news.items) ? news.items : [];
+            return {
+                symbol:symbol,
+                list:items.map((item, index)=>
+                {
+                    return {
+                        date:toDateNumber(item.publishedAt),
+                        title:item.title || `${symbol} 新闻 ${index+1}`,
+                        url:item.url || '',
+                        type:1,
+                        ID:item.id || `${symbol}-news-${index+1}`
+                    };
+                })
+            };
+        }
+
+        function buildAnnouncementsResponse(symbol, announcements)
+        {
+            var items=Array.isArray(announcements.items) ? announcements.items : [];
+            return {
+                symbol:symbol,
+                report:items.map((item, index)=>
+                {
+                    return {
+                        releasedate:toDateNumber(item.publishedAt),
+                        time:toTimeNumber(item.publishedAt, false),
+                        title:item.title || `${symbol} 公告 ${index+1}`,
+                        url:item.url || ''
+                    };
+                })
+            };
+        }
+
+        function createDemoBackendDataSource()
+        {
+            return {
+                Explain:`后端 API 数据 (${API_BASE})`,
+
+                RunRequest:function(data, callback, requestFn, option)
+                {
+                    var requestOption=option || {};
+                    data.PreventDefault=true;
+                    var safeCallback=function(response)
+                    {
+                        try { callback(response); }
+                        catch(e) { console.warn(`[DemoBackendDataSource] callback error in ${data.Name}:`, e.message); }
+                    };
+                    requestFn()
+                        .then((response)=> safeCallback(response))
+                        .catch((error)=>
+                        {
+                            console.warn(`[DemoBackendDataSource] ${data.Name}:`, error.message || error);
+                            safeCallback(requestOption.emptyResponse || null);
+                        });
+                },
+
+                RequestStockListData:function(data, callback)
+                {
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> apiGet('/watchlist').then((response)=>
+                        {
+                            return {
+                                data:(response.items || []).map((item)=>
+                                {
+                                    var name=item.displayName || item.symbol;
+                                    return [item.symbol, appendMarketLabel(name, item.symbol, item.market)];
+                                })
+                            };
+                        }),
+                        { allowFallback:false, emptyResponse:{ data:[] } }
+                    );
+                },
+
+                RequestMemberListData:function(data, callback)
+                {
+                    var symbol=data.Request && data.Request.Data ? data.Request.Data.symbol : '';
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> apiGet('/watchlist').then((response)=>
+                        {
+                            return {
+                                code:0,
+                                symbol:symbol,
+                                name:symbol,
+                                data:(response.items || []).map((item)=> item.symbol)
+                            };
+                        }),
+                        { allowFallback:false, emptyResponse:{ code:0, symbol:symbol, name:symbol, data:[] } }
+                    );
+                },
+
+                RequestReportStockData:function(data, callback)
+                {
+                    var stocks=(data.Request && data.Request.Data && data.Request.Data.stocks) ? data.Request.Data.stocks : [];
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all(stocks.map((item)=>
+                        {
+                            var symbol=getRequestSymbol(item);
+                            if (!symbol) return Promise.resolve(null);
+                            return apiGet('/stock', { symbol:symbol }).then((quote)=> createReportRow(quote));
+                        })).then((rows)=>
+                        {
+                            return { code:0, data:rows.filter((item)=> !!item) };
+                        })
+                    );
+                },
+
+                _fetchMinuteWithAuction:function(symbol, callcation)
+                {
+                    return Promise.all([
+                        apiGet('/stock', { symbol:symbol }),
+                        apiGet('/minute', { symbol:symbol }),
+                        (callcation.Before || callcation.After) ? apiGet('/callauction', { symbol:symbol }) : Promise.resolve(null)
+                    ]).then((response)=>
+                    {
+                        var quote=response[0];
+                        var minute=response[1];
+                        var callauction=response[2];
+                        var auctionData=null;
+                        if (callauction)
+                        {
+                            auctionData={};
+                            if (callcation.Before) auctionData.before=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), true, toNumber(quote.open, quote.price));
+                            if (callcation.After) auctionData.after=createCallAuctionPayload(callauction, toDateNumber(minute.timestamp || quote.timestamp || new Date()), false, toNumber(quote.price, quote.open));
+                        }
+                        return { quote:quote, minute:minute, auctionData:auctionData };
+                    });
+                },
+
+                RequestMinuteData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol[0];
+                    var callcation=data.Request.Data.callcation || {};
+                    return this.RunRequest(data, callback,
+                        ()=> this._fetchMinuteWithAuction(symbol, callcation)
+                            .then((r)=> buildSingleMinuteResponse(symbol, r.quote, r.minute, r.auctionData))
+                    );
+                },
+
+                RequestHistoryMinuteData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol;
+                    var dayCount=data.Request.Data.daycount;
+                    var callcation=data.Request.Data.callcation || {};
+                    return this.RunRequest(data, callback,
+                        ()=> this._fetchMinuteWithAuction(symbol, callcation)
+                            .then((r)=> buildHistoryMinuteResponse(symbol, r.quote, r.minute, dayCount, r.auctionData))
+                    );
+                },
+
+                RequestHistoryData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol;
+                    var period=getKLinePeriod(data.Request.Data.period);
+                    var isLongCycle=(period=='day' || period=='week' || period=='month' || period=='year');
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all([
+                            apiGet('/stock', { symbol:symbol }),
+                            apiGet('/kline', isLongCycle
+                                ? { symbol:symbol, period:period, allHistory:true }
+                                : { symbol:symbol, period:period, count:data.Request.Data.count || 200 })
+                        ]).then((response)=> buildKLineHistoryResponse(symbol, response[0], response[1]))
+                    );
+                },
+
+                RequestRealtimeData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol[0];
+                    var period=getKLinePeriod(data.Request.Data.period);
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all([
+                            apiGet('/stock', { symbol:symbol }),
+                            apiGet('/kline', { symbol:symbol, period:period, count:2 })
+                        ]).then((response)=> buildKLineRealtimeResponse(symbol, response[0], response[1]))
+                    );
+                },
+
+                RequestFlowCapitalData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol[0];
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all([
+                            apiGet('/capital', { symbol:symbol }),
+                            apiGet('/kline', { symbol:symbol, period:'day', count:120 })
+                        ]).then((response)=> buildCapitalResponse(symbol, response[0], response[1]))
+                    );
+                },
+
+                RequestHistoryMinuteKLineData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol;
+                    var period=getKLinePeriod(data.Request.Data.period);
+                    // HQChart传递的是天数，需要转换为数据条数
+                    // 5分钟K线：每天约48条（4小时交易时间/5分钟）
+                    // 15分钟K线：每天约16条
+                    // 30分钟K线：每天约8条
+                    var dayCount=data.Request.Data.count || 5;
+                    var barsPerDay={ '1m':240, '5m':48, '15m':16, '30m':8 }[period] || 48;
+                    var count=Math.min(dayCount * barsPerDay, 800); // 腾讯API最大800条
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all([
+                            apiGet('/stock', { symbol:symbol }),
+                            apiGet('/kline', { symbol:symbol, period:period, count:count })
+                        ]).then((response)=> buildMinuteKLineHistoryResponse(symbol, response[0], response[1]))
+                    );
+                },
+
+                RequestRealtimeMinuteKLineData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol[0];
+                    var period=getKLinePeriod(data.Request.Data.period);
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all([
+                            apiGet('/stock', { symbol:symbol }),
+                            apiGet('/kline', { symbol:symbol, period:period, count:2 })
+                        ]).then((response)=> buildMinuteKLineRealtimeResponse(symbol, response[0], response[1]))
+                    );
+                },
+
+                RequestTradeDetailData:function(data, callback)
+                {
+                    var symbol=data.Request.Data.symbol;
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> Promise.all([
+                            apiGet('/stock', { symbol:symbol }),
+                            apiGet('/trade-detail', { symbol:symbol })
+                        ]).then((response)=> buildTradeDetailResponse(symbol, response[0], response[1]))
+                    );
+                },
+
+                RequestNewsData:function(data, callback)
+                {
+                    var symbol=data.Request.Symbol;
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> apiGet('/news', { symbol:symbol }).then((response)=> buildNewsResponse(symbol, response))
+                    );
+                },
+
+                RequestAnnouncementsData:function(data, callback)
+                {
+                    var symbol=data.Request.Symbol;
+                    return this.RunRequest(
+                        data,
+                        callback,
+                        ()=> apiGet('/announcements', { symbol:symbol }).then((response)=> buildAnnouncementsResponse(symbol, response))
+                    );
+                },
+
+                NetworkFilter:function(data, callback)
+                {
+                    console.log(`[DemoBackendDataSource::NetworkFilter] ${this.Explain}`, data);
+                    switch(data.Name)
+                    {
+                        case 'JSReportChartContainer::RequestStockListData':
+                            return this.RequestStockListData(data, callback);
+                        case 'JSReportChartContainer::RequestMemberListData':
+                            return this.RequestMemberListData(data, callback);
+                        case 'JSDealChartContainer::RequestStockData':
+                            return this.RequestReportStockData(data, callback);
+                        case 'MinuteChartContainer::RequestMinuteData':
+                            return this.RequestMinuteData(data, callback);
+                        case 'MinuteChartContainer::RequestHistoryMinuteData':
+                            return this.RequestHistoryMinuteData(data, callback);
+                        case 'KLineChartContainer::RequestHistoryData':
+                            return this.RequestHistoryData(data, callback);
+                        case 'KLineChartContainer::RequestRealtimeData':
+                            return this.RequestRealtimeData(data, callback);
+                        case 'KLineChartContainer::RequestFlowCapitalData':
+                            return this.RequestFlowCapitalData(data, callback);
+                        case 'KLineChartContainer::ReqeustHistoryMinuteData':
+                            return this.RequestHistoryMinuteKLineData(data, callback);
+                        case 'KLineChartContainer::RequestMinuteRealtimeData':
+                            return this.RequestRealtimeMinuteKLineData(data, callback);
+                        case 'KLineChartContainer::RequestTickData':
+                        case 'KLineChartContainer::RequestTickRealtimeData':
+                            return this.RequestTradeDetailData(data, callback);
+                        case 'NewsInfo::RequestData':
+                            return this.RequestNewsData(data, callback);
+                        case 'AnnouncementInfo::RequestData':
+                            return this.RequestAnnouncementsData(data, callback);
+                        default:
+                            console.warn(`[DemoBackendDataSource] unhandled: ${data.Name}`);
+                            break;
+                    }
+                }
+            };
+        }
+
+        var DemoHQChartDataSource=createDemoBackendDataSource();
+       
+        //简单的把K线控件封装下
+        function KLineChart(divKLine)
+        {
+            this.DivKLine=divKLine;
+            this.Chart=JSChart.Init(divKLine, false, true);   //把K线图绑定到一个Div上
+           
+            this.JSPopMenu=null;
+            this.JSPopMenu=new JSPopMenu();
+            this.JSPopMenu.Inital();
+          
+            //K线配置信息
+            this.Option= 
+            {
+                Type:'历史K线图',   //创建图形类型
+                //Type:'历史K线图横屏',
+
+                //EnableBorderDrag:false,
+                
+                Windows: //窗口指标
+                [
+                    { Index:"MA",   Overlay:true, AddIndexWindow:true, Export:true, IsSync:true, IndexHelp:true, IsShowIndexTitle:true, IsShowIndexName:true },
+                    { Index:"VOL",  Overlay:true, Export:true, IsSync:true, IndexHelp:true, IsShowIndexTitle:true, IsShowIndexName:true },
+                    { Index:"MACD", Overlay:true, Export:true, IsSync:true, IndexHelp:true, IsShowIndexTitle:true, IsShowIndexName:true }
+                ], 
+
+                OverlayIndex:
+                [
+                    
+                ],  //叠加指标
+
+                
+                //OverlayIndexFrameWidth:1,
+                //DragDownload: { Day:{ Enable:true } , Minute:{ Enable:true }}, 
+
+                EnableZoomUpDown:
+                {
+                    //Wheel:false,
+                    //Keyboard:false,
+                    //Touch:false,
+                },
+
+                EnableYDrag:
+                {
+                    Right:true,
+                    Left:true,
+                    Wheel:true,
+                },
+
+                EnableXDrag:{ Bottom:true, LButton:{ Type:1 }, RButton:{ Type:2 }},
+
+                //PressKeyboardConfig:{ PauseUpdate:true },
+
+                //Language:'EN',
+
+                Symbol:"600000.sh",
+                IsAutoUpdate:true,       //是自动更新数据
+                AutoUpdateFrequency:5000,   //数据更新频率
+                //TradeIndex: {Index:'交易系统-BIAS'},    //交易系统
+
+                SplashTitle:'加载数据中......',
+    
+                IsShowRightMenu:false,         //右键菜单
+                //CorssCursorTouchEnd:true,
+                //IsClickShowCorssCursor:true,
+                //IsCorssOnlyDrawKLine:true,
+
+                CtrlMoveStep:10,
+                EnablePopMenuV2:true,
+                EnableDrawToolDialogV2:true,
+                EnableModifyDrawDialogV2:false,
+                EnableResize:true,
+                EnableTooltipDialog:false,
+
+                TooltipDialog:{ Enable:false, Style:0, IndexTitle:{ Enable:false }, MaxRowCount:50 },
+                SelectRectDialog:{ Enable:true },
+                KLineTooltip:{ Enable:true, EnableKeyDown:false },
+                FloatTooltip:{ Enable:true, },
+                SmallFloatTooltip:{ Enable:true, Style:1  },
+                SearchIndexDialog:{ Enable:true, },
+                ModifyIndexParamDialog:{ Enable:true, EnableRestoreParam:false },
+
+                LatestPointFlash:{ Enable:true, Frequency:500 },
+
+                KeyboardMove:{ Delay:50, PressTime:500 },
+
+                //DataMove:{ Mouse:{ EnableLR:false } },
+
+                //双击K线图 弹分时图配置
+                PopMinuteChart:
+                { 
+                    Enable:true, 
+                    EnableMarkBG:true,
+                    Option:
+                    { 
+                        Windows:
+                        [
+                            { Index:"RSI", Overlay:false,MaxMin:false }
+                        ]
+                    }
+                },
+
+                //EnableVerifyRecvData:true,
+
+                CorssCursorInfo: 
+                { 
+                    Right:1, Bottom:1, DateFormatType:3, HPenType:0, VPenType:0, IsShowClose:false, VLineType:0,RightButton:{ Enable:true }, 
+                    IsShowCorss:true, PriceFormatType:0, DataFormatType:0, 
+                    EnableKeyboard:true,
+                    EnableDBClick:true,
+                    RangeIncrease:{ IsShow:true, Formula:1 }
+                    //IsShowIncrease:false,
+                },
+
+                EnableZoomIndexWindow:true,
+
+                KLine:  //K线设置
+                {
+                    DragMode:1,                 //拖拽模式 0=禁止拖拽 1=数据拖拽 2=区间选择
+                    Right:1,                    //复权 0 不复权 1 前复权 2 后复权
+                    Period:0,                   //周期 0 日线 1 周线 2 月线 3 年线 
+                    MaxRequestDataCount:8000,   //数据个数
+                    MaxRequestMinuteDayCount:100, //分钟数据获取几天数据  默认取5天数据
+                    
+                    //Info:["互动易","大宗交易",'龙虎榜',"调研","业绩预告","公告"],       //信息地雷
+                    //Info:["公告"], 
+                    //InfoPosition:0,
+                    IsShowTooltip:true,                 //是否显示K线提示信息
+                    DrawType:0,      //K线类型 0=实心K线柱子 1=收盘价线 2=美国线 3=空心K线柱子 4=收盘价面积图
+                    //FirstShowDate:20161201,
+                    //KLineDoubleClick:true, //禁止双击弹框 (废弃 使用(PopMinuteChart:{ }))
+                    RightSpaceCount:30,
+                    ZoomType:0,
+                    //OneLimitBarType:1,
+                    
+                    //PageSize:30,               //一屏显示多少数据
+                    DataWidth:10,
+
+                    PriceGap:{ Enable:false, Count:0 },
+
+                    //EnablePrediction:true,      //启动预测线,
+                    EnableDaySummary:true,
+                },
+
+                StepPixel:0,
+
+                IsDrawPictureXY:true,
+
+                Listener:
+                {
+                    //KeyDown:false,
+                    //Wheel:false
+                },
+
+                SelectedChart:{ EnableSelected: true, EnableMoveOn:true },
+                EnableIndexChartDrag:true,
+
+                GlobalOption:{ SelectedBorder:{ Mode:1} },
+
+                SelectRect:
+                {
+                    //Mark:{ IsShow:true, Position:{ Top:"TopEx" } },
+                    //PreventClose:true,
+                },
+    
+                KLineTitle: //标题设置
+                {
+                    IsShowName:true,       //不显示股票名称
+                    IsShowSettingInfo:true, //不显示周期/复权
+                    IsTitleShowLatestData:true,
+                    //IsShowDateTime:false,
+                },
+
+                //DragDownload: { Day:{ Enable:true } },   //拖拽下载
+
+                
+                DragSelectRect:
+                {
+                    Enable:true,
+                    ShowMode:2,
+                    EnableRButton:false,    //左键区间选择
+                    EnableLButton:false,     //右键区间选择
+                    //ZIndex:3,
+                },
+
+                KLineCountDown:
+                {
+                    //Enable:true,
+                },
+
+                DragKLine:
+                {
+                    //EnableShfit:false,
+                },
+                
+                Border: //边框
+                {
+                    Left:0,        //左边间距
+                    Right:20,       //右边间距
+                    Bottom:20,      //底部间距
+                    Top:25,         //顶部间距
+
+                    AutoLeft:{ Blank:10, MinWidth:80 },
+                    AutoRight:{ Blank:5, MinWidth:80 },
+                },
+                
+                Frame:  //子框架设置
+                [
+                    {
+                        SplitCount:8,
+                        IsShowLeftText:true,
+                        IsShowRightText:true,
+                        Custom:
+                        [
+                            { Type:0, Position:'right', LineType:1 }, 
+                        ]
+                    },
+
+                    { SplitCount:8, IsShowLeftText:true, IsShowRightText:true },
+                    { SplitCount:8, IsShowLeftText:true, IsShowRightText:true }
+                ],
+
+                ExtendChart:    //扩展图形
+                [
+                    
+                ],
+
+
+                Overlay:
+                [
+                    //{ Symbol:'399300.sz', DrawType:1, Color:'rgb(0,0,255)'},
+                    //{ Symbol:'600999.sh' }
+                ],
+            };
+                 
+            this.Create=function()  //创建图形
+            {
+                var self=this;
+                //$(window).resize(function() { self.OnSize(); });    //绑定窗口大小变化事件
+                //$(window).resize(function() { self.OnSize(  ); });    //绑定窗口大小变化事件
+                
+                //自定义函数和变量
+                JSComplier.AddFunction({ Name:'FUNC_ALPHA', Description:'自定义Alpha函数', IsDownload:true, Invoke:(obj)=>{ return HQData.FUNC_ALPHA(obj); } } );
+                JSComplier.AddVariant({ Name:'VAR_DEMO',   Description:'自定义变量1' } );
+
+                this.Option.EventCallback=
+                [
+                    {
+                        event:JSCHART_EVENT_ID.ON_SPLIT_YCOORDINATE,
+                        callback:(event, data, obj)=>{ this.OnSplitYCoordinate(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_SPLIT_XCOORDINATE,
+                        callback:(event, data, obj)=>{ this.OnSplitXCoordinate(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CLICK_CROSSCURSOR_RIGHT,
+                        callback:(event, data, obj)=>{ this.ClickCrossCursor(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CLICK_CHART_PAINT,
+                        callback:(event, data, obj)=>{ this.OnClickChartPaint(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.CHART_STATUS,
+                        callback:(event, data, obj)=>{ this.DrawTradeMarks({ HQChart:obj }); }
+                    }
+                ];
+
+                //this.Chart.CreateExtraCanvasElement(JSChart.CorssCursorCanvasKey, { ZIndex:5 }); //十字光标单独一个图层
+                this.Option.OnCreatedCallback=(chart)=>{ this.OnCreateHQChart(chart); }
+                this.Option.ScriptError=(error)=> { this.ExecuteScriptError(error); }
+                this.Option.NetworkFilter=(data, callback)=>{ this.NetworkFilter(data, callback); }
+                this.Chart.SetOption(this.Option);  //设置K线配置
+                this.Chart.ClearChartDrawPicture(null, { Draw:false }); //清理历史持久化画线
+                this.Chart.Draw();
+                this.Chart.SetFocus();
+            }
+
+            this.OnCreateHQChart=function(chart)
+            {
+            }
+
+            this.NetworkFilter=function(data, callback)
+            {
+                console.log(`[KLineChart::NetworkFilter] ${DemoHQChartDataSource.Explain}`, data);
+                DemoHQChartDataSource.NetworkFilter(data, callback, this);
+            }
+
+            this.OnSplitYCoordinate=function(event, data ,obj)
+            {
+                if (!data || !data.Frame || !obj) return;
+
+                var frame=data.Frame;
+                var maxValue=frame.HorizontalMax;
+                var minValue=frame.HorizontalMin;
+                if (!IFrameSplitOperator.IsNumber(maxValue) || !IFrameSplitOperator.IsNumber(minValue)) return;
+                if (maxValue<=minValue) return;
+
+                var centerValue=(maxValue+minValue)/2;
+                var container=this.Chart && this.Chart.JSChartContainer ? this.Chart.JSChartContainer : null;
+                if (container && container.ChartPaint && container.ChartPaint[0] && container.ChartPaint[0].Data && Array.isArray(container.ChartPaint[0].Data.Data))
+                {
+                    var kData=container.ChartPaint[0].Data.Data;
+                    if (kData.length>0)
+                    {
+                        var lastItem=kData[kData.length-1];
+                        if (lastItem && IFrameSplitOperator.IsNumber(lastItem.Close))
+                        {
+                            centerValue=lastItem.Close;
+                            if (centerValue<=minValue || centerValue>=maxValue) centerValue=(maxValue+minValue)/2;
+                        }
+                    }
+                }
+
+                var stepAbove=(maxValue-centerValue)/4;
+                var stepBelow=(centerValue-minValue)/4;
+                var step=Math.min(stepAbove, stepBelow);
+                if (!IFrameSplitOperator.IsNumber(step) || step<=0) return;
+
+                var precision=2;
+                if (IFrameSplitOperator.IsNumber(obj.FloatPrecision)) precision=obj.FloatPrecision;
+                if (precision<0) precision=0;
+                if (precision>6) precision=6;
+
+                var labels=[];
+                for(var i=4;i>=1;--i) labels.push(centerValue-step*i);
+                for(var i=1;i<=4;++i) labels.push(centerValue+step*i);
+
+                var horizontalInfo=[];
+                for(var i=0;i<labels.length;++i)
+                {
+                    var value=labels[i];
+                    if (!IFrameSplitOperator.IsNumber(value)) continue;
+                    if (value<=minValue || value>=maxValue) continue;
+
+                    var item=new CoordinateInfo();
+                    item.Value=value;
+                    item.LineType=1;
+
+                    var text=(typeof(obj.FormatValueString)==='function') ? obj.FormatValueString(value) : value.toFixed(precision);
+                    item.Message[0]=text;
+                    item.Message[1]=text;
+                    horizontalInfo.push(item);
+                }
+
+                if (horizontalInfo.length>=8) frame.HorizontalInfo=horizontalInfo;
+            }
+
+            this.OnSplitXCoordinate=function(event, data, obj)
+            {
+                // HQChart回调接口，保留空实现以避免默认行为
+            }
+
+            this.OnSize=function(option)  //自适应大小调整
+            {
+                // 用父容器实际高度，不要从 window 减写死的 300px
+                // 父容器是 #KLine（100%）→ #ChartContainer（CenterPanel 高度 - 顶部 64px：CompanyFinanceBar 36 + PeriodTab 28）
+                var parent=this.DivKLine.parentElement;
+                var height=(parent ? parent.clientHeight : ($(window).height()-65));
+
+                this.DivKLine.style.top='0px';
+                this.DivKLine.style.left='0px';
+                this.DivKLine.style.height=height+'px';
+            }
+
+            this.ClickCrossCursor=function(event, data, obj)
+            {
+                console.log('[KLineChart::ClickCrossCursor] event, data', event , data); //打印信息
+
+                var button=data.Button;
+                var rtButton=button.Rect;
+                var yValue=button.Data.YValue;
+                var windowIndex=button.Data.FrameID;
+                var e=data.e;
+
+                if (windowIndex!==0) return;
+
+                var menuData=
+                { 
+                    Menu:
+                    [ 
+                        { Name:`买入 @ ${yValue.toFixed(2)}`,  Data:{ ID: "MENU_BUY_ID",  Args:[yValue] } },
+                        { Name:`卖出 @ ${yValue.toFixed(2)}`,  Data:{ ID: "MENU_SELL_ID", Args:[yValue] } },
+                    ],
+
+                    Position:JSPopMenu.POSITION_ID.DROPDOWN_RIGHT_MENU_ID,
+
+                    ClickCallback:(data)=>{ this.OnClickCrossCursorMenu(data); }
+                };
+
+                this.Chart.PopupMenuByDrapdown(menuData, rtButton);
+
+                if(e.preventDefault) e.preventDefault();
+                if(e.stopPropagation) e.stopPropagation();
+            }
+
+            this.OnClickCrossCursorMenu=function(data)
+            {
+                console.log("[KLineChart::OnClickCrossCursorMenu] data=", data);
+
+                if (data.Data.ID=="MENU_BUY_ID")
+                {
+                    var yValue=data.Data.Args[0];
+                    var text=`买入价:${yValue.toFixed(2)}`;
+                    alert(text);
+                }
+                else if (data.Data.ID=="MENU_SELL_ID")
+                {
+                    var yValue=data.Data.Args[0];
+                    var text=`卖出价:${yValue.toFixed(2)}`;
+                    alert(text);
+                }
+            }
+
+            this.Hide=function()
+            {
+                this.Chart.JSChartContainer.HideAllPopDiv();
+            }
+
+            this.ChangePeriod=function(value)
+            {
+                if (this.Chart)
+                {
+                    // API已经返回目标周期的数据(5m/15m/30m), 设置IsApiPeriod=true
+                    // 防止HQChart再次聚合导致数据量大幅减少(如800条5m→160条25m)
+                    // 日线/周线/月线保持false以支持本地复权计算
+                    this.Chart.JSChartContainer.IsApiPeriod=(value>=5 && value<=7);
+                    this.Chart.JSChartContainer.ChangePeriod(value);
+                }
+            }
+
+            this.TradeMarks=[];
+            this.CurrentTradeSymbol=null;
+            this.TradeScrollPending=false;
+            this.TradeCanvasKey='TradeMarksLayer';
+
+            this.LoadTradeMarks=function(symbol)
+            {
+                var self=this;
+                this.CurrentTradeSymbol=symbol;
+                this.TradeScrollPending=false;
+                apiGet('/trades', { symbol:symbol })
+                    .then(function(data) {
+                        if (self.CurrentTradeSymbol!==symbol) return;
+                        self.TradeMarks=data && data.trades ? data.trades : [];
+                        if (self.TradeMarks.length) self.TradeScrollPending=true;
+                        else self.ClearTradeCanvas();
+                    })
+                    .catch(function() { self.TradeMarks=[]; self.ClearTradeCanvas(); });
+            }
+
+            this.GetTradeCanvas=function()
+            {
+                if (!this.Chart || !this.Chart.JSChartContainer) return null;
+                try
+                {
+                    this.Chart.CreateExtraCanvasElement(this.TradeCanvasKey, { ZIndex:8 });
+                    var item=this.Chart.GetExtraCanvas(this.TradeCanvasKey);
+                    if (!item || !item.Canvas) return null;
+                    return item.Canvas; // 返回 2d context
+                }
+                catch(e) { return null; }
+            }
+
+            this.ClearTradeCanvas=function()
+            {
+                var ctx=this.GetTradeCanvas();
+                if (!ctx) return;
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+
+            // 匹配交易日期到K线bar：日线精确匹配，周线/月线匹配包含该日期的bar
+            this.FindBarForTrade=function(data, dataOffset, xPointCount, tradeDate)
+            {
+                var end=Math.min(data.length, dataOffset+xPointCount);
+                for(var k=dataOffset;k<end;++k)
+                {
+                    var bar=data[k];
+                    if (!bar) continue;
+                    if (bar.Date===tradeDate) return k;
+                    if (k+1<data.length && data[k+1] && bar.Date<=tradeDate && data[k+1].Date>tradeDate) return k;
+                    if (k===end-1 && bar.Date<=tradeDate) return k;
+                }
+                return -1;
+            }
+
+            this.DrawTradeMarks=function(bindData)
+            {
+                var hqchart=bindData.HQChart;
+                if (!hqchart || !hqchart.ChartPaint || !hqchart.ChartPaint[0]) return;
+
+                var kline=hqchart.ChartPaint[0];
+                var frame=hqchart.Frame;
+                if (!frame || !frame.SubFrame || !frame.SubFrame[0]) return;
+
+                var mainFrame=frame.SubFrame[0].Frame;
+                if (!mainFrame) return;
+
+                var xPointCount=mainFrame.XPointCount;
+                var dataOffset=mainFrame.Data ? mainFrame.Data.DataOffset : 0;
+                var chartData=kline.Data;
+                if (!chartData || !chartData.Data) return;
+                var data=chartData.Data;
+                if (!data.length) return;
+
+                // 首次加载交易数据后，自动滚动到最近交易位置
+                if (this.TradeScrollPending)
+                {
+                    this.TradeScrollPending=false;
+                    var latestDate=0;
+                    for(var i=0;i<this.TradeMarks.length;i++)
+                        if (this.TradeMarks[i].date>latestDate) latestDate=this.TradeMarks[i].date;
+
+                    var barIdx=-1;
+                    for(var k=0;k<data.length;k++)
+                    {
+                        if (!data[k]) continue;
+                        if (data[k].Date===latestDate) { barIdx=k; break; }
+                        if (k+1<data.length && data[k+1] && data[k].Date<=latestDate && data[k+1].Date>latestDate) { barIdx=k; break; }
+                    }
+
+                    if (barIdx>=0 && (barIdx<dataOffset || barIdx>=dataOffset+xPointCount))
+                    {
+                        var d=mainFrame.Data;
+                        d.DataOffset=Math.max(0, barIdx - Math.floor(xPointCount*0.3));
+                        hqchart.UpdataDataoffset();
+                        hqchart.UpdatePointByCursorIndex();
+                        hqchart.Draw();
+                        return;
+                    }
+                }
+
+                // 在独立 canvas 层上绘制标记
+                var canvas=this.GetTradeCanvas();
+                if (!canvas || !canvas.canvas) return;
+                canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
+
+                if (!this.TradeMarks.length) return;
+
+                for(var t=0;t<this.TradeMarks.length;++t)
+                {
+                    var trade=this.TradeMarks[t];
+                    var barIndex=this.FindBarForTrade(data, dataOffset, xPointCount, trade.date);
+                    if (barIndex<0) continue;
+
+                    var bar=data[barIndex];
+                    var x=mainFrame.GetXFromIndex(barIndex - dataOffset);
+                    var isBuy=(trade.type==='buy');
+                    var price=isBuy ? bar.Low : bar.High;
+                    var y=mainFrame.GetYFromData(price);
+
+                    canvas.save();
+                    canvas.textAlign='center';
+
+                    if (isBuy)
+                    {
+                        // 绿色向上箭头 + 标签
+                        canvas.fillStyle='rgb(25,158,0)';
+                        canvas.beginPath();
+                        canvas.moveTo(x, y+4);
+                        canvas.lineTo(x-7, y+16);
+                        canvas.lineTo(x+7, y+16);
+                        canvas.closePath();
+                        canvas.fill();
+                        // 标签背景
+                        canvas.fillStyle='rgba(25,158,0,0.85)';
+                        canvas.fillRect(x-14, y+18, 28, 16);
+                        canvas.fillStyle='#fff';
+                        canvas.font='bold 12px sans-serif';
+                        canvas.fillText('买入', x, y+31);
+                    }
+                    else
+                    {
+                        // 红色向下箭头 + 标签
+                        canvas.fillStyle='rgb(238,21,21)';
+                        canvas.beginPath();
+                        canvas.moveTo(x, y-4);
+                        canvas.lineTo(x-7, y-16);
+                        canvas.lineTo(x+7, y-16);
+                        canvas.closePath();
+                        canvas.fill();
+                        // 标签背景
+                        canvas.fillStyle='rgba(238,21,21,0.85)';
+                        canvas.fillRect(x-14, y-34, 28, 16);
+                        canvas.fillStyle='#fff';
+                        canvas.font='bold 12px sans-serif';
+                        canvas.fillText('卖出', x, y-21);
+                    }
+
+                    canvas.restore();
+                }
+            }
+
+            this.ChangeSymbol=function(symbol)
+            {
+                if (this.Chart) this.Chart.ChangeSymbol(symbol);
+                this.LoadTradeMarks(symbol);
+            }
+
+            this.ReloadResource=function()
+            {
+                if (this.Chart) this.Chart.ReloadResource({ Resource:null, Draw:true , Update:true });  //动态更新颜色配置  
+            }
+
+
+            this.EnableStockChip=function()
+            {
+                if (!this.Chart || !this.Chart.JSChartContainer) return;
+
+                var hqchart=this.Chart.JSChartContainer;
+                var openOrCloseStockChip=()=>
+                {
+                    var bShowStockChip=false;
+                    if (hqchart.GetStockChipChart()) bShowStockChip=true;       //筹码
+                    var stockChipConfig={Name:'StockChip', ShowType:1, Width:230 };
+
+                    if (bShowStockChip)
+                    {
+                        hqchart.ExecuteMenuCommand(JSCHART_MENU_ID.CMD_HIDE_STOCKCHIP_ID);
+                    }
+                    else
+                    {
+                        hqchart.ExecuteMenuCommand(JSCHART_MENU_ID.CMD_SHOW_STOCKCHIP_ID, [stockChipConfig.Name, stockChipConfig]);
+                    }
+                };
+
+                // 筹码图在日/周/月/年K线上体验更稳定，分钟周期先自动切到日线再打开
+                if (IFrameSplitOperator && IFrameSplitOperator.IsNumber(hqchart.Period) && hqchart.Period>=4)
+                {
+                    hqchart.ChangePeriod(0);
+                    setWatchlistStatus('已切换到日线后显示筹码', false);
+                    setTimeout(()=> openOrCloseStockChip(), 220);
+                    return;
+                }
+
+                openOrCloseStockChip();
+            }
+
+            this.ShowDrawTool=function()
+            {
+                if (!this.Chart || !this.Chart.JSChartContainer) return;
+                var hqchart=this.Chart.JSChartContainer;
+                var bShow=hqchart.IsShowDrawToolDialog();
+                if (!bShow) hqchart.ExecuteMenuCommand(JSCHART_MENU_ID.CMD_SHOW_DRAWTOOL_ID);
+            }
+
+            this.OnClickChartPaint=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnClickChartPaint] data=", data);
+            }
+
+        }
+
+        //分时图
+        //简单的把K线控件封装下
+        function MinuteChart(divKLine)
+        {
+            this.DivKLine=divKLine;
+            this.Chart=JSChart.Init(divKLine, false, false);   //把K线图绑定到一个Div上
+
+            //分时图配置
+            this.Option= {
+                Type:'分钟走势图',   //创建图形类型
+                //Type:'分钟走势图横屏',
+
+                Windows: //窗口指标
+                [
+                    //{ Index:"AMO", YAxis:{StringFormat:1} },
+                    { Index:"MACD", AddIndexWindow:true,IsSync:true, IndexHelp:true, },
+                 
+                ], 
+
+                OverlayIndex:
+                [
+
+                ],  //叠加指标
+                
+                Symbol:'600000.sh',         // cf1909.czc
+                //Symbol:'HSI.hk',         // cf1909.czc
+                IsAutoUpdate:true,          //是自动更新数据
+                AutoUpdateFrequency:1000,   //数据更新频率
+                DayCount:1,                     //1 最新交易日数据 >1 多日走势图
+                IsShowRightMenu:false,      //是否显示右键菜单
+                //CorssCursorTouchEnd:true,
+                
+                //EnableSelectRect:true,
+
+                LatestPointFlash:{ Enable:true, Frequency:500 },
+
+                //BeforeOpen:{ IsShow:true, Width:120, IsShowMultiDay:true, MulitiDayWidth:100 },
+                //AfterClose:{IsShow:true, Width:100, IsShowMultiDay:true, MulitiDayWidth:50},
+
+                DragSelectRect:
+                {
+                    Enable:true,
+                    EnableLButton:true,
+                },
+
+                EnableZoomIndexWindow:true,
+
+                EnablePopMenuV2:true,
+                EnableDrawToolDialogV2:true,
+                EnableNewIndex:true,
+                TooltipDialog:{ Enable:false, Style:1 },
+                EnableResize:true,
+                Minute:{ DragMode:1, },
+
+                MaxDayCount:5,
+                
+                CorssCursorInfo:
+                {  
+                    HPenType:1,VPenType:1,
+                    Left:1, Right:1, Bottom:1, 
+                    //IsFixXLastTime:true, 
+                    RightButton:{ Enable:true }, 
+                    //IsOnlyDrawMinute:true 
+                    //EnableKeyboard:true,
+                    //IsFixXLastTime:true,
+                    //IsShowCorssPoint:true,
+                    EnableDBClick:true,
+                },
+    
+
+                SelectRect:
+                {
+                    ShowRangeText:{ Enable:true, Position:1 },
+                    //Mark:{ IsShow:true }
+                },
+
+                DragSelectRect:
+                {
+                    Enable:true,
+                    ShowMode:2,
+                    EnableLButton:true,
+                },
+
+                SelectRectDialog:{ Enable:true },
+
+                EnableYDrag:
+                {
+                    Right:true,
+                    Left:true,
+                    Wheel:true,
+                },
+
+                
+                /*
+                DragSelectRect:
+                {
+                    Enable:true
+                },
+                */
+
+                MinuteLine:
+                {
+                    IsDrawAreaPrice:true,      //是否画价格面积图
+                    //IsShowAveragePrice:false,   //不显示均线
+                    //SplitType:2,
+
+                    
+                },
+
+                MinuteTitle:
+                {
+                    IsShowTime:true,
+                    IsShowName:true,
+                    IsShowDate:false,
+                    IsShowVolTitle:true,
+                    //IsAlwaysShowLastData:true,
+                    IsTitleShowLatestData:true,
+
+                    //ShowPostion:{ Type:0, Margin:{ Bottom:10 } }
+                },
+
+                MinuteVol:
+                {
+                    BarColorType:1,
+                },
+
+                //Language:'EN',
+                //EnableBorderDrag:false,
+
+                IsDrawPictureXY:true,
+
+                SelectedChart:{ EnableSelected: true, EnableMoveOn:true },
+                EnableIndexChartDrag:true,
+
+                FloatTooltip:{ Enable:true, },
+                SearchIndexDialog:{ Enable:true },
+                ModifyIndexParamDialog:{ Enable:true },
+
+                
+                EnableNightDayBG:true,
+                //EnableBuySellBar:true,
+    
+                Border: //边框
+                {
+                    Left:20,    //左边间距
+                    Right:20,     //右边间距
+                    Top:25,
+                    Bottom:25,
+
+                    AutoLeft:{ Blank:10, MinWidth:60 },
+                    AutoRight:{ Blank:10, MinWidth:60 },
+                },
+                
+                Frame:  //子框架设置
+                [
+                    { 
+                        Custom:
+                        [
+                            { 
+                                Type:0,  Position:'right',
+                            }
+                        ]
+                    },
+                ],
+
+
+                Overlay:    //叠加股票
+                [
+                    //{Symbol:'603190.sh', OverlayType:1, IsCalcuateMaxMin:true, Color:"rgb(250,0,0)" },
+                    //{Symbol:'000001.sz'},
+                    //{Symbol:'000151.sz'}
+                ],
+
+                ExtendChart:    //扩展图形
+                [
+                    //{Name:'MinuteTooltip' }, //手机端tooltip
+                    {Name:'MinutePCTooltip' }, //PC端tooltip
+                ]
+            };
+              
+
+            this.Create=function()  //创建图形
+            {
+                var self=this;
+               
+                this.Option.ScriptError=(error)=> { this.ExecuteScriptError(error); }
+                this.Option.NetworkFilter=(data, callback)=>{  this.NetworkFilter(data, callback); }
+
+                this.Option.EventCallback=
+                [
+                    
+                ];
+
+                this.Chart.SetOption(this.Option);  //设置K线配置
+            }
+
+
+            this.NetworkFilter=function(data, callback)
+            {
+                console.log(`[MinuteChart::NetworkFilter] ${DemoHQChartDataSource.Explain}`, data);
+                DemoHQChartDataSource.NetworkFilter(data, callback);
+            }
+
+           
+            this.OnSize=function(option)  //自适应大小调整
+            {
+                // 用父容器（#Minute）实际高度，不要从 window 减写死的 300px
+                var parent=this.DivKLine.parentElement;
+                var height=(parent ? parent.clientHeight : ($(window).height()-65));
+
+                this.DivKLine.style.top='0px';
+                this.DivKLine.style.left='0px';
+                this.DivKLine.style.height=height+'px';
+                this.Chart.OnSize(option);
+            }
+
+            this.ChangeSymbol=function(symbol)
+            {
+                if (this.Chart) this.Chart.ChangeSymbol(symbol);
+            }
+
+            this.Hide=function()
+            {
+                this.Chart.JSChartContainer.HideAllPopDiv();
+            }
+
+            this.ChangeDayCount=function(count)
+            {
+                if (this.Chart) this.Chart.JSChartContainer.ChangeDayCount(count);
+            }
+
+            this.ReloadResource=function()
+            {
+                if (this.Chart) this.Chart.ReloadResource({ Resource:null, Draw:true , Update:true });  //动态更新颜色配置  
+            }
+
+            this.EnableBeforeOpen=function()
+            {
+                if (!this.Chart || !this.Chart.JSChartContainer) return;
+                var hqchart=this.Chart.JSChartContainer;
+                var bShow=hqchart.IsShowBeforeData && hqchart.IsShowMultiDayBeforeData;
+                var data={ Left:!bShow, MultiDay:{ Left:!bShow }};
+                hqchart.ExecuteMenuCommand(JSCHART_MENU_ID.CMD_SHOW_CALLCATION_ID,[data]);
+            }
+
+            this.ShowDrawTool=function()
+            {
+                if (!this.Chart || !this.Chart.JSChartContainer) return;
+                var hqchart=this.Chart.JSChartContainer;
+                var bShow=hqchart.IsShowDrawToolDialog();
+                if (!bShow) hqchart.ExecuteMenuCommand(JSCHART_MENU_ID.CMD_SHOW_DRAWTOOL_ID);
+            }
+        }
+
+        function ReportChart(divReport)
+        {
+            this.DivReport=divReport;
+            this.OnClickRowCallback=null;
+            this.RowData=[];
+            this.SelectedSymbol='';
+            this.IsLoading=false;
+            this.AutoUpdateTimer=null;
+            this.AutoUpdateFrequency=5000;
+            this.BodyDom=null;
+
+            this.FormatNumber=function(value, digits)
+            {
+                var number=Number(value);
+                if (!isFinite(number)) number=0;
+                return number.toFixed(digits);
+            }
+
+            this.FormatPercent=function(value)
+            {
+                var number=Number(value);
+                if (!isFinite(number)) number=0;
+                var sign=number>0 ? '+' : '';
+                return `${sign}${number.toFixed(2)}%`;
+            }
+
+            this.GetIncreaseClass=function(value)
+            {
+                var number=Number(value);
+                if (!isFinite(number) || number===0) return 'Flat';
+                return number>0 ? 'Up' : 'Down';
+            }
+
+            this.SetSelectedSymbol=function(symbol)
+            {
+                this.SelectedSymbol=(symbol || '').toLowerCase();
+                if (!this.BodyDom) return;
+
+                var rows=this.BodyDom.querySelectorAll('.HQReportRow');
+                var selectedRow=null;
+                for(var i=0;i<rows.length;++i)
+                {
+                    var item=rows[i];
+                    var rowSymbol=(item.getAttribute('data-symbol') || '').toLowerCase();
+                    var isSelected=rowSymbol===this.SelectedSymbol;
+                    item.setAttribute('data-selected', isSelected ? '1' : '0');
+                    if (isSelected) selectedRow=item;
+                }
+
+                // VFin: 选中的行滚动到可视区（"置顶"体验）
+                if (selectedRow && typeof selectedRow.scrollIntoView==='function') {
+                    try { selectedRow.scrollIntoView({ block:'nearest', behavior:'auto' }); }
+                    catch(e) { /* 老浏览器 fallback */ selectedRow.scrollIntoView(); }
+                }
+            }
+
+            this.CollapsedCategories={};
+
+            this.RenderRowItem=function(item)
+            {
+                var rowDom=document.createElement('button');
+                rowDom.type='button';
+                rowDom.className='HQReportRow';
+                rowDom.setAttribute('data-symbol', item.symbol);
+                rowDom.setAttribute('data-selected', (item.symbol || '').toLowerCase()===this.SelectedSymbol ? '1' : '0');
+
+                var categoryDom=document.createElement('div');
+                categoryDom.className='HQReportCell CategoryCell';
+                var marketDom=document.createElement('span');
+                marketDom.className='MarketTag';
+                marketDom.innerText=item.market || '其他';
+                categoryDom.appendChild(marketDom);
+
+                var nameDom=document.createElement('div');
+                nameDom.className='HQReportCell NameCell';
+                var nameTextDom=document.createElement('span');
+                nameTextDom.className='NameText';
+                nameTextDom.innerText=item.name;
+                var codeTextDom=document.createElement('span');
+                codeTextDom.className='CodeText';
+                codeTextDom.innerText=(item.symbol || '').split('.')[0];
+                nameDom.appendChild(nameTextDom);
+                nameDom.appendChild(codeTextDom);
+
+                var priceDom=document.createElement('div');
+                priceDom.className='HQReportCell PriceCell';
+                priceDom.innerText=this.FormatNumber(item.price, 2);
+
+                var increaseDom=document.createElement('div');
+                increaseDom.className=`HQReportCell IncreaseCell ${this.GetIncreaseClass(item.increase)}`;
+                increaseDom.innerText=this.FormatPercent(item.increase);
+
+                rowDom.appendChild(categoryDom);
+                rowDom.appendChild(nameDom);
+                rowDom.appendChild(priceDom);
+                rowDom.appendChild(increaseDom);
+                return rowDom;
+            }
+
+            this.RenderRows=function()
+            {
+                if (!this.BodyDom) return;
+                this.BodyDom.innerHTML='';
+
+                if (!this.RowData.length)
+                {
+                    var emptyDom=document.createElement('div');
+                    emptyDom.className='HQReportEmpty';
+                    emptyDom.innerText='暂无自选数据';
+                    this.BodyDom.appendChild(emptyDom);
+                    return;
+                }
+
+                // 按 category 分组
+                var groups={};
+                var groupOrder=[];
+                for(var i=0;i<this.RowData.length;++i)
+                {
+                    var item=this.RowData[i];
+                    var cat=item.category || '自选股';
+                    if (!groups[cat]) { groups[cat]=[]; groupOrder.push(cat); }
+                    groups[cat].push(item);
+                }
+
+                var renderedSingle=false;
+                // 只有一个分类时不显示 header
+                if (groupOrder.length<=1)
+                {
+                    for(var i=0;i<this.RowData.length;++i)
+                        this.BodyDom.appendChild(this.RenderRowItem(this.RowData[i]));
+                    renderedSingle=true;
+                }
+
+                var self=this;
+                if (!renderedSingle)
+                for(var g=0;g<groupOrder.length;++g)
+                {
+                    var cat=groupOrder[g];
+                    var items=groups[cat];
+                    var collapsed=!!this.CollapsedCategories[cat];
+
+                    var headerDom=document.createElement('div');
+                    headerDom.className='CategoryHeader';
+                    headerDom.setAttribute('data-collapsed', collapsed ? '1' : '0');
+                    // 用 DOM 构造避免 cat / items.length 被注入 HTML（cat 来自数据库，攻击面真实存在）
+                    var arrowSpan=document.createElement('span');
+                    arrowSpan.className='CategoryArrow';
+                    arrowSpan.textContent=collapsed?'▸':'▾';
+                    var countSpan=document.createElement('span');
+                    countSpan.className='CategoryCount';
+                    countSpan.textContent='('+items.length+')';
+                    headerDom.replaceChildren(arrowSpan, document.createTextNode(' '+cat+' '), countSpan);
+                    headerDom.setAttribute('data-cat', cat);
+                    headerDom.addEventListener('click', (function(catName){
+                        return function(){
+                            self.CollapsedCategories[catName]=!self.CollapsedCategories[catName];
+                            self.RenderRows();
+                        };
+                    })(cat));
+                    this.BodyDom.appendChild(headerDom);
+
+                    if (!collapsed)
+                    {
+                        for(var j=0;j<items.length;++j)
+                            this.BodyDom.appendChild(this.RenderRowItem(items[j]));
+                    }
+                }
+
+                // VFin: 渲染完成后把选中行滚到可视区（"置顶"体验）
+                if (this.SelectedSymbol) {
+                    var selRow=this.BodyDom.querySelector('.HQReportRow[data-selected="1"]');
+                    if (selRow && typeof selRow.scrollIntoView==='function') {
+                        try { selRow.scrollIntoView({ block:'nearest', behavior:'auto' }); }
+                        catch(e) { selRow.scrollIntoView(); }
+                    }
+                }
+            }
+
+            this.LoadRows=async function()
+            {
+                var response=await apiGet('/watchlist');
+                var items=Array.isArray(response.items) ? response.items : [];
+                if (!items.length) return [];
+
+                var quotes=await Promise.all(items.map((item)=>
+                {
+                    return apiGet('/stock', { symbol:item.symbol })
+                        .then((quote)=> ({ item:item, quote:quote }))
+                        .catch(()=> null);
+                }));
+
+                var rows=[];
+                for(var i=0;i<quotes.length;++i)
+                {
+                    var data=quotes[i];
+                    if (!data || !data.quote) continue;
+                    var quote=data.quote;
+                    var name=(quote.name || data.item.displayName || data.item.symbol || '').trim();
+                    if (!name) name=data.item.symbol;
+                    var price=toNumber(quote.price, 0);
+                    var yClose=toNumber(quote.yclose, quote.open!==undefined ? quote.open : price);
+                    var increase=quote.increase!==undefined ? toNumber(quote.increase, 0) : (yClose ? (price-yClose)*100/yClose : 0);
+
+                    rows.push({
+                        symbol:data.item.symbol,
+                        market:getMarketLabel(data.item.symbol, quote.market || data.item.market),
+                        name:name,
+                        price:price,
+                        increase:increase,
+                        category:data.item.category || '自选股'
+                    });
+                }
+
+                return rows;
+            }
+
+            this.RefreshWatchlist=async function()
+            {
+                if (this.IsLoading) return;
+                this.IsLoading=true;
+
+                try
+                {
+                    this.RowData=await this.LoadRows();
+                    var hasSelected=false;
+                    if (this.SelectedSymbol)
+                    {
+                        hasSelected=this.RowData.some((item)=> (item.symbol || '').toLowerCase()===this.SelectedSymbol);
+                    }
+
+                    var firstSymbol=null;
+                    if (!hasSelected && this.RowData.length>0)
+                    {
+                        firstSymbol=this.RowData[0].symbol;
+                        this.SelectedSymbol=(firstSymbol || '').toLowerCase();
+                    }
+
+                    this.RenderRows();
+                    if (firstSymbol && this.OnClickRowCallback)
+                    {
+                        this.OnClickRowCallback({ Data:{ Symbol:firstSymbol } }, this);
+                    }
+                }
+                catch(error)
+                {
+                    setWatchlistStatus(error.message || '加载自选失败', true);
+                }
+                finally
+                {
+                    this.IsLoading=false;
+                }
+            }
+
+            this.ReloadResource=function()
+            {
+                this.RenderRows();
+            }
+
+            this.ShowContextMenu=function(x, y, symbol)
+            {
+                this.HideContextMenu();
+                var menu=document.createElement('div');
+                menu.className='WatchlistContextMenu';
+                menu.style.left=x+'px';
+                menu.style.top=y+'px';
+
+                var deleteBtn=document.createElement('button');
+                deleteBtn.type='button';
+                deleteBtn.className='WatchlistContextMenuItem';
+                deleteBtn.innerText='删除自选';
+                var self=this;
+                deleteBtn.addEventListener('click', ()=>
+                {
+                    self.HideContextMenu();
+                    self.RemoveSymbol(symbol);
+                });
+
+                menu.appendChild(deleteBtn);
+                document.body.appendChild(menu);
+                this.ContextMenuDom=menu;
+            }
+
+            this.HideContextMenu=function()
+            {
+                if (this.ContextMenuDom)
+                {
+                    this.ContextMenuDom.remove();
+                    this.ContextMenuDom=null;
+                }
+            }
+
+            this.RemoveSymbol=async function(symbol)
+            {
+                if (!symbol) return;
+                try
+                {
+                    await apiDelete('/watchlist/'+encodeURIComponent(symbol));
+                    this.RowData=this.RowData.filter((item)=> item.symbol!==symbol);
+                    if (this.SelectedSymbol===symbol.toLowerCase() && this.RowData.length>0)
+                    {
+                        this.SelectedSymbol=(this.RowData[0].symbol || '').toLowerCase();
+                        if (this.OnClickRowCallback) this.OnClickRowCallback({ Data:{ Symbol:this.RowData[0].symbol } }, this);
+                    }
+                    this.RenderRows();
+                }
+                catch(error)
+                {
+                    alert(error.message || '删除失败');
+                }
+            }
+
+            this.Create=function()
+            {
+                this.DivReport.innerHTML=
+                `
+                <div class="HQReportRoot">
+                    <div class="HQReportHeader">
+                        <div class="HQReportCell CategoryCell">类别</div>
+                        <div class="HQReportCell NameCell">名称</div>
+                        <div class="HQReportCell PriceCell">最新</div>
+                        <div class="HQReportCell IncreaseCell">涨幅</div>
+                    </div>
+                    <div class="HQReportBody"></div>
+                </div>
+                `;
+
+                this.BodyDom=this.DivReport.querySelector('.HQReportBody');
+                this.DivReport.addEventListener('click', (e)=>
+                {
+                    var rowDom=e.target.closest('.HQReportRow');
+                    if (!rowDom) return;
+                    var symbol=rowDom.getAttribute('data-symbol') || '';
+                    if (!symbol) return;
+                    this.SetSelectedSymbol(symbol);
+                    if (this.OnClickRowCallback) this.OnClickRowCallback({ Data:{ Symbol:symbol } }, this);
+                });
+
+                // 右键菜单：删除自选
+                this.ContextMenuDom=null;
+                var self=this;
+                this.DivReport.addEventListener('contextmenu', (e)=>
+                {
+                    var rowDom=e.target.closest('.HQReportRow');
+                    if (!rowDom) return;
+                    e.preventDefault();
+                    var symbol=rowDom.getAttribute('data-symbol') || '';
+                    if (!symbol) return;
+                    self.ShowContextMenu(e.clientX, e.clientY, symbol);
+                });
+
+                document.addEventListener('click', ()=> { self.HideContextMenu(); });
+
+                this.RefreshWatchlist();
+                if (this.AutoUpdateTimer) clearInterval(this.AutoUpdateTimer);
+                this.AutoUpdateTimer=setInterval(()=> this.RefreshWatchlist(), this.AutoUpdateFrequency);
+            }
+        }
+
+        function ChartContainer()
+        {
+            this.KLineCtrl=null;
+            this.MinuteCtrl=null;
+            this.SelfReport=null;
+            var urlSymbol=null;
+            try { urlSymbol=new URL(window.location.href).searchParams.get('symbol'); } catch(e) {}
+            this.CurrentSymbol=(urlSymbol && urlSymbol.trim()) || '600000.sh';
+            this.CurrentStyle=STYLE_TYPE_ID.BLACK_ID;
+            this.RiseFallMode=loadRiseFallMode();
+
+            this.ApplyRiseFallModeToStyle=function(style)
+            {
+                var palette=getRiseFallPalette(this.RiseFallMode);
+                style.UpBarColor=palette.up;
+                style.DownBarColor=palette.down;
+                style.UpTextColor=palette.up;
+                style.DownTextColor=palette.down;
+                if (style.FrameLatestPrice)
+                {
+                    style.FrameLatestPrice.UpBarColor=palette.up;
+                    style.FrameLatestPrice.DownBarColor=palette.down;
+                }
+                if (style.IndexTitle && style.IndexTitle.UpDownArrow)
+                {
+                    style.IndexTitle.UpDownArrow.UpColor=palette.up;
+                    style.IndexTitle.UpDownArrow.DownColor=palette.down;
+                }
+            }
+
+            this.UpdateRiseFallModeLabel=function()
+            {
+                var dom=document.getElementById('SettingRiseFall');
+                if (!dom) return;
+                dom.innerText=(this.RiseFallMode===RISE_FALL_MODE.GREEN_UP_RED_DOWN) ? '绿涨红跌' : '红涨绿跌';
+            }
+
+            this.ToggleRiseFallMode=function()
+            {
+                this.RiseFallMode=(this.RiseFallMode===RISE_FALL_MODE.GREEN_UP_RED_DOWN)
+                    ? RISE_FALL_MODE.RED_UP_GREEN_DOWN
+                    : RISE_FALL_MODE.GREEN_UP_RED_DOWN;
+                window.__HQ_RISE_FALL_MODE=this.RiseFallMode;
+                saveRiseFallMode(this.RiseFallMode);
+                this.UpdateRiseFallModeLabel();
+                this.UpdateSettingsPanel();
+                var root=document.documentElement;
+                if (root) root.setAttribute('data-rise-fall-mode', this.RiseFallMode);
+                this.ChangeStyle(this.CurrentStyle);
+            }
+
+            this.HideSettingsPanel=function()
+            {
+                var panel=document.getElementById('SettingsPanel');
+                if (!panel) return;
+                panel.setAttribute('data-open', '0');
+            }
+
+            this.ToggleSettingsPanel=function(e)
+            {
+                if (e && e.preventDefault) e.preventDefault();
+                if (e && e.stopPropagation) e.stopPropagation();
+
+                var panel=document.getElementById('SettingsPanel');
+                if (!panel) return;
+                var isOpen=panel.getAttribute('data-open')==='1';
+                panel.setAttribute('data-open', isOpen ? '0' : '1');
+            }
+
+            this.UpdateSettingsPanel=function()
+            {
+                this.UpdateRiseFallModeLabel();
+                var whiteButton=document.getElementById('SettingWhiteStyle');
+                var blackButton=document.getElementById('SettingBlackStyle');
+                if (whiteButton) whiteButton.setAttribute('data-active', this.CurrentStyle===STYLE_TYPE_ID.WHITE_ID ? '1' : '0');
+                if (blackButton) blackButton.setAttribute('data-active', this.CurrentStyle===STYLE_TYPE_ID.BLACK_ID ? '1' : '0');
+            }
+
+            this.SetActivePeriodTab=function(tabId)
+            {
+                var tabs=document.querySelectorAll('#PeriodTab .PeriodItem');
+                for (var i=0;i<tabs.length;++i)
+                {
+                    if (tabs[i].id===tabId) tabs[i].setAttribute('data-active','1');
+                    else tabs[i].removeAttribute('data-active');
+                }
+            }
+
+            // 周期到URL参数的映射
+            this.PeriodToUrlParam=function(type, period)
+            {
+                if (type===0) {
+                    switch(period) {
+                        case 0: return 'day';
+                        case 1: return 'week';
+                        case 2: return 'month';
+                        case 3: return 'year';
+                        case 4: return '1m';
+                        case 5: return '5m';
+                        case 6: return '15m';
+                        case 7: return '30m';
+                    }
+                } else if (type===1) {
+                    switch(period) {
+                        case 1: return 'minute1';
+                        case 5: return 'minute5';
+                    }
+                }
+                return 'day';
+            }
+
+            // 从URL参数获取周期
+            this.UrlParamToPeriod=function(param)
+            {
+                switch(param) {
+                    case 'day': return { type: 0, period: 0 };
+                    case 'week': return { type: 0, period: 1 };
+                    case 'month': return { type: 0, period: 2 };
+                    case 'year': return { type: 0, period: 3 };
+                    case '1m': return { type: 0, period: 4 };
+                    case '5m': return { type: 0, period: 5 };
+                    case '15m': return { type: 0, period: 6 };
+                    case '30m': return { type: 0, period: 7 };
+                    case 'minute1': return { type: 1, period: 1 };
+                    case 'minute5': return { type: 1, period: 5 };
+                    default: return { type: 0, period: 0 };
+                }
+            }
+
+            // 更新URL中的周期参数
+            this.UpdateUrlPeriod=function(type, period)
+            {
+                var param=this.PeriodToUrlParam(type, period);
+                var url=new URL(window.location.href);
+                url.searchParams.set('period', param);
+                window.history.replaceState({}, '', url.toString());
+            }
+
+            // 更新URL中的股票代码
+            this.UpdateUrlSymbol=function(symbol)
+            {
+                if (!symbol) return;
+                var url=new URL(window.location.href);
+                if (url.searchParams.get('symbol')===symbol) return;
+                url.searchParams.set('symbol', symbol);
+                window.history.replaceState({}, '', url.toString());
+            }
+
+            // 从URL读取周期并应用
+            this.ApplyPeriodFromUrl=function()
+            {
+                var url=new URL(window.location.href);
+                var param=url.searchParams.get('period');
+                if (param) {
+                    return this.UrlParamToPeriod(param);
+                }
+                return null;
+            }
+
+
+            this.Create=function()
+            {
+                var resource=JSChart.GetResource();
+                //resource.BGColor=blackStyle.BGColor;
+                resource.ToolbarButtonStyle=1;
+                resource.FrameLogo.Text='';
+
+                this.ChangeStyle(STYLE_TYPE_ID.BLACK_ID);
+
+                this.KLineCtrl=new KLineChart(document.getElementById('KLineCtrl'));
+                if (this.KLineCtrl.Option) this.KLineCtrl.Option.Symbol=this.CurrentSymbol;
+                this.KLineCtrl.Create();
+
+                this.MinuteCtrl=new MinuteChart(document.getElementById('MinuteCtrl'));
+                if (this.MinuteCtrl.Option) this.MinuteCtrl.Option.Symbol=this.CurrentSymbol;
+                this.MinuteCtrl.Create();
+
+                this.SelfReport=new ReportChart(document.getElementById('ReportCtrl'));
+                this.SelfReport.OnClickRowCallback=(data, obj)=>{ this.OnClickReportRow(data, obj); }
+                this.SelfReport.Create();
+                this.SelfReport.SetSelectedSymbol(this.CurrentSymbol);
+
+                // 打开页面时与 portfolio_data.json 对齐一次（删已抛售的、加新买入的）
+                this.SyncPortfolio(true);
+
+                document.getElementById('WatchlistAddButton').onclick=()=>{ this.AddWatchlistSymbol(); };
+                document.getElementById('SyncPortfolioButton').onclick=()=>{ this.SyncPortfolio(false); };
+
+                // 收起/展开左侧面板
+                document.getElementById('LeftPanelToggle').onclick=()=>
+                {
+                    var panel=document.getElementById('LeftPanel');
+                    var btn=document.getElementById('LeftPanelToggle');
+                    var collapsed=panel.getAttribute('data-collapsed')==='1';
+                    panel.setAttribute('data-collapsed', collapsed ? '0' : '1');
+                    btn.textContent=collapsed ? '‹' : '›';
+                    btn.title=collapsed ? '收起' : '展开';
+                };
+
+                // 搜索下拉
+                var searchTimer=null;
+                var dropdown=document.getElementById('WatchlistDropdown');
+                var input=document.getElementById('WatchlistInput');
+
+                var positionDropdown=()=>
+                {
+                    var rect=input.getBoundingClientRect();
+                    dropdown.style.left=rect.left+'px';
+                    dropdown.style.top=(rect.bottom+1)+'px';
+                    dropdown.style.minWidth=rect.width+'px';
+                    dropdown.style.maxWidth=Math.max(rect.width, Math.min(window.innerWidth-rect.left-12, 480))+'px';
+                };
+
+                var closeDropdown=()=>{ dropdown.innerHTML=''; dropdown.style.display='none'; };
+
+                var selectItem=(symbol, name)=>
+                {
+                    input.value=symbol;
+                    closeDropdown();
+                    this.AddWatchlistSymbol();
+                };
+
+                window.addEventListener('resize', ()=>{ if (dropdown.style.display==='block') positionDropdown(); });
+                window.addEventListener('scroll', ()=>{ if (dropdown.style.display==='block') positionDropdown(); }, true);
+
+                input.addEventListener('input', ()=>
+                {
+                    clearTimeout(searchTimer);
+                    var q=input.value.trim();
+                    if (!q) { closeDropdown(); return; }
+                    searchTimer=setTimeout(async ()=>
+                    {
+                        try
+                        {
+                            var data=await apiRequest('GET', '/search', { query:{ q } });
+                            var items=data && data.items ? data.items : [];
+                            if (!items.length) { closeDropdown(); return; }
+                            dropdown.innerHTML='';
+                            items.forEach(item=>
+                            {
+                                // item.name/code/typeLabel 来自上游搜索接口 — 用 textContent 防 XSS
+                                var div=document.createElement('div');
+                                div.className='WatchlistDropdownItem';
+                                var nameSpan=document.createElement('span');
+                                nameSpan.className='WatchlistDropdownName';
+                                nameSpan.textContent=item.name||'';
+                                var codeSpan=document.createElement('span');
+                                codeSpan.className='WatchlistDropdownCode';
+                                codeSpan.textContent=item.code||'';
+                                if (item.typeLabel) {
+                                    var typeSpan=document.createElement('span');
+                                    typeSpan.className='WatchlistDropdownType';
+                                    typeSpan.textContent=item.typeLabel;
+                                    div.append(nameSpan, typeSpan, codeSpan);
+                                } else {
+                                    div.append(nameSpan, codeSpan);
+                                }
+                                div.onmousedown=(e)=>{ e.preventDefault(); selectItem(item.symbol, item.name); };
+                                dropdown.appendChild(div);
+                            });
+                            positionDropdown();
+                            dropdown.style.display='block';
+                        }
+                        catch(e) { closeDropdown(); }
+                    }, 250);
+                });
+
+                input.addEventListener('keydown', (e)=>
+                {
+                    if (e.key==='Enter') { closeDropdown(); this.AddWatchlistSymbol(); }
+                    if (e.key==='Escape') closeDropdown();
+                });
+
+                document.addEventListener('mousedown', (e)=>
+                {
+                    if (!document.getElementById('WatchlistInputWrap').contains(e.target)) closeDropdown();
+                });
+
+                var divKLine=document.getElementById('KLine');
+                divKLine.style["visibility"]="visible";
+                divKLine.style["display"]="block";
+
+                var divMinute=document.getElementById('Minute');
+                divMinute.style["visibility"]="visible";
+                divMinute.style["display"]="none";
+
+                document.getElementById('MinuteDay').onmousedown=(e)=>{  this.Show(1, 1); }
+                document.getElementById('Minute5Day').onmousedown=(e)=>{  this.Show(1, 5); }
+
+                document.getElementById('KLineDay').onmousedown=(e)=>{  this.Show(0, 0); }
+                document.getElementById('KLineWeek').onmousedown=(e)=>{  this.Show(0, 1); }
+                document.getElementById('KLineMonth').onmousedown=(e)=>{  this.Show(0, 2); }
+                document.getElementById('KLineYear').onmousedown=(e)=>{  this.Show(0, 3); }
+                
+
+                document.getElementById('KLineMinute').onmousedown=(e)=>{  this.Show(0, 4); }
+                document.getElementById('KLine5Minute').onmousedown=(e)=>{  this.Show(0, 5); }
+                document.getElementById('KLine15Minute').onmousedown=(e)=>{  this.Show(0, 6); }
+                document.getElementById('KLine30Minute').onmousedown=(e)=>{  this.Show(0, 7); }
+
+
+                document.getElementById('StockChip').onmousedown=(e)=>{ this.EnableStockChip(); }
+                document.getElementById('BeforeOpen').onmousedown=(e)=>{ this.EnableBeforeOpen(); }
+                document.getElementById('DrawTool').onmousedown=(e)=>{ this.ShowDrawTool(); }
+                document.getElementById('SettingsMenu').onmousedown=(e)=>{ this.ToggleSettingsPanel(e); }
+                document.getElementById('SettingRiseFall').onclick=(e)=>{ this.ToggleRiseFallMode(); this.HideSettingsPanel(); }
+                document.getElementById('SettingWhiteStyle').onclick=(e)=>{ this.ChangeStyle(STYLE_TYPE_ID.WHITE_ID); this.HideSettingsPanel(); }
+                document.getElementById('SettingBlackStyle').onclick=(e)=>{ this.ChangeStyle(STYLE_TYPE_ID.BLACK_ID); this.HideSettingsPanel(); }
+                document.addEventListener('mousedown', (e)=>
+                {
+                    var panel=document.getElementById('SettingsPanel');
+                    var toggle=document.getElementById('SettingsMenu');
+                    if (!panel || !toggle) return;
+                    if (panel.contains(e.target) || toggle.contains(e.target)) return;
+                    this.HideSettingsPanel();
+                });
+                
+
+                window.__HQ_RISE_FALL_MODE=this.RiseFallMode;
+                this.UpdateSettingsPanel();
+                document.documentElement.setAttribute('data-rise-fall-mode', this.RiseFallMode);
+                
+                // 从URL读取周期参数并应用
+                var periodFromUrl=this.ApplyPeriodFromUrl();
+                if (periodFromUrl) {
+                    this.Show(periodFromUrl.type, periodFromUrl.period);
+                } else {
+                    this.SetActivePeriodTab('KLineDay');
+                    this.UpdataToolbar(0);
+                }
+            }
+
+            //type 1=分时图     0=K线图
+            this.Show=function(type, period)
+            {
+                if (type===0)
+                {
+                    var divKLine=document.getElementById('KLine');
+                    divKLine.style["visibility"]="visible";
+                    divKLine.style["display"]="block";
+
+                    var divMinute=document.getElementById('Minute');
+                    divMinute.style["visibility"]="visible";
+                    divMinute.style["display"]="none";
+                    this.MinuteCtrl.Hide();
+
+                    this.KLineCtrl.Hide();
+                    var isMinutePeriod=(period>=4 && period<=7);
+                    this.KLineCtrl.ChangePeriod(period);
+                    if (isMinutePeriod && this.CurrentSymbol) this.KLineCtrl.ChangeSymbol(this.CurrentSymbol);
+
+                    if (period===0) this.SetActivePeriodTab('KLineDay');
+                    else if (period===1) this.SetActivePeriodTab('KLineWeek');
+                    else if (period===2) this.SetActivePeriodTab('KLineMonth');
+                    else if (period===3) this.SetActivePeriodTab('KLineYear');
+                    else if (period===4) this.SetActivePeriodTab('KLineMinute');
+                    else if (period===5) this.SetActivePeriodTab('KLine5Minute');
+                    else if (period===6) this.SetActivePeriodTab('KLine15Minute');
+                    else if (period===7) this.SetActivePeriodTab('KLine30Minute');
+                    this.UpdataToolbar(type);
+                    this.UpdateUrlPeriod(0, period);
+                }
+                else if (type===1)
+                {
+                    var divMinute=document.getElementById('Minute');
+                    divMinute.style["visibility"]="visible";
+                    divMinute.style["display"]="block";
+
+                    var divKLine=document.getElementById('KLine');
+                    divKLine.style["visibility"]="visible";
+                    divKLine.style["display"]="none";
+                    this.KLineCtrl.Hide();
+
+                    this.MinuteCtrl.ChangeDayCount(period);
+                    if (this.CurrentSymbol) this.MinuteCtrl.ChangeSymbol(this.CurrentSymbol);
+                    if (period===1) this.SetActivePeriodTab('MinuteDay');
+                    else if (period===5) this.SetActivePeriodTab('Minute5Day');
+                    this.UpdataToolbar(type);
+                    this.UpdateUrlPeriod(1, period);
+                }
+            }
+
+            this.ChangeStyle=function(value)
+            {
+                var style=HQChartStyle.GetStyleConfig(value); //读取风格配置
+                this.CurrentStyle=value;
+                this.ApplyRiseFallModeToStyle(style);
+                JSChart.SetCSSStyle(value);
+                JSChart.SetStyle(style);
+
+                var pixelRatio=GetDevicePixelRatio();
+                var resource=JSChart.GetResource();
+                resource.ToolbarButtonStyle=1;
+                resource.Report.Item.Font.Size=12;
+                resource.Report.Item.Mergin.Top=8*pixelRatio;
+                resource.Report.Item.Mergin.Bottom=8*pixelRatio;
+                this.UpdateSettingsPanel();
+
+                if (this.MinuteCtrl) this.MinuteCtrl.ReloadResource();  //动态更新颜色配置  
+                if (this.KLineCtrl) this.KLineCtrl.ReloadResource();    //动态更新颜色配置  
+                if (this.SelfReport) this.SelfReport.ReloadResource();
+            }
+
+            this.EnableStockChip=function()
+            {
+                if (!this.KLineCtrl) return;
+                this.Show(0, 0);
+                this.KLineCtrl.EnableStockChip();
+            }
+
+            this.ShowDrawTool=function()
+            {
+                var divKLine=document.getElementById('KLine');
+                if (divKLine.style["display"]=="block" && this.KLineCtrl)
+                {
+                    this.KLineCtrl.ShowDrawTool();
+                    return;
+                }
+
+                var divMinute=document.getElementById('Minute');
+                if (divMinute.style["display"]=="block" && this.MinuteCtrl)
+                {
+                    this.MinuteCtrl.ShowDrawTool();
+                }
+            }
+
+            this.EnableBeforeOpen=function()
+            {
+                if (this.MinuteCtrl) this.MinuteCtrl.EnableBeforeOpen();
+            }
+
+            this.UpdataToolbar=function(type)
+            {
+                var dom=document.getElementById('StockChip');
+                dom.style["display"]=(type===0?"block":"none");
+
+                dom=document.getElementById('BeforeOpen');
+                dom.style["display"]=(type===1?"block":"none");
+            }
+
+            this.OnClickReportRow=function(data, obj)
+            {
+                var symbol=data.Data.Symbol;
+                this.ChangeSymbol(symbol);
+            }
+
+            this.ChangeSymbol=function(symbol)
+            {
+                if (!symbol) return;
+                this.CurrentSymbol=symbol;
+                if (this.MinuteCtrl) this.MinuteCtrl.ChangeSymbol(symbol);
+                if (this.KLineCtrl) this.KLineCtrl.ChangeSymbol(symbol);
+                if (this.SelfReport && this.SelfReport.SetSelectedSymbol) this.SelfReport.SetSelectedSymbol(symbol);
+                this.UpdateUrlSymbol(symbol);
+                if (typeof window.VFinUpdateFinanceBar==='function') window.VFinUpdateFinanceBar(symbol);
+            }
+
+            this.RefreshWatchlist=function()
+            {
+                setWatchlistStatus('', false);
+                if (this.SelfReport) this.SelfReport.RefreshWatchlist();
+            }
+
+            this.AddWatchlistSymbol=async function()
+            {
+                var input=document.getElementById('WatchlistInput');
+                if (!input) return;
+                var symbol=normalizeInputSymbol(input.value ? input.value.trim() : '');
+                if (!symbol) return;
+
+                try
+                {
+                    var response=await apiPost('/watchlist', { symbol:symbol });
+                    input.value='';
+                    setWatchlistStatus('', false);
+                    this.RefreshWatchlist();
+                    if (response && response.item && response.item.symbol)
+                        this.ChangeSymbol(response.item.symbol);
+                }
+                catch(error)
+                {
+                    setWatchlistStatus(error.message || '添加自选失败', true);
+                    alert(error.message || '添加自选失败');
+                }
+            }
+
+            this.SyncPortfolio=async function(silent)
+            {
+                try
+                {
+                    var response=await apiPost('/watchlist/sync-portfolio');
+                    var added=response.imported || 0;
+                    var removed=response.removed || 0;
+                    if (!silent)
+                    {
+                        var msg='持仓已是最新';
+                        if (added || removed)
+                        {
+                            var parts=[];
+                            if (added) parts.push(`新增 ${added}`);
+                            if (removed) parts.push(`移除 ${removed}`);
+                            msg='已同步持仓：'+parts.join('，');
+                        }
+                        setWatchlistStatus(msg, false);
+                    }
+                    if (added || removed) this.RefreshWatchlist();
+                }
+                catch(error)
+                {
+                    if (silent)
+                    {
+                        if (window.console) console.warn('[sync-portfolio]', error);
+                        return;
+                    }
+                    setWatchlistStatus(error.message || '同步失败', true);
+                    alert(error.message || '同步持仓失败');
+                }
+            }
+
+            // 注：不做周期性 auto-sync，避免覆盖用户手动调整的分类（例如把"我的持仓"里的股票挪到"自选股"）。
+            // 仅在页面打开时同步一次；用户想强制再同步就点 ⟳ 按钮。
+        }
+
+        // ─── VFin 顶部财务指标条 ──────────────────────────────────
+        // 总是显示基础信息（公司名 / ticker / 行情），有静态财报数据则补 PE/PB/ROE 等
+        (function() {
+            var lastSymbol=null;
+            var lastSymbolRendered=false;
+            var inflightCtrl=null;
+            var FMT={
+                ratio: function(n){
+                    if (n===null || n===undefined || !isFinite(n)) return null;
+                    if (Math.abs(n)>=10) return n.toFixed(1);
+                    return n.toFixed(2);
+                },
+                pct: function(n){
+                    if (n===null || n===undefined || !isFinite(n)) return null;
+                    return (n*100).toFixed(2)+'%';
+                },
+                cap: function(v, cur){
+                    if (v===null || v===undefined || !isFinite(v)) return null;
+                    var unit=cur==='HKD' ? '港' : cur==='USD' ? '美' : '元';
+                    var abs=Math.abs(v);
+                    if (abs>=1e12) return (v/1e12).toFixed(2)+' 万亿'+unit;
+                    if (abs>=1e8)  return (v/1e8).toFixed(2)+' 亿'+unit;
+                    if (abs>=1e4)  return (v/1e4).toFixed(2)+' 万'+unit;
+                    return v.toFixed(0)+' '+unit;
+                }
+            };
+
+            function escapeHtml(s){
+                return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+                    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+                });
+            }
+
+            function detectMarketLabel(sym){
+                var s=(sym||'').toLowerCase();
+                if (/\.sh$/.test(s)) return 'A股';
+                if (/\.sz$/.test(s)) return 'A股';
+                if (/\.bj$/.test(s)) return 'A股';
+                if (/\.hk$/.test(s)) return '港股';
+                if (/\.us$/.test(s)) return '美股';
+                return '';
+            }
+
+            function render(opts){
+                var bar=document.getElementById('CompanyFinanceBar');
+                if (!bar) return;
+                var name=opts.name || opts.symbol || '';
+                var ticker=(opts.symbol||'').toUpperCase();
+                var market=detectMarketLabel(opts.symbol);
+                var m=opts.metrics||{};
+                var hasFin=opts.hasFinancial;
+
+                var items=[
+                    { label:'PE',     val: FMT.ratio(m.pe) },
+                    { label:'PB',     val: FMT.ratio(m.pb) },
+                    { label:'ROE',    val: FMT.pct(m.roe) },
+                    { label:'ROA',    val: FMT.pct(m.roa) },
+                    { label:'毛利率', val: FMT.pct(m.gross_margin) },
+                    { label:'净利率', val: FMT.pct(m.net_margin) },
+                    { label:'市值',   val: FMT.cap(m.market_cap, m.market_cap_currency) }
+                ];
+
+                var html='<span class="cf-name">'
+                    +'<b>'+escapeHtml(name)+'</b>'
+                    +'<span class="cf-symbol">'+escapeHtml(ticker)+'</span>'
+                    +'</span>';
+                if (market) {
+                    html+='<span class="cf-item"><span class="cf-label">市场</span><span class="cf-value">'+escapeHtml(market)+'</span></span>';
+                }
+                html+='<span class="cf-item"><span class="cf-label">行业</span>'
+                    +(opts.industry
+                        ? '<span class="cf-value">'+escapeHtml(opts.industry)+'</span>'
+                        : '<span class="cf-value cf-empty">—</span>')
+                    +'</span>';
+                html+='<span class="cf-item"><span class="cf-label">报告期</span>'
+                    +(opts.periodLabel
+                        ? '<span class="cf-value">'+escapeHtml(opts.periodLabel)+'</span>'
+                        : '<span class="cf-value cf-empty">—</span>')
+                    +'</span>';
+                items.forEach(function(it){
+                    html+='<span class="cf-item"><span class="cf-label">'+it.label+'</span>';
+                    if (it.val===null) html+='<span class="cf-value cf-empty">—</span>';
+                    else html+='<span class="cf-value">'+escapeHtml(it.val)+'</span>';
+                    html+='</span>';
+                });
+                if (hasFin) {
+                    html+='<a class="cf-research" href="/research/'+encodeURIComponent(opts.symbol||'')+'">财报 →</a>';
+                } else {
+                    html+='<span class="cf-research" style="color:#848E9C;border-color:#2B3139;cursor:not-allowed" title="该股票暂无静态财报数据">无财报</span>';
+                }
+                bar.innerHTML=html;
+            }
+
+            window.VFinUpdateFinanceBar=function(symbol){
+                if (!symbol) return;
+                // 重复触发同一 symbol 不再发请求 — 但只在上一次至少已渲染过才跳过
+                if (symbol===lastSymbol && lastSymbolRendered) return;
+                if (inflightCtrl) inflightCtrl.abort();
+                inflightCtrl=new AbortController();
+                var signal=inflightCtrl.signal;
+                lastSymbol=symbol;
+                lastSymbolRendered=false;
+
+                // 并行：财务静态数据（可能 404）+ 实时行情（拿真名）
+                var pFin=fetch('/api/companies/'+encodeURIComponent(symbol), { signal: signal, cache:'no-store' })
+                    .then(function(r){ return r.ok ? r.json() : null; })
+                    .catch(function(){ return null; });
+                var pQuote=fetch('/api/hq/stock?symbol='+encodeURIComponent(symbol), { signal: signal, cache:'no-store' })
+                    .then(function(r){ return r.ok ? r.json() : null; })
+                    .catch(function(){ return null; });
+
+                Promise.all([pFin, pQuote]).then(function(arr){
+                    if (signal.aborted) return;
+                    var fin=arr[0]; var quote=arr[1];
+                    render({
+                        symbol: symbol,
+                        name: (fin && fin.name) || (quote && quote.name) || symbol,
+                        industry: fin && fin.industry,
+                        periodLabel: fin && fin.periodLabel,
+                        metrics: fin && fin.metrics,
+                        hasFinancial: !!fin
+                    });
+                    lastSymbolRendered=true;
+                }).catch(function(e){
+                    if (e && e.name==='AbortError') return;
+                    render({ symbol: symbol, name: symbol, hasFinancial: false });
+                    lastSymbolRendered=true;
+                });
+            };
+        })();
+
+        $(function ()
+        {
+            var control=new ChartContainer();
+            control.Create();
+            window.__chartControl=control;
+            // 初始 symbol 已在 control 内确定，立即填充指标条
+            if (control.CurrentSymbol && typeof window.VFinUpdateFinanceBar==='function') {
+                window.VFinUpdateFinanceBar(control.CurrentSymbol);
+            }
+        })
+    
+
+    </script>
+<style>
+
+html,body
+{
+    height:100%;
+    overflow-x:hidden;
+}
+
+body
+{
+    margin:0px;
+    /* 与 VFin 主应用 globals.css 对齐（html { font-size: 13px }），右侧不再有"字偏大"的感觉 */
+    font-size:13px;
+    background-color: var(--BGColor);
+}
+
+#FullDemo
+{
+    display: flex;
+    height:100%;
+}
+
+#CenterPanel
+{
+    position: relative;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: 100%;
+}
+
+#LeftPanel
+{
+    flex: 0 0 323px;
+    width: 323px;
+    height: 100%;
+    border-right: solid 1px var(--BorderColor);
+    overflow: hidden;
+    transition: flex-basis 0.2s ease, width 0.2s ease;
+}
+
+#LeftPanel[data-collapsed='1']
+{
+    flex: 0 0 36px;
+    width: 36px;
+}
+
+#LeftPanel[data-collapsed='1'] #WatchlistInputWrap,
+#LeftPanel[data-collapsed='1'] #WatchlistAddButton,
+#LeftPanel[data-collapsed='1'] #SyncPortfolioButton,
+#LeftPanel[data-collapsed='1'] #WatchlistStatus,
+#LeftPanel[data-collapsed='1'] #Report
+{
+    display: none;
+}
+
+#LeftPanel[data-collapsed='1'] #WatchlistTitle
+{
+    display: none;
+}
+
+#LeftPanelToggle
+{
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    margin-left: auto;
+    border: solid 1px var(--BorderColor);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--TabTextColor);
+    font-size: 16px;
+    line-height: 20px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#PeriodTab
+{
+    position: relative;
+    display: flex;
+    width: 100%;
+    border-bottom:solid 1px var(--BorderColor);
+    
+    background-color: var(--BGColor);
+    line-height: 30px;
+}
+
+#ChartContainer
+{
+    width: 100%;
+    /* CenterPanel 高度 - (CompanyFinanceBar 36px + PeriodTab 28px) = 100% - 64px
+       之前 35px 算少了，导致 chart 顶到屏幕外、"右侧不置顶" */
+    height: calc(100% - 64px);
+    background-color: var(--BGColor);
+    overflow-x:hidden;
+}
+
+#KLine
+{
+    width: 100%;
+    height: 100%;
+}
+
+#KLineCtrl
+{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#Minute
+{
+    width: 100%;
+    height: 100%;
+}
+
+#MinuteCtrl
+{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.TabItem
+{
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-right:solid 1px var(--BorderColor);
+    cursor: pointer;
+    background-color: var(--TabItemBG);
+    color:var(--TabTextColor);
+    transition: background-color 0.15s, color 0.15s;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.TabItem:hover
+{
+    background-color: rgba(240, 185, 11, 0.08);
+    color: var(--AccentColor);
+}
+
+#SettingsPanel
+{
+    position: absolute;
+    top: 31px;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    min-width: 140px;
+    background-color: var(--BGColor);
+    border: solid 1px var(--BorderColor);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    z-index: 30;
+}
+
+#SettingsPanel[data-open='1']
+{
+    display: flex;
+}
+
+.SettingsItem
+{
+    border: none;
+    border-bottom: solid 1px var(--BorderColor);
+    background-color: var(--TabItemBG);
+    color: var(--TabTextColor);
+    line-height: 32px;
+    text-align: left;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.SettingsItem:last-child
+{
+    border-bottom: none;
+}
+
+.SettingsItem[data-active='1']
+{
+    color: var(--AccentColor);
+    font-weight: 600;
+}
+
+.PeriodItem[data-active='1']
+{
+    background-color:var(--AccentColor);
+    color:rgb(255,255,255);
+    font-weight:600;
+}
+
+.SpaceItem
+{
+    width: 50px;
+    border-right:solid 1px var(--BorderColor);
+}
+
+
+#Report
+{
+    width: 100%;
+    height: calc(100% - 62px);
+}
+
+#ReportCtrl
+{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.HQReportRoot
+{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: var(--BGColor);
+    color: var(--TabTextColor);
+}
+
+.HQReportHeader
+{
+    display: grid;
+    grid-template-columns: 38px 1fr 72px 62px;
+    column-gap: 8px;
+    align-items: center;
+    height: 32px;
+    padding: 0 8px 0 10px;
+    border-bottom: solid 1px var(--BorderColor);
+    background-color: var(--TabItemBG);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.HQReportBody
+{
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.HQReportRow
+{
+    display: grid;
+    grid-template-columns: 38px 1fr 72px 62px;
+    column-gap: 8px;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    border: none;
+    border-bottom: solid 1px var(--BorderColor);
+    background-color: transparent;
+    color: inherit;
+    padding: 4px 8px 4px 10px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.HQReportRow[data-selected='1']
+{
+    background-color: rgba(25,118,210,0.16);
+}
+
+.HQReportCell
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.CategoryCell
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.NameCell
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding-right: 8px;
+    overflow: hidden;
+}
+
+.MarketTag
+{
+    flex: 0 0 auto;
+    min-width: 30px;
+    height: 16px;
+    line-height: 16px;
+    border-radius: 8px;
+    padding: 0 6px;
+    font-size: 10px;
+    background-color: rgba(25,118,210,0.16);
+    color: var(--AccentColor);
+    text-align: center;
+}
+
+.NameText
+{
+    font-size: 13px;
+    line-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.CodeText
+{
+    font-size: 11px;
+    line-height: 14px;
+    color: var(--TabTextColor);
+    opacity: 0.55;
+}
+
+.PriceCell,
+.IncreaseCell
+{
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.IncreaseCell.Up
+{
+    color: rgb(25,158,0);
+}
+
+.IncreaseCell.Down
+{
+    color: rgb(238,21,21);
+}
+
+.IncreaseCell.Flat
+{
+    color: var(--TabTextColor);
+}
+
+.HQReportEmpty
+{
+    padding: 12px 10px;
+    color: var(--TabTextColor);
+    font-size: 12px;
+}
+
+.WatchlistContextMenu
+{
+    position: fixed;
+    z-index: 9999;
+    min-width: 100px;
+    background: var(--TabItemBG, #2a2a2a);
+    border: 1px solid var(--BorderColor, #444);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    padding: 4px 0;
+}
+
+.WatchlistContextMenuItem
+{
+    display: block;
+    width: 100%;
+    border: none;
+    background: none;
+    color: var(--TabTextColor, #ddd);
+    font-size: 13px;
+    padding: 6px 16px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.WatchlistContextMenuItem:hover
+{
+    background: rgba(25,118,210,0.25);
+}
+
+#WatchlistToolbar
+{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    height:42px;
+    padding:0 8px 0 12px;
+    border-bottom:solid 1px var(--BorderColor);
+    background-color:var(--TabItemBG);
+    color:var(--TabTextColor);
+}
+
+#WatchlistTitle
+{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:1px;
+    flex-shrink:0;
+}
+
+#WatchlistInputWrap
+{
+    flex:1 1 auto;
+    min-width:0;
+    position:relative;
+}
+
+#WatchlistDropdown
+{
+    display:none;
+    position:fixed;
+    background-color:var(--BGColor);
+    border:solid 1px var(--BorderColor);
+    border-radius:0 0 4px 4px;
+    z-index:200;
+    max-height:320px;
+    overflow-y:auto;
+    box-shadow:0 6px 16px rgba(0,0,0,0.25);
+}
+
+.WatchlistDropdownItem
+{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:7px 12px;
+    cursor:pointer;
+    font-size:13px;
+    color:var(--TabTextColor);
+    white-space:nowrap;
+}
+
+.WatchlistDropdownItem:hover
+{
+    background-color:var(--TabItemBG);
+}
+
+.WatchlistDropdownName
+{
+    flex:0 0 auto;
+    white-space:nowrap;
+    color:var(--TabTextColor);
+}
+
+.WatchlistDropdownCode
+{
+    flex-shrink:0;
+    font-size:12px;
+    color:var(--AccentColor);
+    opacity:0.85;
+}
+
+.WatchlistDropdownType
+{
+    flex-shrink:0;
+    font-size:11px;
+    padding:1px 4px;
+    border-radius:3px;
+    background-color:rgba(25,118,210,0.12);
+    color:var(--AccentColor);
+}
+
+#WatchlistInput
+{
+    width:100%;
+    box-sizing:border-box;
+    height:28px;
+    padding:0 8px;
+    border:solid 1px var(--BorderColor);
+    border-radius:4px;
+    background-color:var(--BGColor);
+    color:var(--TabTextColor);
+}
+
+#WatchlistAddButton,
+#SyncPortfolioButton
+{
+    flex-shrink:0;
+    width:28px;
+    height:28px;
+    border:none;
+    border-radius:14px;
+    background-color:var(--AccentColor);
+    color:rgb(255,255,255);
+    font-size:14px;
+    line-height:28px;
+    cursor:pointer;
+}
+
+#WatchlistAddButton { font-size:20px; }
+
+.CategoryHeader
+{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    padding:6px 10px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--TabTextColor);
+    opacity:0.7;
+    cursor:pointer;
+    border-bottom:solid 1px var(--BorderColor);
+    user-select:none;
+}
+
+.CategoryHeader:hover { opacity:1; }
+
+.CategoryArrow { font-size:10px; }
+
+.CategoryCount
+{
+    font-weight:400;
+    opacity:0.6;
+}
+
+#WatchlistStatus
+{
+    height:20px;
+    padding:0 12px;
+    line-height:20px;
+    font-size:12px;
+    color:var(--TabTextColor);
+    background-color:var(--BGColor);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+#WatchlistStatus[data-state='error']
+{
+    color:var(--AccentColor);
+}
+
+/* ─── VFin · 币安风格深色 tokens（覆盖默认） ─────────────────────────
+   背景三层 #0B0E11 / #181A20 / #1E2329；强调金 #F0B90B；
+   原 BGColor/TabItemBG/BorderColor/TabTextColor/AccentColor 全部统一替换
+*/
+:root,
+:root[hqchart_style='1'],
+:root[hqchart_style='0'],
+:root[hqchart_style='defined']
+{
+    --BGColor:#0B0E11;
+    --TabItemBG:#181A20;
+    --BorderColor:#2B3139;
+    --TabTextColor:#B7BDC6;
+    --AccentColor:#F0B90B;
+}
+
+/* 字体 */
+html,body
+{
+    font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    color: #EAECEF;
+    background-color: #0B0E11;
+}
+
+/* 顶部 Tab 行 */
+#TopMenu, #SubMenu, #ToolBar, .TabBar
+{
+    background-color: #181A20;
+    border-bottom: solid 1px #2B3139;
+}
+
+.TabItem
+{
+    color:#B7BDC6;
+    background-color: transparent;
+}
+.TabItem:hover
+{
+    background-color: rgba(240,185,11,0.08);
+    color:#F0B90B;
+}
+.PeriodItem[data-active='1']
+{
+    background-color: rgba(240,185,11,0.15) !important;
+    color:#F0B90B !important;
+    box-shadow: inset 0 -2px 0 #F0B90B;
+}
+
+/* 设置面板 */
+#SettingsPanel
+{
+    background-color:#1E2329 !important;
+    border:1px solid #2B3139 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.SettingsItem
+{
+    background-color: transparent !important;
+    color:#B7BDC6;
+    transition: background-color .15s, color .15s;
+}
+.SettingsItem:hover
+{
+    background-color: rgba(240,185,11,0.08);
+    color:#F0B90B;
+}
+.SettingsItem[data-active='1']
+{
+    color:#F0B90B;
+    font-weight:600;
+}
+
+/* watchlist 左侧栏 */
+#LeftPanel
+{
+    background-color:#181A20;
+    border-right: 1px solid #2B3139 !important;
+}
+#WatchlistInputWrap input, #WatchlistInput
+{
+    background-color:#1E2329 !important;
+    border:1px solid #2B3139 !important;
+    color:#EAECEF !important;
+}
+#WatchlistInputWrap input:focus, #WatchlistInput:focus
+{
+    border-color: #F0B90B !important;
+    outline: none !important;
+}
+#WatchlistAddButton, #SyncPortfolioButton, #LeftPanelToggle
+{
+    background-color: transparent !important;
+    border:1px solid #2B3139 !important;
+    color:#B7BDC6 !important;
+    transition: background-color .15s, color .15s, border-color .15s;
+}
+#WatchlistAddButton:hover, #SyncPortfolioButton:hover, #LeftPanelToggle:hover
+{
+    background-color: rgba(240,185,11,0.08) !important;
+    border-color: #F0B90B !important;
+    color:#F0B90B !important;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: #2B3139;
+    border-radius: 6px;
+    border: 2px solid #0B0E11;
+}
+::-webkit-scrollbar-thumb:hover { background: #474D57; }
+
+/* 表单 / 输入 通用深色 */
+input, button, select { font-family: inherit; }
+input[type='text'], input[type='search'], input[type='number']
+{
+    background-color:#1E2329;
+    border:1px solid #2B3139;
+    color:#EAECEF;
+}
+input[type='text']:focus, input[type='search']:focus, input[type='number']:focus
+{
+    border-color:#F0B90B;
+    outline:none;
+}
+
+/* WatchlistStatus 错误用降色 */
+#WatchlistStatus[data-state='error']
+{
+    color:#F6465D !important;
+}
+
+/* ── VFin · 右侧（CenterPanel）字号紧凑化 — 对齐 Binance trade 页 ───
+   原 body=14px，PeriodTab line-height=30px 偏大；Binance trade 实测
+   周期 tab ≈12px / 30px 行高其实没问题但视觉重——这里把字号压到 12px
+   并稍微收紧 padding，与币安顶部 K 线周期切换条匹配。 */
+#PeriodTab
+{
+    line-height: 28px !important;
+}
+#PeriodTab .TabItem,
+#PeriodTab .PeriodItem,
+#SettingsMenu,
+#StockChip,
+#BeforeOpen,
+#DrawTool
+{
+    font-size: 12px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+.SettingsItem
+{
+    font-size: 12px !important;
+    line-height: 28px !important;
+}
+
+/* ── VFin · 财务指标条（CenterPanel 顶部） ─────────────────── */
+/* ── 财务条 (参考 Binance trade 页右上角统计 — 紧凑、低对比、左对齐) ── */
+#CompanyFinanceBar
+{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    min-height: 36px;
+    padding: 5px 10px;
+    background-color: #181A20;
+    border-bottom: 1px solid #2B3139;
+    font-size: 11px;
+    line-height: 1.2;
+    color: #B7BDC6;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    cursor: auto;
+}
+#CompanyFinanceBar *
+{
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+}
+#CompanyFinanceBar .cf-name
+{
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    margin-right: 12px;
+}
+#CompanyFinanceBar .cf-name b
+{
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #EAECEF;
+}
+#CompanyFinanceBar .cf-name .cf-symbol
+{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #848E9C;
+}
+#CompanyFinanceBar .cf-item
+{
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    padding: 0 10px;
+    border-right: 1px solid rgba(43, 49, 57, 0.6);
+    font-variant-numeric: tabular-nums lining-nums;
+}
+#CompanyFinanceBar .cf-item:last-of-type { border-right: none; }
+#CompanyFinanceBar .cf-label
+{
+    color: #848E9C;
+    font-size: 10px;
+    line-height: 1;
+}
+#CompanyFinanceBar .cf-value
+{
+    color: #EAECEF;
+    font-family: 'IBM Plex Mono', 'Inter', monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.15;
+}
+#CompanyFinanceBar .cf-value.cf-empty { color: #5E6673; font-weight: 400; }
+#CompanyFinanceBar .cf-research
+{
+    margin-left: auto;
+    padding: 3px 8px;
+    font-size: 10.5px;
+    color: #F0B90B;
+    border: 1px solid rgba(240,185,11,0.35);
+    background: transparent;
+    border-radius: 3px;
+    text-decoration: none;
+    line-height: 1.3;
+    transition: background-color .15s, border-color .15s;
+}
+#CompanyFinanceBar .cf-research:hover
+{
+    background: rgba(240,185,11,0.10);
+    border-color: #F0B90B;
+}
+@media (max-width: 768px) {
+    #CompanyFinanceBar { font-size: 10.5px; padding: 4px 6px; min-height: 32px; }
+    #CompanyFinanceBar .cf-item { padding: 0 6px; }
+    #CompanyFinanceBar .cf-name { margin-right: 8px; }
+}
+</style>
+
+</body>
+</html>

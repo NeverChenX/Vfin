@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<title>键盘精灵</title>  
+    <link rel="stylesheet" href="../jscommon/umychart.resource/css/tools.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/font/iconfont.css" />
+</head>  
+<body>
+
+    <div id="kline"></div>
+
+    <script src="../jscommon/umychart.resource/js/jquery.min.js"></script>
+    <script src="../jscommon/umychart.resource/js/webfont.js"></script>
+    <script src='../jscommon/umychart.console.js'></script>     <!-- 日志输出 -->
+    <script src="../jscommon/umychart.network.js"></script>     <!-- 网络请求分装 -->
+    <script src="../jscommon/umychart.js"></script>             <!-- K线图形 -->
+    <script src="../jscommon/umychart.complier.js"></script>    <!-- 麦语言解析执行器 -->
+    <script src="../jscommon/umychart.index.data.js"></script>  <!-- 基础指标库 -->
+    <script src="../jscommon/umychart.style.js"></script>       <!-- 白色风格和黑色风格配置信息 -->
+    <script src="../jscommon/umychart.popMenu.js"></script>
+    <script src="../jscommon/umychart.DialogDrawTool.js"></script>
+    <script src="../jscommon/umychart.PopMinuteChart.js"></script>
+    <script src="../jscommon/umychart.report.js"></script>
+    <script src="../jscommon/umychart.keyboard.js"></script>
+    <script src="../jscommon/umychart.PopKeyboard.js"></script>
+    <script src="../jscommon/umychart.version.js"></script>
+
+    <script src="../jscommon/umychart.NetworkFilterTest.js"></script>
+    <script src="../jscommon/umychart.testdata/symbollist_shsz.js"></script>
+    
+    <script>
+
+        //简单的把K线控件封装下
+        function KLineChart(divKLine)
+        {
+            this.DivKLine=divKLine;
+            this.Chart=JSChart.Init(divKLine);   //把K线图绑定到一个Div上
+           
+            //K线配置信息
+            this.Option= 
+            {
+                Type:'历史K线图',   //创建图形类型
+    
+                Windows: //窗口指标
+                [
+                    {Index:"MA"},
+                    {Index:"MACD"},
+                    {Index:"RSI"},
+                ], 
+
+
+                EnableYDrag:
+                {
+                    Right:true,
+                    Left:true,
+                },
+
+                Symbol:"600000.sh",
+                IsAutoUpdate:true,       //是自动更新数据
+                AutoUpdateFrequency:30000,   //数据更新频率
+                
+                EnablePopMenuV2:true,
+                IsShowRightMenu:true,          //右键菜单
+                CorssCursorInfo: { Right:2, DateFormatType:3, HPenType:1, VPenType:1 ,VLineType:0,RightButton:{ Enable:true }, IsShowCorss:true, PriceFormatType:0, DataFormatType:0 },
+                EnableZoomIndexWindow:true,
+
+                KLine:  //K线设置
+                {
+                    DragMode:1,                 //拖拽模式 0 禁止拖拽 1 数据拖拽 2 区间选择
+                    Right:0,                    //复权 0 不复权 1 前复权 2 后复权
+                    Period:0,                   //周期 0 日线 1 周线 2 月线 3 年线 
+                    MaxRequestDataCount:600,   //数据个数
+                    MaxRequestMinuteDayCount:5, //分钟数据获取几天数据  默认取5天数据
+                    PageSize:50,               //一屏显示多少数据
+                    IsShowTooltip:true,                 //是否显示K线提示信息
+                    DrawType:0,      //K线类型 0=实心K线柱子 1=收盘价线 2=美国线 3=空心K线柱子 4=收盘价面积图
+                    KLineDoubleClick:false, //禁止双击弹框
+                    RightSpaceCount:3,
+                    ZoomType:0,
+                    
+                    //DataWidth:5
+                },
+
+                EnableIndexChartDrag:true,
+    
+                KLineTitle: //标题设置
+                {
+                    IsShowName:true,       //不显示股票名称
+                    IsShowSettingInfo:true //不显示周期/复权
+                },
+    
+                Border: //边框
+                {
+                    Left:0,         //左边间距
+                    Right:90,       //右边间距
+                    Bottom:25,      //底部间距
+                    Top:25,         //顶部间距
+
+                    //AutoLeft:{ Blank:10, MinWidth:30 },
+                    AutoRight:{ Blank:5, MinWidth:60 },
+                },
+                
+                Frame:  //子框架设置
+                [
+                   
+                ]
+            };
+                 
+            this.Create=function()  //创建图形
+            {
+                var self=this;
+                $(window).resize(function() { self.OnSize( ); });    //绑定窗口大小变化事件
+
+                var blackStyle=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取黑色风格配置
+                //blackStyle.DisableLogo=true;
+
+                JSChart.SetStyle(blackStyle);
+                this.DivKLine.style.backgroundColor=blackStyle.BGColor; //设置最外面的div背景
+
+                JSChart.GetResource().ToolbarButtonStyle=1;
+
+                this.OnSize();  //让K线全屏
+                this.Option.NetworkFilter=(data, callback)=>{ HQData.NetworkFilter(data, callback); }
+                this.Chart.SetOption(this.Option);  //设置K线配置
+            }
+
+            this.OnSize=function(option)  //自适应大小调整
+            {
+                var height= $(window).height();
+                var width = $(window).width();
+                //width=50000;
+                this.DivKLine.style.top='0px';
+                this.DivKLine.style.left='0px';
+                this.DivKLine.style.width=width+'px';
+                this.DivKLine.style.height=height+'px';
+                this.Chart.OnSize(option);
+            }
+
+            this.ChangeSymbol=function(symbol)
+            {
+                this.Chart.ChangeSymbol(symbol);
+            }
+        }
+
+            
+        $(function () 
+        {
+            WebFont.load({ custom: { families: ['iconfont'] } });   //预加载下iconfont资源
+
+            var klineControl=new KLineChart(document.getElementById('kline'));
+            klineControl.Create();
+
+            var hqKeyboard=new JSPopKeyboard();
+
+            hqKeyboard.Keyboard.Option.EventCallback=
+            [
+                {
+                    event:JSCHART_EVENT_ID.ON_KEYBOARD_SELECTED,    //切换股票
+                    callback:(event, data, obj)=>
+                    { 
+                        console.log("[JSCHART_EVENT_ID.ON_KEYBOARD_SELECTED] data", data)
+                        hqKeyboard.Hide();
+
+                        if (!data || !data.RowData) return;
+                        
+                        var selItem=data.RowData;
+                        if (selItem.Data.Type===0)
+                        {
+                            klineControl.Chart.Focus();
+                            klineControl.ChangeSymbol(selItem.Data.Symbol);
+                        }
+                        else if (selItem.Data.Type===1)
+                        {
+                            klineControl.Chart.Focus();
+                            klineControl.Chart.ChangeIndex(0,selItem.Data.Index);
+                        }
+                        else if (selItem.Data.Type===2)
+                        {
+                            alert(`跳转'${selItem.Data.PageName}'页面`);
+                        }
+                    }
+                },
+            ]
+
+            hqKeyboard.Inital();
+            hqKeyboard.Create();
+            HQData.Keyboard_RequestSymbolList(null, (data)=>{ hqKeyboard.SetSymbolData(data); });   //请求码表数据
+
+            document.addEventListener('keydown', (event) =>
+            {
+                var div=document.getElementById('kline'); 
+                if (div.contains(event.target)) //在K线上才出来键盘精灵
+                {
+                    hqKeyboard.OnGlobalKeydown(event) 
+                }
+            });
+
+            document.addEventListener("mousedown", (event)=>{  hqKeyboard.OnGlobalMouseDown(event) })
+
+            klineControl.Chart.Focus(); //设置焦点在K线上
+        })
+
+    </script>  
+</body>  
+</html>
+
+
+<style>
+
+.kline
+{
+    position: relative
+}
+
+        
+</style>

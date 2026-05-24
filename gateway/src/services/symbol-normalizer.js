@@ -1,0 +1,79 @@
+function createInvalidSymbolError(input) {
+  const value = typeof input === 'string' ? input : '';
+  const error = new Error(`Invalid symbol: ${value}`);
+  error.statusCode = 400;
+  return error;
+}
+
+export function normalizeSymbol(input) {
+  if (typeof input !== 'string') {
+    throw createInvalidSymbolError(input);
+  }
+
+  const value = input.trim().toLowerCase();
+
+  if (!value) {
+    throw createInvalidSymbolError(input);
+  }
+
+  // 带明确市场后缀时直接信任，无需校验前缀（指数如 000001.sh 合法）
+  if (/^\d{6}\.sh$/.test(value)) {
+    return { market: 'sh', symbol: value };
+  }
+
+  if (/^\d{6}\.sz$/.test(value)) {
+    return { market: 'sz', symbol: value };
+  }
+
+  if (/^\d{5}\.hk$/.test(value)) {
+    return { market: 'hk', symbol: value };
+  }
+
+  // 港股指数 / 字母代码：HSI、HSCEI、HSTECH、CES100 等
+  // Tencent 端 URL 形如 `hkHSI`，buildTencentSymbol 已正确处理 ${market}${code}
+  if (/^[a-z]{2,6}\.hk$/.test(value)) {
+    const code = value.replace(/\.hk$/, '').toUpperCase();
+    return { market: 'hk', symbol: `${code}.hk` };
+  }
+
+  if (/^\d{6}$/.test(value)) {
+    if (value.startsWith('6')) {
+      return { market: 'sh', symbol: `${value}.sh` };
+    }
+
+    if (/^[03]/.test(value)) {
+      return { market: 'sz', symbol: `${value}.sz` };
+    }
+
+    // 可转债: 110xxx/113xxx → 上交所, 123xxx/127xxx/128xxx → 深交所
+    if (/^(110|113)/.test(value)) {
+      return { market: 'sh', symbol: `${value}.sh` };
+    }
+
+    if (/^(123|127|128)/.test(value)) {
+      return { market: 'sz', symbol: `${value}.sz` };
+    }
+
+    throw createInvalidSymbolError(input);
+  }
+
+  if (/^\d{1,5}$/.test(value)) {
+    return {
+      market: 'hk',
+      symbol: `${value.padStart(5, '0')}.hk`
+    };
+  }
+
+  // 美股代码可能含子类后缀（BRK.B、BF.B 等），保留代码段中的点
+  if (/^[a-z]{1,5}(\.[a-z]{1,3})?\.us$/.test(value)) {
+    const lastDot = value.lastIndexOf('.');
+    const code = value.slice(0, lastDot);
+    return { market: 'us', symbol: `${code.toUpperCase()}.us` };
+  }
+
+  if (/^[a-z]{1,5}(\.[a-z]{1,3})?$/.test(value)) {
+    return { market: 'us', symbol: `${value.toUpperCase()}.us` };
+  }
+
+  throw createInvalidSymbolError(input);
+}

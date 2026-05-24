@@ -1,0 +1,1210 @@
+{
+  "ticker": "01811",
+  "name": "中广核新能源",
+  "nameEn": "CGN New Energy Holdings Co., Ltd.",
+  "industry": "能源电力",
+  "market": "HK",
+  "currency": "USD",
+  "unit": "yuan",
+  "accountingStandard": "IFRS",
+  "statements": {
+    "IS": {
+      "periods": [
+        {
+          "period": {
+            "year": 2021,
+            "granularity": "Y"
+          },
+          "values": {
+            "rev_main": 1694658000,
+            "rev_other": 0,
+            "rev_total": 1694658000,
+            "cogs_main": 1036219000,
+            "cogs_other": 0,
+            "gross_profit": 658439000,
+            "selling_exp": 0,
+            "admin_exp": 96680000,
+            "rd_exp": 0,
+            "da_exp": null,
+            "asset_impairment": -20292000,
+            "credit_impairment": 0,
+            "fair_value_change": 0,
+            "other_op_inc": 41351000,
+            "ebit": 461265000.0,
+            "interest_exp": 188216000,
+            "interest_inc": null,
+            "invest_inc": -37551000,
+            "fx_gain": null,
+            "non_op_net": null,
+            "ebt": 235498000,
+            "tax_exp": 33774000,
+            "ni_parent": 184762000,
+            "ni_minority": 16962000,
+            "net_income": 201724000,
+            "oci": -14511000,
+            "compr_inc": 187213000
+          }
+        },
+        {
+          "period": {
+            "year": 2022,
+            "granularity": "Y"
+          },
+          "values": {
+            "rev_main": 2430056000,
+            "rev_other": 0,
+            "rev_total": 2430056000,
+            "cogs_main": 1583271000,
+            "cogs_other": 0,
+            "gross_profit": 846785000,
+            "selling_exp": 0,
+            "admin_exp": 109395000,
+            "rd_exp": 0,
+            "da_exp": null,
+            "asset_impairment": 2791000,
+            "credit_impairment": 0,
+            "fair_value_change": 0,
+            "other_op_inc": -26301000,
+            "ebit": 563351000.0,
+            "interest_exp": 227105000,
+            "interest_inc": null,
+            "invest_inc": -63252000,
+            "fx_gain": null,
+            "non_op_net": null,
+            "ebt": 272994000,
+            "tax_exp": 58573000,
+            "ni_parent": 195143000,
+            "ni_minority": 19278000,
+            "net_income": 214421000,
+            "oci": -187718000,
+            "compr_inc": 26703000
+          }
+        },
+        {
+          "period": {
+            "year": 2023,
+            "granularity": "Y"
+          },
+          "values": {
+            "rev_main": 2192977000,
+            "rev_other": 0,
+            "rev_total": 2192977000,
+            "cogs_main": 1520171000,
+            "cogs_other": 0,
+            "gross_profit": 672806000,
+            "selling_exp": 0,
+            "admin_exp": 120313000,
+            "rd_exp": 0,
+            "da_exp": null,
+            "asset_impairment": 8593000,
+            "credit_impairment": 0,
+            "fair_value_change": 0,
+            "other_op_inc": 9778000,
+            "ebit": 562271000.0,
+            "interest_exp": 212765000,
+            "interest_inc": null,
+            "invest_inc": 3022000,
+            "fx_gain": null,
+            "non_op_net": null,
+            "ebt": 352528000,
+            "tax_exp": 72895000,
+            "ni_parent": 267685000,
+            "ni_minority": 11948000,
+            "net_income": 279633000,
+            "oci": -51123000,
+            "compr_inc": 228510000
+          }
+        },
+        {
+          "period": {
+            "year": 2024,
+            "granularity": "Y"
+          },
+          "values": {
+            "rev_main": 1951339000,
+            "rev_other": 0,
+            "rev_total": 1951339000,
+            "cogs_main": 1117436000,
+            "cogs_other": 0,
+            "gross_profit": 833903000,
+            "selling_exp": 0,
+            "admin_exp": 131050000,
+            "rd_exp": 0,
+            "da_exp": null,
+            "asset_impairment": 19271000,
+            "credit_impairment": 0,
+            "fair_value_change": 0,
+            "other_op_inc": -14102000,
+            "ebit": 514232000.0,
+            "interest_exp": 181231000,
+            "interest_inc": null,
+            "invest_inc": 4251000,
+            "fx_gain": null,
+            "non_op_net": null,
+            "ebt": 337252000,
+            "tax_exp": 78971000,
+            "ni_parent": 248018000,
+            "ni_minority": 10263000,
+            "net_income": 258281000,
+            "oci": -114298000,
+            "compr_inc": 143983000
+          }
+        },
+        {
+          "period": {
+            "year": 2025,
+            "granularity": "Y"
+          },
+          "values": {
+            "rev_main": 1692850000,
+            "rev_other": 0,
+            "rev_total": 1692850000,
+            "cogs_main": 900008000,
+            "cogs_other": 0,
+            "gross_profit": 792842000,
+            "selling_exp": 0,
+            "admin_exp": 125114000,
+            "rd_exp": 0,
+            "da_exp": null,
+            "asset_impairment": -347000,
+            "credit_impairment": 0,
+            "fair_value_change": 0,
+            "other_op_inc": 27692000,
+            "ebit": 508435000.0,
+            "interest_exp": 158928000,
+            "interest_inc": null,
+            "invest_inc": 16399000,
+            "fx_gain": null,
+            "non_op_net": null,
+            "ebt": 365906000,
+            "tax_exp": 80798000,
+            "ni_parent": 275868000,
+            "ni_minority": 9240000,
+            "net_income": 285108000,
+            "oci": 42725000,
+            "compr_inc": 327833000
+          }
+        }
+      ]
+    },
+    "BS": {
+      "periods": [
+        {
+          "period": {
+            "year": 2021,
+            "granularity": "Y"
+          },
+          "values": {
+            "cash": 378136000,
+            "pledged_deposits": 157730000,
+            "st_investments": 0,
+            "notes_receivable": 0,
+            "ar": 744471000,
+            "inventory": 54209000,
+            "contract_assets_cur": 186735000,
+            "prepayments": 123141000,
+            "income_tax_recv": 214000,
+            "deriv_assets_cur": 8454000,
+            "other_ca": null,
+            "total_ca": 1659411000,
+            "ppe": 6195027000,
+            "rou_assets": 100315000,
+            "cip": 0,
+            "investment_property": 0,
+            "lt_equity_inv": 149238000,
+            "goodwill": 168798000,
+            "intangibles": 0,
+            "deferred_tax_assets": 23322000,
+            "other_nca": null,
+            "total_nca": 7014247000,
+            "total_assets": 8673658000,
+            "st_debt": 1925970000,
+            "lt_debt_current": null,
+            "notes_payable": 0,
+            "ap": 129505000,
+            "income_tax_payable": 12299000,
+            "contract_liab_cur": 4719000,
+            "lease_liab_cur": 6899000,
+            "deriv_liab_cur": 0,
+            "other_cl": null,
+            "total_cl": 2805144000,
+            "lt_debt": 4339209000,
+            "bonds_payable": 0,
+            "lease_liab_noncur": 28648000,
+            "deferred_tax_liab": 49415000,
+            "lt_deferred_revenue": 0,
+            "other_ncl": null,
+            "total_ncl": 4433318000,
+            "total_liab": 7238462000,
+            "share_capital": 55000,
+            "capital_reserve": 0,
+            "treasury_stock": 0,
+            "other_reserves": 1313497000,
+            "retained_earnings": 0,
+            "parent_equity": 1313552000,
+            "minority_equity": 121644000,
+            "total_equity": 1435196000,
+            "total_liab_equity": 8673658000
+          }
+        },
+        {
+          "period": {
+            "year": 2022,
+            "granularity": "Y"
+          },
+          "values": {
+            "cash": 455005000,
+            "pledged_deposits": 152270000,
+            "st_investments": 0,
+            "notes_receivable": 0,
+            "ar": 739314000,
+            "inventory": 66328000,
+            "contract_assets_cur": 354219000,
+            "prepayments": 111458000,
+            "income_tax_recv": 524000,
+            "deriv_assets_cur": 8300000,
+            "other_ca": null,
+            "total_ca": 1892912000,
+            "ppe": 5812394000,
+            "rou_assets": 105248000,
+            "cip": 0,
+            "investment_property": 0,
+            "lt_equity_inv": 74268000,
+            "goodwill": 154596000,
+            "intangibles": 0,
+            "deferred_tax_assets": 24757000,
+            "other_nca": null,
+            "total_nca": 6451021000,
+            "total_assets": 8343933000,
+            "st_debt": 1609344000,
+            "lt_debt_current": null,
+            "notes_payable": 0,
+            "ap": 223028000,
+            "income_tax_payable": 30390000,
+            "contract_liab_cur": 4569000,
+            "lease_liab_cur": 4864000,
+            "deriv_liab_cur": 0,
+            "other_cl": null,
+            "total_cl": 2467451000,
+            "lt_debt": 4283679000,
+            "bonds_payable": 0,
+            "lease_liab_noncur": 32378000,
+            "deferred_tax_liab": 48484000,
+            "lt_deferred_revenue": 0,
+            "other_ncl": null,
+            "total_ncl": 4376623000,
+            "total_liab": 6844074000,
+            "share_capital": 55000,
+            "capital_reserve": 0,
+            "treasury_stock": 0,
+            "other_reserves": 1362469000,
+            "retained_earnings": 0,
+            "parent_equity": 1362524000,
+            "minority_equity": 137335000,
+            "total_equity": 1499859000,
+            "total_liab_equity": 8343933000
+          }
+        },
+        {
+          "period": {
+            "year": 2023,
+            "granularity": "Y"
+          },
+          "values": {
+            "cash": 301666000,
+            "pledged_deposits": 111735000,
+            "st_investments": 0,
+            "notes_receivable": 0,
+            "ar": 766028000,
+            "inventory": 44648000,
+            "contract_assets_cur": 368146000,
+            "prepayments": 163171000,
+            "income_tax_recv": 19000,
+            "deriv_assets_cur": 0,
+            "other_ca": null,
+            "total_ca": 1767975000,
+            "ppe": 5883410000,
+            "rou_assets": 131916000,
+            "cip": 0,
+            "investment_property": 0,
+            "lt_equity_inv": 75929000,
+            "goodwill": 143352000,
+            "intangibles": 0,
+            "deferred_tax_assets": 27004000,
+            "other_nca": null,
+            "total_nca": 6582167000,
+            "total_assets": 8350142000,
+            "st_debt": 1311959000,
+            "lt_debt_current": null,
+            "notes_payable": 0,
+            "ap": 108671000,
+            "income_tax_payable": 24061000,
+            "contract_liab_cur": 3959000,
+            "lease_liab_cur": 6209000,
+            "deriv_liab_cur": 0,
+            "other_cl": null,
+            "total_cl": 2002626000,
+            "lt_debt": 4546302000,
+            "bonds_payable": 0,
+            "lease_liab_noncur": 45398000,
+            "deferred_tax_liab": 52203000,
+            "lt_deferred_revenue": 0,
+            "other_ncl": null,
+            "total_ncl": 4658957000,
+            "total_liab": 6661583000,
+            "share_capital": 55000,
+            "capital_reserve": 0,
+            "treasury_stock": 0,
+            "other_reserves": 1544536000,
+            "retained_earnings": 0,
+            "parent_equity": 1544591000,
+            "minority_equity": 143968000,
+            "total_equity": 1688559000,
+            "total_liab_equity": 8350142000
+          }
+        },
+        {
+          "period": {
+            "year": 2024,
+            "granularity": "Y"
+          },
+          "values": {
+            "cash": 158377000,
+            "pledged_deposits": 162018000,
+            "st_investments": 0,
+            "notes_receivable": 0,
+            "ar": 886638000,
+            "inventory": 53972000,
+            "contract_assets_cur": 390810000,
+            "prepayments": 131122000,
+            "income_tax_recv": 0,
+            "deriv_assets_cur": 583000,
+            "other_ca": null,
+            "total_ca": 1795027000,
+            "ppe": 6124678000,
+            "rou_assets": 189862000,
+            "cip": 0,
+            "investment_property": 0,
+            "lt_equity_inv": 78777000,
+            "goodwill": 137947000,
+            "intangibles": 0,
+            "deferred_tax_assets": 30194000,
+            "other_nca": null,
+            "total_nca": 6922681000,
+            "total_assets": 8717708000,
+            "st_debt": 1889933000,
+            "lt_debt_current": null,
+            "notes_payable": 0,
+            "ap": 46577000,
+            "income_tax_payable": 32614000,
+            "contract_liab_cur": 3237000,
+            "lease_liab_cur": 11295000,
+            "deriv_liab_cur": 0,
+            "other_cl": null,
+            "total_cl": 2431693000,
+            "lt_debt": 4412727000,
+            "bonds_payable": 0,
+            "lease_liab_noncur": 55564000,
+            "deferred_tax_liab": 42436000,
+            "lt_deferred_revenue": 0,
+            "other_ncl": null,
+            "total_ncl": 4526478000,
+            "total_liab": 6958171000,
+            "share_capital": 55000,
+            "capital_reserve": 0,
+            "treasury_stock": 0,
+            "other_reserves": 1617617000,
+            "retained_earnings": 0,
+            "parent_equity": 1617672000,
+            "minority_equity": 141865000,
+            "total_equity": 1759537000,
+            "total_liab_equity": 8717708000
+          }
+        },
+        {
+          "period": {
+            "year": 2025,
+            "granularity": "Y"
+          },
+          "values": {
+            "cash": 164620000,
+            "pledged_deposits": 68507000,
+            "st_investments": 0,
+            "notes_receivable": 0,
+            "ar": 819381000,
+            "inventory": 44222000,
+            "contract_assets_cur": 498819000,
+            "prepayments": 124321000,
+            "income_tax_recv": 0,
+            "deriv_assets_cur": 0,
+            "other_ca": null,
+            "total_ca": 1736820000,
+            "ppe": 6550186000,
+            "rou_assets": 245976000,
+            "cip": 0,
+            "investment_property": 0,
+            "lt_equity_inv": 97071000,
+            "goodwill": 131211000,
+            "intangibles": 0,
+            "deferred_tax_assets": 29382000,
+            "other_nca": null,
+            "total_nca": 7353843000,
+            "total_assets": 9090663000,
+            "st_debt": 2696313000,
+            "lt_debt_current": null,
+            "notes_payable": 0,
+            "ap": 29749000,
+            "income_tax_payable": 26193000,
+            "contract_liab_cur": 721000,
+            "lease_liab_cur": 6525000,
+            "deriv_liab_cur": 0,
+            "other_cl": null,
+            "total_cl": 3148826000,
+            "lt_debt": 3775585000,
+            "bonds_payable": 0,
+            "lease_liab_noncur": 74037000,
+            "deferred_tax_liab": 43956000,
+            "lt_deferred_revenue": 0,
+            "other_ncl": null,
+            "total_ncl": 3924190000,
+            "total_liab": 7073016000,
+            "share_capital": 55000,
+            "capital_reserve": 0,
+            "treasury_stock": 0,
+            "other_reserves": 1873037000,
+            "retained_earnings": 0,
+            "parent_equity": 1873092000,
+            "minority_equity": 144555000,
+            "total_equity": 2017647000,
+            "total_liab_equity": 9090663000
+          }
+        }
+      ]
+    },
+    "CF": {
+      "periods": [
+        {
+          "period": {
+            "year": 2021,
+            "granularity": "Y"
+          },
+          "values": {
+            "ebt_for_cf": 235498000,
+            "da_cfo": 272190000,
+            "impairment_cfo": 4335000,
+            "sbc_cfo": null,
+            "other_non_cash": 238503000,
+            "chg_receivables": -325777000,
+            "chg_inventory": -32212000,
+            "chg_payables": 66924000,
+            "chg_other_wc": -136182000,
+            "interest_paid": -188216000,
+            "tax_paid": -37637000,
+            "net_op_cf": 285642000,
+            "capex": -1210195000,
+            "disposal_ppe": 7127000,
+            "acquisitions": -8802000,
+            "divestitures": null,
+            "purchase_investments": null,
+            "sale_investments": null,
+            "interest_dividends_received": 28147000,
+            "other_investing": -37917000,
+            "net_inv_cf": -1221640000,
+            "debt_issued": 3133739000,
+            "debt_repaid": -1984798000,
+            "equity_issued": 26973000,
+            "equity_repurchased": -1414000,
+            "dividends_to_shareholders": -68300000,
+            "dividends_to_nci": -6657000,
+            "lease_principal_paid": -4938000,
+            "other_financing": null,
+            "net_fin_cf": 906389000,
+            "fx_effect_on_cash": 5758000,
+            "net_change_cash": -29609000,
+            "end_cash": 374999000,
+            "beg_cash": 398850000
+          }
+        },
+        {
+          "period": {
+            "year": 2022,
+            "granularity": "Y"
+          },
+          "values": {
+            "ebt_for_cf": 272994000,
+            "da_cfo": 340977000,
+            "impairment_cfo": 66648000,
+            "sbc_cfo": null,
+            "other_non_cash": 289513000,
+            "chg_receivables": -45954000,
+            "chg_inventory": -15030000,
+            "chg_payables": -68633000,
+            "chg_other_wc": -156444000,
+            "interest_paid": -222479000,
+            "tax_paid": -41690000,
+            "net_op_cf": 642381000,
+            "capex": -376014000,
+            "disposal_ppe": 1432000,
+            "acquisitions": null,
+            "divestitures": 14340000,
+            "purchase_investments": null,
+            "sale_investments": null,
+            "interest_dividends_received": 3557000,
+            "other_investing": -16479000,
+            "net_inv_cf": -373164000,
+            "debt_issued": 2624449000,
+            "debt_repaid": -2546714000,
+            "equity_issued": 24074000,
+            "equity_repurchased": -5048000,
+            "dividends_to_shareholders": -36952000,
+            "dividends_to_nci": -4085000,
+            "lease_principal_paid": -6628000,
+            "other_financing": null,
+            "net_fin_cf": -173383000,
+            "fx_effect_on_cash": -30187000,
+            "net_change_cash": 95834000,
+            "end_cash": 440646000,
+            "beg_cash": 374999000
+          }
+        },
+        {
+          "period": {
+            "year": 2023,
+            "granularity": "Y"
+          },
+          "values": {
+            "ebt_for_cf": 352528000,
+            "da_cfo": 352053000,
+            "impairment_cfo": 16340000,
+            "sbc_cfo": null,
+            "other_non_cash": 210062000,
+            "chg_receivables": -44935000,
+            "chg_inventory": 20212000,
+            "chg_payables": -114953000,
+            "chg_other_wc": -35048000,
+            "interest_paid": -211893000,
+            "tax_paid": -74709000,
+            "net_op_cf": 681550000,
+            "capex": -644633000,
+            "disposal_ppe": 7177000,
+            "acquisitions": null,
+            "divestitures": -16872000,
+            "purchase_investments": null,
+            "sale_investments": null,
+            "interest_dividends_received": 5778000,
+            "other_investing": 37371000,
+            "net_inv_cf": -611179000,
+            "debt_issued": 2598839000,
+            "debt_repaid": -2546444000,
+            "equity_issued": 5229000,
+            "equity_repurchased": null,
+            "dividends_to_shareholders": -39029000,
+            "dividends_to_nci": -3641000,
+            "lease_principal_paid": -15608000,
+            "other_financing": null,
+            "net_fin_cf": -212547000,
+            "fx_effect_on_cash": -10970000,
+            "net_change_cash": -142176000,
+            "end_cash": 287500000,
+            "beg_cash": 440646000
+          }
+        },
+        {
+          "period": {
+            "year": 2024,
+            "granularity": "Y"
+          },
+          "values": {
+            "ebt_for_cf": 337252000,
+            "da_cfo": 367897000,
+            "impairment_cfo": 39476000,
+            "sbc_cfo": null,
+            "other_non_cash": 204270000,
+            "chg_receivables": -156774000,
+            "chg_inventory": -15139000,
+            "chg_payables": -65849000,
+            "chg_other_wc": -125732000,
+            "interest_paid": -184085000,
+            "tax_paid": -82775000,
+            "net_op_cf": 502626000,
+            "capex": -926427000,
+            "disposal_ppe": 39913000,
+            "acquisitions": null,
+            "divestitures": null,
+            "purchase_investments": null,
+            "sale_investments": null,
+            "interest_dividends_received": 2984000,
+            "other_investing": -51202000,
+            "net_inv_cf": -934732000,
+            "debt_issued": 2145441000,
+            "debt_repaid": -1572703000,
+            "equity_issued": 11457000,
+            "equity_repurchased": -14425000,
+            "dividends_to_shareholders": -66921000,
+            "dividends_to_nci": -4028000,
+            "lease_principal_paid": -17720000,
+            "other_financing": null,
+            "net_fin_cf": 297016000,
+            "fx_effect_on_cash": 5967000,
+            "net_change_cash": -135090000,
+            "end_cash": 158377000,
+            "beg_cash": 287500000
+          }
+        },
+        {
+          "period": {
+            "year": 2025,
+            "granularity": "Y"
+          },
+          "values": {
+            "ebt_for_cf": 365906000,
+            "da_cfo": 383932000,
+            "impairment_cfo": 8871000,
+            "sbc_cfo": null,
+            "other_non_cash": 126546000,
+            "chg_receivables": 81980000,
+            "chg_inventory": 9700000,
+            "chg_payables": -11792000,
+            "chg_other_wc": -75296000,
+            "interest_paid": -168475000,
+            "tax_paid": -83819000,
+            "net_op_cf": 806028000,
+            "capex": -750439000,
+            "disposal_ppe": 2999000,
+            "acquisitions": null,
+            "divestitures": 55144000,
+            "purchase_investments": null,
+            "sale_investments": null,
+            "interest_dividends_received": 2729000,
+            "other_investing": 96642000,
+            "net_inv_cf": -592925000,
+            "debt_issued": 1833715000,
+            "debt_repaid": -1794765000,
+            "equity_issued": 930000,
+            "equity_repurchased": -4974000,
+            "dividends_to_shareholders": -62005000,
+            "dividends_to_nci": -5671000,
+            "lease_principal_paid": -20750000,
+            "other_financing": null,
+            "net_fin_cf": -221995000,
+            "fx_effect_on_cash": 15135000,
+            "net_change_cash": -8892000,
+            "end_cash": 164620000,
+            "beg_cash": 158377000
+          }
+        }
+      ]
+    }
+  },
+  "ratios": [
+    {
+      "period": {
+        "year": 2021,
+        "granularity": "Y"
+      },
+      "values": {
+        "market_cap": 35013123840,
+        "market_cap_currency": "HKD",
+        "total_shares": 4290824000,
+        "pe_ttm": 20.4879,
+        "pb": 3.4574,
+        "ps_ttm": 3.3336,
+        "pcf_ttm": 14.9342,
+        "dividend_yield": 0.0151
+      }
+    },
+    {
+      "period": {
+        "year": 2022,
+        "granularity": "Y"
+      },
+      "values": {
+        "market_cap": 11585224800,
+        "market_cap_currency": "HKD",
+        "total_shares": 4290824000,
+        "pe_ttm": 7.3514,
+        "pb": 1.0687,
+        "ps_ttm": 0.7276,
+        "pcf_ttm": 3.1181,
+        "dividend_yield": 0.0249
+      }
+    },
+    {
+      "period": {
+        "year": 2023,
+        "granularity": "Y"
+      },
+      "values": {
+        "market_cap": 8624556240,
+        "market_cap_currency": "HKD",
+        "total_shares": 4290824000,
+        "pe_ttm": 5.1471,
+        "pb": 0.7489,
+        "ps_ttm": 0.4391,
+        "pcf_ttm": 1.6737,
+        "dividend_yield": 0.0355
+      }
+    },
+    {
+      "period": {
+        "year": 2024,
+        "granularity": "Y"
+      },
+      "values": {
+        "market_cap": 10252918360,
+        "market_cap_currency": "HKD",
+        "total_shares": 4289924000,
+        "pe_ttm": 5.1942,
+        "pb": 0.8106,
+        "ps_ttm": 0.6738,
+        "pcf_ttm": 2.1804,
+        "dividend_yield": 0.0511
+      }
+    },
+    {
+      "period": {
+        "year": 2025,
+        "granularity": "Y"
+      },
+      "values": {
+        "market_cap": 10681910760,
+        "market_cap_currency": "HKD",
+        "total_shares": 4289924000,
+        "pe_ttm": 6.0125,
+        "pb": 0.7707,
+        "ps_ttm": 0.7521,
+        "pcf_ttm": 2.5162,
+        "dividend_yield": 0.0451
+      }
+    }
+  ],
+  "_source": "本地权威CSV · lixinger + 年报 PDF (cgnne.com IR) · CFO/CFI/CFF Indirect Method",
+  "_fetchedAt": "2026-05-13T15:26:18.145603Z",
+  "_validation": {
+    "passedAt": "2026-05-13T14:41:22.156587Z",
+    "passed": true,
+    "sources": {
+      "primary": {
+        "name": "公司 IR 站年报 PDF (5 份: ar2021/2022/2023/2024/2025)",
+        "url": "http://www.cgnne.com/encgnneh/c100585/list.shtml",
+        "fetchedAt": "2026-05-13T17:42:00Z"
+      },
+      "secondary": {
+        "name": "lixinger 个人版 CSV (5 年三表)",
+        "url": "/home/Neverchen/project/File/5年三表",
+        "fetchedAt": "2026-05-12T14:14:55Z"
+      }
+    },
+    "checks": [
+      {
+        "field": "CF.net_op_cf",
+        "period": "2021-Y",
+        "primary": 285642000,
+        "secondary": 285642000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_inv_cf",
+        "period": "2021-Y",
+        "primary": -1221640000,
+        "secondary": -1221640000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_fin_cf",
+        "period": "2021-Y",
+        "primary": 906389000,
+        "secondary": 906389000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_change_cash",
+        "period": "2021-Y",
+        "primary": -29609000,
+        "secondary": -29609000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.beg_cash",
+        "period": "2021-Y",
+        "primary": 398850000,
+        "secondary": 398850000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.end_cash",
+        "period": "2021-Y",
+        "primary": 374999000,
+        "secondary": 374999000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_op_cf",
+        "period": "2022-Y",
+        "primary": 642381000,
+        "secondary": 642381000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_inv_cf",
+        "period": "2022-Y",
+        "primary": -373164000,
+        "secondary": -373164000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_fin_cf",
+        "period": "2022-Y",
+        "primary": -173383000,
+        "secondary": -173383000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_change_cash",
+        "period": "2022-Y",
+        "primary": 95834000,
+        "secondary": 95834000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.beg_cash",
+        "period": "2022-Y",
+        "primary": 374999000,
+        "secondary": 374999000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.end_cash",
+        "period": "2022-Y",
+        "primary": 440646000,
+        "secondary": 440646000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_op_cf",
+        "period": "2023-Y",
+        "primary": 681550000,
+        "secondary": 681550000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_inv_cf",
+        "period": "2023-Y",
+        "primary": -611179000,
+        "secondary": -611179000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_fin_cf",
+        "period": "2023-Y",
+        "primary": -212547000,
+        "secondary": -212547000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_change_cash",
+        "period": "2023-Y",
+        "primary": -142176000,
+        "secondary": -142176000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.beg_cash",
+        "period": "2023-Y",
+        "primary": 440646000,
+        "secondary": 440646000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.end_cash",
+        "period": "2023-Y",
+        "primary": 287500000,
+        "secondary": 287500000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_op_cf",
+        "period": "2024-Y",
+        "primary": 502626000,
+        "secondary": 502626000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_inv_cf",
+        "period": "2024-Y",
+        "primary": -934732000,
+        "secondary": -934732000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_fin_cf",
+        "period": "2024-Y",
+        "primary": 297016000,
+        "secondary": 297016000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_change_cash",
+        "period": "2024-Y",
+        "primary": -135090000,
+        "secondary": -135090000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.beg_cash",
+        "period": "2024-Y",
+        "primary": 287500000,
+        "secondary": 287500000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.end_cash",
+        "period": "2024-Y",
+        "primary": 158377000,
+        "secondary": 158377000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_op_cf",
+        "period": "2025-Y",
+        "primary": 806028000,
+        "secondary": 806028000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_inv_cf",
+        "period": "2025-Y",
+        "primary": -592925000,
+        "secondary": -592925000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_fin_cf",
+        "period": "2025-Y",
+        "primary": -221995000,
+        "secondary": -221995000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.net_change_cash",
+        "period": "2025-Y",
+        "primary": -8892000,
+        "secondary": -8892000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.beg_cash",
+        "period": "2025-Y",
+        "primary": 158377000,
+        "secondary": 158377000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "CF.end_cash",
+        "period": "2025-Y",
+        "primary": 164620000,
+        "secondary": 164620000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_assets",
+        "period": "2021-Y",
+        "primary": 8673658000,
+        "secondary": 8673658000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_liab",
+        "period": "2021-Y",
+        "primary": 7238462000,
+        "secondary": 7238462000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_equity",
+        "period": "2021-Y",
+        "primary": 1435196000,
+        "secondary": 1435196000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_assets",
+        "period": "2022-Y",
+        "primary": 8343933000,
+        "secondary": 8343933000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_liab",
+        "period": "2022-Y",
+        "primary": 6844074000,
+        "secondary": 6844074000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_equity",
+        "period": "2022-Y",
+        "primary": 1499859000,
+        "secondary": 1499859000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_assets",
+        "period": "2023-Y",
+        "primary": 8350142000,
+        "secondary": 8350142000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_liab",
+        "period": "2023-Y",
+        "primary": 6661583000,
+        "secondary": 6661583000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_equity",
+        "period": "2023-Y",
+        "primary": 1688559000,
+        "secondary": 1688559000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_assets",
+        "period": "2024-Y",
+        "primary": 8717708000,
+        "secondary": 8717708000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_liab",
+        "period": "2024-Y",
+        "primary": 6958171000,
+        "secondary": 6958171000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_equity",
+        "period": "2024-Y",
+        "primary": 1759537000,
+        "secondary": 1759537000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_assets",
+        "period": "2025-Y",
+        "primary": 9090663000,
+        "secondary": 9090663000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_liab",
+        "period": "2025-Y",
+        "primary": 7073016000,
+        "secondary": 7073016000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      },
+      {
+        "field": "BS.total_equity",
+        "period": "2025-Y",
+        "primary": 2017647000,
+        "secondary": 2017647000.0,
+        "absDiff": 0.0,
+        "relDiff": 0.0,
+        "passed": true
+      }
+    ],
+    "notes": [
+      "2021 数据使用 ar2021.pdf 原版（非 ar2022.pdf restated），跟 lixinger 一致",
+      "IFRS interest_paid 计 CFF section，schema 字段位置在 CFO 区（CFA 教材标准）"
+    ]
+  }
+}

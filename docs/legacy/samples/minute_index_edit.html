@@ -1,0 +1,1005 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+
+<title>仿通达信公式编辑器-分时图</title>  
+    <!-- 加载资源 -->
+    <link rel="stylesheet" href="../jscommon/umychart.resource/font/iconfont.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/font/drawtool/iconfont.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/css/tools.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/js/codemirror/codemirror.css" />
+</head>  
+<body>
+    <div id="kline" style="width: 900px;height:400px;position: relative;"></div>
+    <div class="tools">
+        <div id="tools_top" class="top">
+            <span>指标名称：</span>
+            <input class="input" id="index_name" value="我的指标1"/>
+            <select class="changeIndex" id="window_index">
+                <option value="2">副图</option>
+                <option value="1">成交量图</option>
+                <option value="0">主图</option>
+            </select>
+
+            <button class="toolsButton" id="index_run">执行(切换指标)</button>
+            <button class="toolsButton" id="index_check">语法检测</button>
+            <button class="toolsButton" id="index_save">保存指标</button>
+
+            <input type="checkbox" id="overlay_y" name="overlay_y"/>
+            <label for="overlay_y">叠加指标使用独立坐标 </label>
+
+            <button class="toolsButton" id="overlayindex_run">执行(叠加指标)</button>
+            
+            <a href="https://jones2000.blog.csdn.net/article/details/129125330" target="_blank">函数帮助</a>
+
+            <button class="toolsButton" id="daycount_5">5日分时</button>
+            <button class="toolsButton" id="daycount_1">1日分时</button>
+            <button class="toolsButton" id="style_black">黑色风格</button>
+            <button class="toolsButton" id="style_white">白色风格</button>
+
+        </div>
+        <div class="table" id="tools_table">
+            <table cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>参数</th>
+                        <th>数值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input value="M1" id="param_name" />
+                        </td>
+                        <td>
+                            <input value="5" id="param_value"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input value="M2" id="param_name_1"/>
+                        </td>
+                        <td>
+                            <input value="10" id="param_value_1"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input value="M3" id="param_name_2"/>
+                        </td>
+                        <td>
+                            <input value="15" id="param_value_2"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input value="M4" id="param_name_3"/>
+                        </td>
+                        <td>
+                            <input value="20" id="param_value_3"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="code">
+            <textarea id="tools_code"></textarea>
+        </div>
+        <div class="cache" id="tools_cache">
+            <ul id="local_index">
+              <li>ddddd <span class="toolsButton">ddsfds</span></li> 
+            </ul>
+        </div>
+    </div>
+
+    <script src="../jscommon/umychart.resource/js/jquery.min.js"></script>
+    <script src="../jscommon/umychart.resource/js/webfont.js"></script>
+    <script src='../jscommon/umychart.console.js'></script>     <!-- 日志输出 -->
+    <script src="../jscommon/umychart.network.js"></script>     <!-- 网络请求分装 -->
+    <script src="../jscommon/umychart.js"></script>             <!-- K线图形 -->
+    <script src="../jscommon/umychart.complier.js"></script>    <!-- 麦语言解析执行器 -->
+    <script src="../jscommon/umychart.index.data.js"></script>  <!-- 基础指标库 -->
+    <script src="../jscommon/umychart.style.js"></script>       <!-- 白色风格和黑色风格配置信息 -->
+    <script src="../jscommon/umychart.popMenu.js"></script>
+    <script src="../jscommon/umychart.DialogDrawTool.js"></script>
+    <script src="../jscommon/umychart.DialogTooltip.js"></script>
+    <script src="../jscommon/umychart.DialogSelectRect.js"></script>
+    <script src="../jscommon/umychart.DialogSearchIndex.js"></script>
+    <script src="../jscommon/umychart.version.js"></script>
+
+    <!-- 公式编辑器 -->
+    <script src="../jscommon/umychart.resource/js/codemirror/codemirror.js"></script>
+    <script src="../jscommon/umychart.resource/js/codemirror/javascript.js"></script>
+   
+
+    <!-- 单日分时数据 -->
+    <script src="../jscommon/umychart.testdata/DayMinute/000151.sz.1day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/DayMinute/000001.sz.1day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/DayMinute/600000.sh.1day.minute.js"></script>
+
+
+    <!-- 多日分时数据 -->
+    <script src="../jscommon/umychart.testdata/Day5Minute/600000.sh.5day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/Day5Minute/000001.sz.5day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/Day5Minute/000151.sz.5day.minute.js"></script>
+
+    <script src="../jscommon/umychart.testdata.js"></script>
+   
+    <script>
+
+        MARKET_SUFFIX_NAME.GetMarketStatus = function (symbol)  { return 2; }
+
+        //默认显示的指标代码
+        var DEFAULT_CODE='MA1:MA(CLOSE,M1);\n\MA2:MA(CLOSE,M2);\n\MA3:MA(CLOSE,M3);\n\MA4:MA(CLOSE,M4);\nDRAWICON(MA1>MA4,H,5);';
+        //DEFAULT_CODE="BUY(C>O,L);";
+        //DEFAULT_CODE=`TIPICON(C>O, L, 1, STRFORMAT("低开高走<BR>收盘:{0:0.00}<BR>开盘:{1:.000}", C,O )), COLORRED, YMOVE(5), FONTSIZE15,VALIGN0`;
+        //DEFAULT_CODE=`DRAWTEXT(CLOSE>OPEN,LOW,'看多'),ALIGN1,VALIGN0,YMOVE(5),FONTSIZE14,BACKGROUND(RGBA(255, 69, 0,0.5),RGB(255,0,0), 1,1,1,1),RGB(230,230,230);`;
+
+        //简单的把K线控件封装下
+        function KLineChart(divKLine)
+        {
+            this.DivKLine=divKLine;
+            this.Chart=JSChart.Init(divKLine, false, true);   //把K线图绑定到一个Div上
+            this.IndexEdit;
+
+            this.MapIndex=new Map();    //本地指标
+          
+            //分时图配置
+            this.Option= {
+                Type:'分钟走势图',   //创建图形类型
+                //Type:'分钟走势图横屏',
+
+                Windows: //窗口指标
+                [
+                    //{ Index:"AMO", YAxis:{StringFormat:1} }
+                    { Index:"MACD", AddIndexWindow:true }
+                ], 
+
+                OverlayIndex:
+                [
+                    //{Index:'KDJ', Windows:0, ShowRightText:false, IsShareY:true },
+                ],  //叠加指标
+                
+                
+                Symbol:'600000.sh',         // cf1909.czc
+                //Symbol:'300720.sz',         // cf1909.czc
+                //Symbol:'HSI.hk',         // cf1909.czc
+                IsAutoUpdate:true,          //是自动更新数据
+                AutoUpdateFrequency:10000,   //数据更新频率
+                DayCount:1,                     //1 最新交易日数据 >1 多日走势图
+                IsShowRightMenu:true,       //是否显示右键菜单
+                //CorssCursorTouchEnd:true,
+                
+                EnableSelectRect:true,
+                EnableZoomIndexWindow:true,
+
+                EnablePopMenuV2:true,
+                EnableDrawToolDialogV2:true,
+                EnableNewIndex:true,
+                TooltipDialog:{ Enable:true, Style:1 },
+                
+                CorssCursorInfo:
+                {  
+                    HPenType:1,VPenType:1,
+                    Left:1, Right:1, Bottom:1, 
+                    IsFixXLastTime:true, 
+                    RightButton:{ Enable:true }, 
+                    //IsOnlyDrawMinute:true 
+                    EnableKeyboard:true
+                },
+    
+
+                SelectRect:
+                {
+                    ShowRangeText:{ Enable:true, Position:1 },
+                    //Mark:{ IsShow:true }
+                },
+
+                SelectRectDialog:{ Enable:true },
+                
+                /*
+                DragSelectRect:
+                {
+                    Enable:true
+                },
+                */
+
+                MinuteLine:
+                {
+                    IsDrawAreaPrice:true,      //是否画价格面积图
+                    //IsShowAveragePrice:false,   //不显示均线
+                    //SplitType:2,
+
+                    
+                },
+
+                MinuteTitle:
+                {
+                    IsShowTime:true,
+                    IsShowName:true,
+                    IsShowDate:false,
+                    IsShowVolTitle:true,
+                    //IsAlwaysShowLastData:true,
+                    IsTitleShowLatestData:true,
+
+                    //ShowPostion:{ Type:0, Margin:{ Bottom:10 } }
+                },
+
+                MinuteVol:
+                {
+                    BarColorType:1,
+                },
+
+                //Language:'EN',
+                //EnableBorderDrag:false,
+
+                IsDrawPictureXY:true,
+
+                SelectedChart:{ EnableSelected: true, EnableMoveOn:true },
+                EnableIndexChartDrag:true,
+
+                FloatTooltip:{ Enable:true, },
+                SearchIndexDialog:{ Enable:true },
+                ModifyIndexParamDialog:{ Enable:true },
+
+                EnableSelectRect:true,
+                EnableNightDayBG:true,
+    
+                Border: //边框
+                {
+                    Left:80,    //左边间距
+                    Right:80,     //右边间距
+                    Top:25,
+                    Bottom:25,
+
+                    AutoLeft:{ Blank:10, MinWidth:60 },
+                    AutoRight:{ Blank:10, MinWidth:60 },
+                },
+                
+                Frame:  //子框架设置
+                [
+                    { 
+                        SplitCount:5,  IsShowLeftText:true ,RightTextFormat:0,YTextBaseline:1, IsShowYLine:true,
+                        //HorizontalReserved:{ Top:4, Bottom:20},
+                        //BottomSpace:40,
+                        Custom:
+                        [
+                            
+                            { 
+                                Type:0,  Position:'right',
+                            }
+                        ]
+                    },
+                    { SplitCount:5,},
+                    { SplitCount:5 },
+                    { SplitCount:11, IsShowXLine:false },
+                ],
+
+
+                Overlay:    //叠加股票
+                [
+                    //{Symbol:'603190.sh', OverlayType:1, IsCalcuateMaxMin:true, Color:"rgb(250,0,0)" },
+                    //{Symbol:'000001.sz'},
+                    //{Symbol:'000151.sz'}
+                ],
+
+                ExtendChart:    //扩展图形
+                [
+                    //{Name:'MinuteTooltip' }, //手机端tooltip
+                    {Name:'MinutePCTooltip' }, //PC端tooltip
+                    //{Name:"画图工具"}
+                ]
+            };
+              
+
+            this.Create=function()  //创建图形
+            {
+                var self=this;
+                //$(window).resize(function() { self.OnSize( {Type:1} ); });    //绑定窗口大小变化事件
+                $(window).resize(function() { self.OnSize( ); });    //绑定窗口大小变化事件
+
+                var blackStyle=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取黑色风格配置
+                JSChart.SetStyle(blackStyle);
+                this.DivKLine.style.backgroundColor=blackStyle.BGColor; //设置最外面的div背景
+                JSChart.GetResource().ToolbarButtonStyle=1;
+                JSChart.SetCSSStyle(STYLE_TYPE_ID.BLACK_ID);
+
+                this.OnSize();  //让K线全屏
+                this.Option.ScriptError=(error)=> { this.ExecuteScriptError(error); }
+                this.Option.NetworkFilter=(data, callback)=>{  this.NetworkFilter(data, callback); }
+
+                this.Option.EventCallback=
+                [
+                    {
+                        event:JSCHART_EVENT_ID.ON_TITLE_DRAW,
+                        callback:(event, data, obj)=>{ this.UpdateTitle(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CREATE_RIGHT_MENU,
+                        callback:(event, data, obj)=>{ this.OnCreateRightMenu(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_MENU_COMMAND,
+                        callback:(event, data, obj)=>{ this.OnMenuCommand(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CUSTOM_MINUTE_NIGHT_DAY_X_INDEX,
+                        callback:(event, data, obj)=>{ this.OnCustomNightDayXIndex(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CUSTOM_MINUTE_BG,
+                        callback:(event, data, obj)=>{ this.OnCustomMinuteBG(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_SPLIT_YCOORDINATE, 
+                        callback:(event, data, obj)=>{ this.OnSplitYCoordinate(event, data, obj); }
+                    },
+
+                    {
+                        event:JSCHART_EVENT_ID.SEARCH_DIALOG_ON_CLICK_INDEX,
+                        callback:(event, data, obj)=>{ this.OnClickIndex(event, data, obj); }
+                    },
+                ];
+
+                this.Chart.SetOption(this.Option);  //设置K线配置
+            }
+
+
+            this.NetworkFilter=function(data, callback)
+            {
+                console.log(`[KLineChart::NetworkFilter] ${HQData.Explain}`, data);
+
+                switch(data.Name) 
+                {
+                    case "APIScriptIndex::ExecuteScript":
+                        this.GetAPIIndexData(data, callback);
+                        break;
+                    default:
+                        HQData.NetworkFilter(data, callback);
+                        break;
+                }
+            }
+
+            this.GetAPIIndexData=function(data, callback)
+            {
+                data.PreventDefault=true;
+                var request=data.Request;
+                if (request.Data.indexname=='BUY_SELL_INDEX')
+                    this.GetAPIIndx_BUY_SELL_INDEX(data, callback)
+            }
+
+            this.GetAPIIndx_BUY_SELL_INDEX=function(data, callback)
+            {
+                var hqchart=data.HQChart;
+                var kData=hqchart.SourceData;
+
+                //图标信息
+                var SVGData= 
+                { 
+                    name:'图标1', type:1, 
+                    Draw: 
+                    { 
+                        DrawType:'DRAWSVG', 
+                        Family:'iconfont', 
+                        TextFont:"12px 微软雅黑",
+                        IsDrawFirst:true,
+                        Data:[ ]
+                    }
+                };
+
+                var testDataInterval=parseInt(kData.Data.length/10);
+                var ARRAY_TEST_ITEM_DATA=
+                [
+                    { SVGColor:"rgb(255,20,147)", Text:"恭", TextColor:"rgb(220,220,220)" },
+                    { SVGColor:"rgb(0,0,255)", Text:"喜", TextColor:"rgb(220,220,220)" },
+                    { SVGColor:"rgb(30,144,255)", Text:"发", TextColor:"rgb(0,0,0)" },
+                    { SVGColor:"rgb(255,140,0)", Text:"财", TextColor:"rgb(0,0,0)" },
+                    { SVGColor:"rgb(255,99,71)", Text:"财", TextColor:"rgb(0,255,0)" },
+                    { SVGColor:"rgb(72,209,204)", Text:"源", TextColor:"rgb(255,0,0)" },
+                ];
+
+                for(var i=0, j=0;i<kData.Data.length;++i)
+                {
+                    var item=kData.Data[i];
+                    if (i%testDataInterval!=8) continue;
+
+                    var testData=ARRAY_TEST_ITEM_DATA[j%ARRAY_TEST_ITEM_DATA.length];
+                    var drawItem=
+                    { 
+                        Date:item.Date, Time:item.Time, Value:item.Close, 
+                        Text:{ Content:testData.Text, Color:testData.TextColor, YOffset:-6},
+                        SVG: { Symbol:"\ue6a7", Color:testData.SVGColor, Size:24,YOffset:0 },
+                        //Line: { Color:"rgb(255,0,255)", Dash:[5,5], Value:"C", Width:1, SVGBlank:4 },
+                        Tooltip:{ Text:`测试提示信息<br>${IFrameSplitOperator.FormatTimeString(item.Time, "HH:MM")}<br>恭喜发财,财源广进!`}
+                    };
+
+                    SVGData.Draw.Data.push(drawItem);
+                    ++j;
+                }
+
+                var apiData=
+                {
+                    code:0, 
+                    stock:{ name:hqchart.Name, symbol:hqchart.Symbol }, 
+                    outdata: 
+                    { 
+                        data:kData.GetDate(), time:kData.GetTime(), outvar:[SVGData]
+                    } 
+                };
+                
+                console.log('[KLineChart::GetAPIIndx_BUY_SELL_INDEX] apiData ', apiData);
+                callback(apiData);
+            }
+
+            this.UpdateTitle=function(event, data, obj)
+            {
+                console.log("[KLineChart::UpdateTitle] ", data);
+            }
+
+            this.OnCreateRightMenu=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnCreateRightMenu] data=", data);
+                
+                data.MenuData.Menu.push( { Name:JSPopMenu.SEPARATOR_LINE_NAME });
+
+                var indexInfo={ API: { ID:"BUY_SELL_INDEX", Name:'买卖指标', Args:null, Url:'local'}, IsShareY:true, Identify:"DEMO_OVERY_INDEX_8881" };
+                if (obj.GetOverlayIndexByIdentify(indexInfo.Identify))
+                {
+                    var newItem={ Name:`主图${indexInfo.API.Name}示例`, Data:{ ID: JSCHART_MENU_ID.CMD_DELETE_OVERLAY_INDEX_ID, Args:[indexInfo.Identify]}, Checked:true};
+                }
+                else
+                {
+                    var newItem={ Name:`主图${indexInfo.API.Name}示例`, Data:{ ID: JSCHART_MENU_ID.CMD_ADD_OVERLAY_INDEX_ID, Args:[0, indexInfo]}, Checked:false};
+                }
+
+                data.MenuData.Menu.push(newItem);
+
+                //测试叠加
+                var aryOverlaySymbol=[];                    //叠加的股票列表
+                for(var i=0; i<obj.OverlayChartPaint.length; ++i)
+                {
+                    var item=obj.OverlayChartPaint[i];
+                    if (item && item.Symbol) aryOverlaySymbol.push(item.Symbol)
+                }
+
+                var overlay=
+                { 
+                    Name:"叠加品种", 
+                    SubMenu:
+                    [
+                        { Name:"000001.sz", Data:{ ID: JSCHART_MENU_ID.CMD_OVERLAY_SYMBOL_ID, Args:["000001.sz", !aryOverlaySymbol.includes("000001.sz")]}, Checked:aryOverlaySymbol.includes("000001.sz") },
+                        { Name:"000151.sz", Data:{ ID: JSCHART_MENU_ID.CMD_OVERLAY_SYMBOL_ID, Args:["000151.sz", !aryOverlaySymbol.includes("000151.sz")]}, Checked:aryOverlaySymbol.includes("000151.sz") },
+                        { Name:"600000.sh", Data:{ ID: JSCHART_MENU_ID.CMD_OVERLAY_SYMBOL_ID, Args:["600000.sh", !aryOverlaySymbol.includes("600000.sh")]}, Checked:aryOverlaySymbol.includes("600000.sh") },
+                    ]
+                };
+
+                var aryMenu=data.MenuData.Menu;
+                for(var i=0;i<aryMenu.length;++i)
+                {
+                    var item=aryMenu[i];
+                    if (item.Name=="叠加品种")
+                    {
+                        aryMenu[i]=overlay;
+                        break;
+                    }
+                }
+
+                //删除叠加菜单
+                for(var i=0;i<aryMenu.length;++i)
+                {
+                    var item=aryMenu[i];
+                    if (item.Name=="叠加品种")
+                    {
+                        for(var j=0;j<item.SubMenu.length;++j)
+                        {
+                            if (item.SubMenu[j].Checked)
+                            {
+                                item.SubMenu.push({ Name:JSPopMenu.SEPARATOR_LINE_NAME });
+                                item.SubMenu.push({ Name:"取消叠加", Data:{ ID: JSCHART_MENU_ID.CMD_DELETE_ALL_OVERLAY_SYMBOL_ID} });
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.OnMenuCommand=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnMenuCommand] data=", data);
+            }
+
+            this.OnCustomNightDayXIndex=function(event, data, obj)
+            {
+                //data.XIndex=120;
+            }
+
+            this.OnCustomMinuteBG=function(event, data, obj)
+            {
+                return;
+                
+                if (data.DayCount==1) 
+                {
+                    data.AryDay[0].BGColor="rgb(100,100,0)";    //设置背景
+                }
+                else if (data.DayCount>1)
+                {
+                    for(var i=0;i<data.AryDay.length;++i)
+                    {
+                        var item=data.AryDay[i];
+                        if (i>=2) item.BGColor="rgb(219,112,147)";  //设置背景
+                    }
+                }
+            }
+
+            this.OnSplitYCoordinate=function(event, data, obj)
+            {
+                /*if (data.ID==0) 
+                {
+                    var frame=data.Frame;
+
+                    for(var i=0;i<frame.HorizontalInfo.length;++i)
+                    {
+                        var item=frame.HorizontalInfo[i];
+                        if (i==0)
+                            item.YOffset=[ { Offset:5 }, { Offset:5 }];
+                    }
+
+                }
+                */
+            }
+
+            this.OnSize=function(option)  //自适应大小调整
+            {
+                var height= $(window).height()-300;
+                var width = $(window).width();
+                
+                this.DivKLine.style.top='0px';
+                this.DivKLine.style.left='0px';
+                this.DivKLine.style.width=width+'px';
+                this.DivKLine.style.height=height+'px';
+                this.Chart.OnSize(option);
+            }
+
+            this.ChangeSymbol=function(symbol)
+            {
+                this.Chart.ChangeSymbol(symbol);
+            }
+
+            this.OverlayIndex=function()
+            {
+                var option={WindowIndex:0, IndexName:"指标ID", Name:"自定义指标", Args:[{Name:"T", Value:5}],
+                Script:"T:MA(O,20);DRAWTEXT_LINE(O>C,13,'13.00',RGB(0,33,3), 10,1, RGB(0,255,0));", Identify:"guid_66990"};
+                //var option={WindowIndex:0, IndexName:"MACD", Identify:"guid_66990"};
+                this.Chart.AddOverlayIndex(option);
+            }
+
+            this.ChangeIndex=function(windowIndex,indexName,option)
+            {
+                this.Chart.ChangeIndex(windowIndex,indexName,option);
+            }
+
+            this.AddIndexWindow=function(indexName)
+            {
+                this.Chart.AddIndexWindow(indexName);
+            }
+
+            this.ExecuteScriptError=function(error)
+            {
+                var log=`错误:${error.Description}\r\n行号:${error.LineNumber}`;
+                if (error.Word) log+="\r\n错误单词:"+error.Word;
+
+                alert(log);
+                console.log('[ComplierError]', error);
+            }
+
+
+            this.ChangeStyle=function(styleName)
+            {
+                var buttonColor=[null,null];
+                if (styleName=='black') 
+                {
+                    var style=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取风格配置
+                }
+                else if (styleName=='white') 
+                {
+                    var style=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.WHITE_ID); //读取风格配置
+                    style.BGColor='rgb(255,255,255)';
+                }
+                else 
+                {
+                    return;
+                }
+
+                style.ToolbarButtonStyle=1;
+                JSChart.SetStyle(style);
+                this.DivKLine.style.backgroundColor=style.BGColor;   //修改div背景色
+                
+                this.Chart.ReloadResource({ Resource:null, Draw:true , Update:true });  //动态更新颜色配置  
+
+            }
+
+
+            this.GetIndexInfo=function()
+            {
+                //指标名称
+                var indexName=document.getElementById('index_name').value;
+                var code=this.IndexEdit.getValue();
+
+                var PARAM_LIST=
+                [ 
+                    {Name:"param_name", Value:"param_value"}, 
+                    {Name:"param_name_1", Value:"param_value_1"},
+                    {Name:"param_name_2", Value:"param_value_2"},
+                    {Name:"param_name_3", Value:"param_value_3"}
+                ];
+
+                //指标参数
+                var aryParam=[];
+                for(var i=0;i<PARAM_LIST.length;++i)
+                {
+                    var item=PARAM_LIST[i];
+                    var paramName=document.getElementById(item.Name).value;
+                    var value=document.getElementById(item.Value).value;
+
+                    if (paramName && value)
+                        aryParam.push({Name:paramName, Value:parseInt(value)});
+                }
+
+                var  indexInfo=
+                {
+                    Name:indexName,
+                    Script:code,
+                    Args:aryParam,
+                };
+
+                return indexInfo;
+            }
+
+            //执行指标
+            this.ExecuteIndexScript=function()
+            {
+                var indexInfo=this.GetIndexInfo();
+                var windowIndex=parseInt(document.getElementById('window_index').value);
+
+                if (windowIndex<2)
+                {
+                    alert("主图和成交量图不支持切换指标,只能叠加指标");
+                    return;
+                }
+
+                this.Chart.ChangeScriptIndex(windowIndex,indexInfo)
+            }
+
+            //叠加指标
+            this.ExecuteOverlayIndexScript=function()
+            {
+                var indexInfo=this.GetIndexInfo();
+                var windowIndex=parseInt(document.getElementById('window_index').value);
+                var value=document.getElementById("overlay_y").checked;
+
+                var option={ Script:indexInfo.Script, WindowIndex:windowIndex, Name:indexInfo.Name, Args:indexInfo.Args, IsShareY:!value };
+                this.Chart.AddOverlayIndex(option);
+            }
+
+             //语法检测
+            this.CheckIndexScript=function()
+            {
+                var indexInfo=this.GetIndexInfo();
+
+                var option=
+                {
+                    Callback:(data)=>
+                    {
+                        console.log("[Explain] data ", data);
+                        var strLog="";
+                        for(var i=0;i<data.length;++i)
+                        {
+                            var item=data[i];
+                            if (item.Type==0) strLog+=item.Data+'\n';
+                            else strLog+=item.Draw+'\n';
+
+                            if (i>30) 
+                            {
+                                strLog+='......';   //太多了就不显示了
+                                break;
+                            }
+                        }
+
+                        alert("语法正确\n"+strLog);
+                    },
+
+                    Arguments: indexInfo.Args,
+                };
+                
+                JSComplier.Explain(indexInfo.Script, option, (error, data)=>
+                {
+                    console.log("[Explain] error, data ", error, data);
+                    alert(`语法错误: 行号:${error.LineNumber}, ${error.Description}`);
+                });
+            }
+        
+
+            //本地指标
+            this.LoadLocalIndex=function()
+            {
+                var cache=localStorage.getItem("HQChart_Local_Index_Minute");
+                if (typeof(cache) != "string") return;
+
+                var saveData=JSON.parse(cache);
+                if (!IFrameSplitOperator.IsNonEmptyArray(saveData)) return;
+
+                var mapIndex=new Map();
+                for(var i=0;i<saveData.length;++i)
+                {
+                    var item=saveData[i];
+                    mapIndex.set(item.Key, item.Data);    
+                }
+                
+                this.MapIndex=mapIndex;
+
+                this.UpdateIndexList();
+            }
+
+            this.SaveLocalIndex=function()
+            {
+                var indexInfo=this.GetIndexInfo();
+                var windowIndex=parseInt(document.getElementById('window_index').value);
+                indexInfo.WindowIndex=windowIndex;
+
+                if (!indexInfo.Script)
+                {
+                    alert("指标脚本不能为空!");
+                    return;
+                }
+
+                if (this.MapIndex.has(indexInfo.Name))
+                {
+                    if (!window.confirm(`是否覆盖指标[${indexInfo.Name}]`)) return;
+                }
+
+                this.MapIndex.set(indexInfo.Name, indexInfo);
+
+                this.UpdateIndexList();
+
+                this.localStorageSave();
+            }
+
+            this.localStorageSave=function()
+            {
+                var aryIndex=[];
+                for(var mapItem of this.MapIndex)
+                {
+                    var key=mapItem[0];
+                    var value=mapItem[1];
+                    var item={ Key:key, Data:value};
+                    aryIndex.push(item);
+                }
+
+                var strData=JSON.stringify(aryIndex);
+                localStorage.setItem("HQChart_Local_Index_Minute",strData);
+            }
+
+            this.UpdateIndexList=function()
+            {
+                var strData="";
+                for(var mapItem of this.MapIndex)
+                {
+                    var key=mapItem[0];
+                    var value=mapItem[1];
+
+                    var strItem=`<li onclick="SelectLocalIndex(event, '${key}')">${key}<span onclick="DeleteLocalIndex(event, '${key}')">删除</span></li>`;
+
+                    strData+=strItem;
+                }
+
+                document.getElementById('local_index').innerHTML=strData;
+            }
+
+
+            this.DeleteLocalIndex=function(e, name)
+            {
+                e.stopPropagation();
+                if (!this.MapIndex.has(name)) return;
+
+                if (!window.confirm(`是否删除指标[${name}]`)) return;
+                
+                this.MapIndex.delete(name);
+
+                this.UpdateIndexList();
+
+                this.localStorageSave();
+            }
+
+            this.SelectLocalIndex=function(e, name)
+            {
+                if (!this.MapIndex.has(name)) return;
+                var item=this.MapIndex.get(name);
+
+                this.IndexEdit.setValue(item.Script);
+                document.getElementById('index_name').value=item.Name;
+
+                var PARAM_LIST=
+                [ 
+                    {Name:"param_name", Value:"param_value"}, 
+                    {Name:"param_name_1", Value:"param_value_1"},
+                    {Name:"param_name_2", Value:"param_value_2"},
+                    {Name:"param_name_3", Value:"param_value_3"}
+                ];
+
+                //指标参数
+                var aryParam=[];
+                for(var i=0;i<PARAM_LIST.length;++i)
+                {
+                    var paramItem=PARAM_LIST[i];
+                    var argItem=item.Args[i];
+                    if (argItem)
+                    {
+                        document.getElementById(paramItem.Name).value=argItem.Name;
+                        document.getElementById(paramItem.Value).value=argItem.Value;
+                    }
+                    else
+                    {
+                        document.getElementById(paramItem.Name).value="";
+                        document.getElementById(paramItem.Value).value="";
+                    }
+                    
+                }
+
+                document.getElementById('window_index').value=item.WindowIndex;
+            }
+
+            this.OnClickIndex=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnClickIndex] data=", data);
+            }
+        
+        }
+
+        function DeleteLocalIndex(e, name)
+        {
+            alert(`[DeleteLocalIndex]${name}`);
+            e.stopPropagation();
+        }
+
+        function SelectLocalIndex(e, name)
+        {
+            alert(`[SelectLocalIndex]${name}`);
+        }
+
+        $(function () 
+        {
+            var a=4664.7300000000004, b=4664.73;
+            var test=NumberCompare.LT(a,b);
+            var test2=NumberCompare.GT(a,b);
+
+            const font = new FontFace("iconfont",`url('../jscommon/umychart.resource/font/iconfont.woff?t=1690947130935') format('woff')`);
+            document.fonts.add(font);    //把字体添加到 document.font（FontFaceSet）中
+            font.load();    // 加载字体
+
+            var klineControl=new KLineChart(document.getElementById('kline'));
+             // 等待到所有的字体都加载完毕
+             document.fonts.ready.then(() => 
+            {
+                klineControl.Create();
+            });
+
+            klineControl.LoadLocalIndex();
+
+            var jsEditor;
+            $('#tools_code').val(DEFAULT_CODE);
+            jsEditor = CodeMirror.fromTextArea($('#tools_code').get(0), {
+                mode: "javascript",
+                gutter: true,
+                lineNumbers: true
+            })
+            jsEditor.setSize('99.8%', 257);
+            jsEditor.gutter = true;
+
+            klineControl.IndexEdit=jsEditor;
+
+            //执行指标
+            $("#index_run").click(function() { klineControl.ExecuteIndexScript(); } );
+            $("#index_check").click(function() { klineControl.CheckIndexScript(); } );
+            $("#index_save").click(function() { klineControl.SaveLocalIndex(); } );
+            $("#overlayindex_run").click(function(){ klineControl.ExecuteOverlayIndexScript(); });
+            $("#daycount_5").click(function(){ klineControl.Chart.ChangeDayCount(5); });
+            $("#daycount_1").click(function(){ klineControl.Chart.ChangeDayCount(1); });
+
+            $("#style_black").click(function(){ klineControl.ChangeStyle('black') })
+            $("#style_white").click(function(){ klineControl.ChangeStyle('white'); })
+
+            
+
+            DeleteLocalIndex=(e, name)=>{ klineControl.DeleteLocalIndex(e, name); }
+            SelectLocalIndex=(e, name)=> { klineControl.SelectLocalIndex(e, name); }
+
+        })
+
+      
+    </script>  
+
+</body>  
+</html>
+
+
+
+<style>
+
+.tools {
+    width:100%;
+}
+.tools .top {
+    margin-bottom:2px;
+}
+.tools .top .toolsButton {
+    height:32px;
+    padding:0 8px;
+    cursor:pointer;
+}
+.tools .top span {
+    padding-left:2px;
+}
+.tools .top .input {
+    height:28px;
+    padding-left:5px;
+}
+.tools .top .changeIndex {
+    height:32px;
+    width:90px;
+}
+
+.tools .table {
+    width:19.5%;
+    float:left;
+}
+
+.tools .table table {
+    width:100%;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    margin-left:1px;
+}
+
+.tools .table table tbody td,.tools .table table thead th {
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    height:32px;
+    padding:5px;
+    width:95px;
+
+    text-align: left;
+}
+.tools .table table td input{
+    width:50px;
+}
+
+.tools .code {
+    float:left;
+    width:60.5%;
+}
+
+.tools .cache {
+    float:left;
+    width:19.8%;
+    border:1px solid #ccc;
+    height:257px;
+    margin-left:-1px;
+    overflow-y:auto;
+}
+.tools .cache li {
+    padding:5px;
+    height:18px;
+}
+.tools .cache li.active,.tools .cache li:hover{
+    background-color:#26B99A;
+    color:#fff;
+    cursor:pointer;
+}
+.tools .cache li span{
+    float:right;
+    margin-right:5px;
+} 
+</style>
+       
