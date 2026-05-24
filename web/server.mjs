@@ -71,3 +71,40 @@ server.listen(port, hostname, () => {
   // eslint-disable-next-line no-console
   console.log(`   gateway DB: ${process.env.VFIN_GATEWAY_DB_PATH}`);
 });
+
+// C3: graceful shutdown so systemd restart doesn't kill in-flight requests
+// mid-write (sqlite WAL fsync, fetch in progress, etc).
+let shuttingDown = false;
+function gracefulShutdown(sig) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  // eslint-disable-next-line no-console
+  console.log(`[shutdown] received ${sig}, draining…`);
+  // Stop accepting new connections, wait for in-flight to finish.
+  server.close((err) => {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error('[shutdown] server.close error:', err);
+      process.exit(1);
+    }
+    // eslint-disable-next-line no-console
+    console.log('[shutdown] http server closed');
+    process.exit(0);
+  });
+  // Hard cap — systemd KillMode default sends SIGKILL after TimeoutStopSec.
+  setTimeout(() => {
+    // eslint-disable-next-line no-console
+    console.error('[shutdown] forced exit after 20s');
+    process.exit(1);
+  }, 20_000).unref();
+}
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('uncaughtException', (err) => {
+  // eslint-disable-next-line no-console
+  console.error('[uncaughtException]', err);
+});
+process.on('unhandledRejection', (reason) => {
+  // eslint-disable-next-line no-console
+  console.error('[unhandledRejection]', reason);
+});

@@ -3,10 +3,22 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+// H2: real Asia/Shanghai conversion (was using host local time + "+08:00"
+// suffix, which broke any non-Shanghai deployment).
 function beijingNow() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}+08:00`;
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+  const m = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  if (m.hour === '24') m.hour = '00';
+  return `${m.year}-${m.month}-${m.day}T${m.hour}:${m.minute}:${m.second}+08:00`;
 }
 
 function toTimestamp(value) {

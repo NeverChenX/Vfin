@@ -24,6 +24,18 @@ export function createDatabaseConnection({ dbPath = getDefaultDatabasePath() } =
   }
 
   const db = new Database(dbPath);
+  // C6: WAL + busy_timeout + synchronous=NORMAL.
+  // - WAL: writers don't block readers; crash recovery is per-frame, not "all
+  //   pages flushed". Required for concurrent reads (the /api/hq routes do).
+  // - synchronous=NORMAL: paired with WAL is durable across app crashes
+  //   (only at risk on power loss within the last few frames).
+  // - busy_timeout: avoids SQLITE_BUSY when reader/writer collide.
+  // :memory: doesn't support WAL.
+  if (dbPath !== ':memory:') {
+    db.pragma('journal_mode = WAL');
+    db.pragma('synchronous = NORMAL');
+  }
+  db.pragma('busy_timeout = 5000');
   db.pragma('foreign_keys = ON');
 
   runMigrations(db);

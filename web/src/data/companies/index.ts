@@ -4,7 +4,9 @@ import { join } from 'node:path';
 import type { CompanyFinancials, PeriodKey } from '@/types/finance';
 import { marketGroup, type MarketGroup } from '@/lib/symbol-utils';
 
-const DIR = join(process.cwd(), 'src', 'data', 'companies');
+// C4: env-overridable so prod containers with read-only src/ work.
+const DIR =
+  process.env.VFIN_COMPANIES_DIR ?? join(process.cwd(), 'src', 'data', 'companies');
 
 export interface CompanyListEntry {
   ticker: string;

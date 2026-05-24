@@ -87,6 +87,13 @@ function uniqueKlineItems(items) {
   return [...map.values()];
 }
 
+// H13: coerce all numerics through a finite-guard so a single string/null
+// upstream value cannot poison min/max/sum into NaN.
+function num(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 function aggregateYearItems(items) {
   const yearMap = new Map();
   for (const item of items) {
@@ -94,26 +101,31 @@ function aggregateYearItems(items) {
     const year = dateText.slice(0, 4);
     if (!/^\d{4}$/.test(year)) continue;
 
+    const openN = num(item.open);
+    const highN = num(item.high);
+    const lowN = num(item.low);
+    const closeN = num(item.close);
+
     if (!yearMap.has(year)) {
       yearMap.set(year, {
         date: item.date,
-        open: item.open,
-        high: item.high,
-        low: item.low,
-        close: item.close,
-        volume: Number(item.volume ?? 0),
-        amount: Number(item.amount ?? 0)
+        open: openN,
+        high: highN,
+        low: lowN,
+        close: closeN,
+        volume: num(item.volume),
+        amount: num(item.amount)
       });
       continue;
     }
 
     const current = yearMap.get(year);
     current.date = item.date;
-    current.high = Math.max(Number(current.high), Number(item.high));
-    current.low = Math.min(Number(current.low), Number(item.low));
-    current.close = item.close;
-    current.volume += Number(item.volume ?? 0);
-    current.amount += Number(item.amount ?? 0);
+    current.high = Math.max(current.high, highN);
+    current.low = Math.min(current.low, lowN);
+    current.close = closeN;
+    current.volume += num(item.volume);
+    current.amount += num(item.amount);
   }
 
   return [...yearMap.values()];

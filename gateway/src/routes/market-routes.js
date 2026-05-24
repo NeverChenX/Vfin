@@ -10,14 +10,26 @@ import iconv from 'iconv-lite';
 function loadTradeRecords() {
   const tradeMap = new Map();
   // 查找 HT_History 文件
-  const investDir = process.env.INVEST_DATA_DIR || '/home/Neverchen/project/invest/raw_data';
+  // C2: previously hard-coded to /home/Neverchen/project/invest/raw_data which
+  // leaked a sibling project path and broke on any other machine. Now ENV-only
+  // — if unset, trade marks are silently disabled instead of pointing at
+  // someone else's filesystem.
+  const investDir = process.env.INVEST_DATA_DIR;
+  if (!investDir) {
+    return tradeMap;
+  }
+  // Reject obviously malicious paths (relative segments / NUL) early.
+  if (investDir.includes('\0') || investDir.includes('..')) {
+    console.error('[trades] INVEST_DATA_DIR rejected (suspicious path)');
+    return tradeMap;
+  }
   let historyFile = null;
 
   try {
     const files = fs.readdirSync(investDir);
     historyFile = files.find(f => f.startsWith('HT_History') && f.endsWith('.xls'));
   } catch (_e) {
-    console.log('[trades] invest/raw_data directory not found, trade marks disabled');
+    console.log('[trades] INVEST_DATA_DIR not readable, trade marks disabled');
     return tradeMap;
   }
 
