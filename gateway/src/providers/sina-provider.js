@@ -1,10 +1,28 @@
 import iconv from 'iconv-lite';
 import { BaseProvider } from './base-provider.js';
 import { fetchText } from './http-client.js';
-import { parseSinaQuote, parseSinaUSKline } from './live-mappers.js';
+import { parseSinaQuote, parseSinaUSKline, parseSinaFx, parseSinaCommodity, parseSinaIntlIndex } from './live-mappers.js';
 import { createTimestamp } from '../utils/time.js';
 
+const SINA_INTL_MAP = {
+  'N225.jp': 'int_nikkei'
+};
+const SINA_COMMODITY_MAP = {
+  'XAU.cm': 'hf_GC',
+  'CL.cm':  'hf_CL'
+};
+
 function buildSinaSymbol({ market, symbol }) {
+  if (market === 'fx') {
+    const code = symbol.replace(/\.fx$/i, '').toLowerCase();
+    return `fx_s${code}`;
+  }
+  if (market === 'cm') {
+    return SINA_COMMODITY_MAP[symbol] || null;
+  }
+  if (market === 'jp' || market === 'de' || market === 'uk') {
+    return SINA_INTL_MAP[symbol] || null;
+  }
   if (symbol?.includes('.')) {
     const lastDot = symbol.lastIndexOf('.');
     const code = symbol.slice(0, lastDot);
@@ -15,6 +33,9 @@ function buildSinaSymbol({ market, symbol }) {
 
 async function fetchSinaQuote(context) {
   const code = buildSinaSymbol(context);
+  if (!code) {
+    throw new Error(`Sina has no symbol mapping for ${context.symbol}`);
+  }
   const url = `https://hq.sinajs.cn/list=${code}`;
   const buffer = await fetchText(url, {
     headers: {
@@ -24,6 +45,31 @@ async function fetchSinaQuote(context) {
     responseType: 'arrayBuffer'
   });
   const text = iconv.decode(Buffer.from(buffer), 'gbk');
+
+  if (context.market === 'fx') {
+    const d = parseSinaFx(text);
+    return {
+      name: d.name, now: d.price, prevClose: d.prevClose,
+      open: d.open, high: d.high, low: d.low,
+      volume: 0, turnover: 0, time: d.time
+    };
+  }
+  if (context.market === 'cm') {
+    const d = parseSinaCommodity(text);
+    return {
+      name: d.name, now: d.price, prevClose: d.prevClose,
+      open: d.open, high: d.high, low: d.low,
+      volume: 0, turnover: 0, time: d.time
+    };
+  }
+  if (context.market === 'jp' || context.market === 'de' || context.market === 'uk') {
+    const d = parseSinaIntlIndex(text);
+    return {
+      name: d.name, now: d.price, prevClose: d.prevClose,
+      open: d.price, high: d.price, low: d.price,
+      volume: 0, turnover: 0, time: ''
+    };
+  }
   return parseSinaQuote(text);
 }
 
@@ -43,6 +89,7 @@ export class SinaProvider extends BaseProvider {
           market: context.market,
           name: data.name,
           now: data.now,
+          prevClose: data.prevClose,
           open: data.open,
           high: data.high,
           low: data.low,

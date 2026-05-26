@@ -65,6 +65,53 @@ export function parseSinaQuote(raw) {
   };
 }
 
+const SINA_ENVELOPE = /="(.*)";/;
+
+function extractSinaPayload(raw) {
+  const m = raw.match(SINA_ENVELOPE);
+  if (!m) throw new Error('Invalid Sina payload');
+  if (!m[1]) throw new Error('Empty Sina payload');
+  return m[1].split(',');
+}
+
+export function parseSinaFx(raw) {
+  const parts = extractSinaPayload(raw);
+  return {
+    name: parts[13] || '',
+    time: parts[0] || '',
+    price: toNumber(parts[1]),
+    prevClose: toNumber(parts[2]),
+    open: toNumber(parts[3]),
+    high: toNumber(parts[6]),
+    low: toNumber(parts[7])
+  };
+}
+
+export function parseSinaCommodity(raw) {
+  const parts = extractSinaPayload(raw);
+  return {
+    name: parts[13] || '',
+    time: parts[6] || '',
+    price: toNumber(parts[0]),
+    open: toNumber(parts[3]),
+    high: toNumber(parts[4]),
+    low: toNumber(parts[5]),
+    prevClose: toNumber(parts[7])
+  };
+}
+
+export function parseSinaIntlIndex(raw) {
+  const parts = extractSinaPayload(raw);
+  const price = toNumber(parts[1]);
+  const change = toNumber(parts[2]);
+  return {
+    name: parts[0] || '',
+    price,
+    prevClose: price - change,
+    pctChange: toNumber(parts[3])
+  };
+}
+
 export function parseTencentMinute(raw) {
   const list = raw?.data ?? [];
   const points = list.map((item) => {
