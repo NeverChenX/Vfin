@@ -2,34 +2,25 @@
 
 import { useEffect, useState } from 'react';
 import { fetchAllLimited, fetchJSONSafe, startVisibilityPoll, QUOTE_POLL_MS } from '@/lib/poll';
+import { MiniSparkline } from '@/components/home/MiniSparkline';
+import { pctToTextClass } from './color-mapping';
+import type { Quote } from './types';
 
 interface IndexConfig {
   symbol: string;
   label: string;
-  marketBadge: string;
-  /** 强制显示该标签，不被 quote.name 覆盖（用于"恒生 HSI"显示而非"盈富基金"） */
+  marketBadge: 'SH' | 'HK' | 'SZ' | 'US';
   forceLabel?: boolean;
 }
 
 const INDICES: ReadonlyArray<IndexConfig> = [
   { symbol: '000001.sh', label: '上证指数', marketBadge: 'SH' },
-  // 港股恒生指数（Tencent: hkHSI），网关 symbol-normalizer 已支持字母 .hk
-  { symbol: 'HSI.hk',    label: '恒生指数', marketBadge: 'HK' },
+  { symbol: 'HSI.hk',    label: '恒生指数', marketBadge: 'HK', forceLabel: true },
   { symbol: '399006.sz', label: '创业板指', marketBadge: 'SZ' },
   { symbol: 'IXIC.us',   label: '纳斯达克', marketBadge: 'US' },
 ];
 
-interface Quote {
-  symbol: string;
-  name?: string;
-  price?: number;
-  yclose?: number;
-  open?: number;
-  high?: number;
-  low?: number;
-}
-
-export function MarketCards() {
+export function MarketIndexCards() {
   const [quotes, setQuotes] = useState<Record<string, Quote>>({});
 
   useEffect(() => startVisibilityPoll(async (signal) => {
@@ -59,18 +50,16 @@ function Card({ cfg, quote }: { cfg: IndexConfig; quote?: Quote }) {
   const yclose = quote?.yclose ?? price;
   const change = hasQuote ? price - yclose : 0;
   const pct = hasQuote && yclose ? (change / yclose) * 100 : 0;
-  const dir = !hasQuote ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
-  const colorCls = dir === 'up' ? 'text-up' : dir === 'down' ? 'text-down' : 'text-flat';
+  const dir: 'up' | 'down' | 'flat' = !hasQuote ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
+  const colorCls = pctToTextClass(hasQuote ? pct : null);
   const sign = change > 0 ? '+' : '';
 
   return (
     <div className="group rounded-md border border-[var(--color-border-base)] bg-[var(--color-bg-elev1)] p-3 transition-colors hover:border-[var(--color-border-strong)] sm:p-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-1.5 min-w-0">
-          <span className="truncate text-[12px] font-semibold text-[var(--color-text-secondary)] sm:text-[13px]">
-            {cfg.forceLabel ? cfg.label : (quote?.name?.trim() || cfg.label)}
-          </span>
-        </div>
+        <span className="truncate text-[12px] font-semibold text-[var(--color-text-secondary)] sm:text-[13px]">
+          {cfg.forceLabel ? cfg.label : (quote?.name?.trim() || cfg.label)}
+        </span>
         <span className="shrink-0 rounded bg-[var(--color-bg-elev2)] px-1.5 py-0.5 font-mono text-[9px] text-[var(--color-text-tertiary)]">
           {cfg.marketBadge}
         </span>
@@ -80,6 +69,9 @@ function Card({ cfg, quote }: { cfg: IndexConfig; quote?: Quote }) {
       </div>
       <div className={`num mt-0.5 text-[11px] sm:text-[12px] ${colorCls}`}>
         {hasQuote ? `${sign}${change.toFixed(2)}  ${sign}${pct.toFixed(2)}%` : '--'}
+      </div>
+      <div className="mt-2 -mx-1">
+        <MiniSparkline symbol={cfg.symbol} dir={dir} width={120} height={30} />
       </div>
     </div>
   );
