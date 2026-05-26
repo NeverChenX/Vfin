@@ -27,7 +27,12 @@ export function MarketBreadth() {
   const upRatio = data.total > 0 ? data.up / data.total : 0;
   const flatRatio = data.total > 0 ? data.flat / data.total : 0;
   const downRatio = data.total > 0 ? data.down / data.total : 0;
-  const lhRatio = data.limitDown > 0 ? data.limitUp / data.limitDown : data.limitUp;
+  // 涨停/跌停比：limitDown=0 时不能拿原始 limitUp 当比例值（会出现 "42.0×" 这种误导）。
+  // limitDown=0 且 limitUp>0 显示 "∞"，两者皆 0 显示 "0.0×"。
+  const lhRatio = data.limitDown > 0 ? data.limitUp / data.limitDown : null;
+  const lhDisplay = lhRatio === null
+    ? (data.limitUp > 0 ? '∞' : '0.0')
+    : lhRatio.toFixed(1);
 
   return (
     <div className="rounded-md border border-[var(--color-border-base)] bg-[var(--color-bg-elev1)] p-3 sm:p-4">
@@ -51,7 +56,7 @@ export function MarketBreadth() {
       <div className="mt-3 flex items-center justify-between border-t border-dashed border-[var(--color-border-base)] pt-2 text-[11px]">
         <span>涨停 <span className="num text-up font-semibold">{data.limitUp}</span></span>
         <span>跌停 <span className="num text-down font-semibold">{data.limitDown}</span></span>
-        <span>比 <span className="num text-up font-semibold">{lhRatio.toFixed(1)}×</span></span>
+        <span>比 <span className="num text-up font-semibold">{lhDisplay}×</span></span>
       </div>
     </div>
   );

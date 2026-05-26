@@ -31,18 +31,20 @@ const SLOTS: ReadonlyArray<SlotConfig> = [
   { symbol: 'USDJPY.fx', label: 'USDJPY', highlight: true, liveInP1: false },
 ];
 
+// 提到模块顶层，避免 useEffect 闭包捕获 render-time 引用（被 react-hooks/exhaustive-deps 标红的潜在坑）
+const LIVE_SLOTS = SLOTS.filter((s) => s.liveInP1);
+
 export function CrossMarketStrip() {
-  const liveSlots = SLOTS.filter((s) => s.liveInP1);
   const [quotes, setQuotes] = useState<Record<string, Quote>>({});
 
   useEffect(() => startVisibilityPoll(async (signal) => {
-    const res = await fetchAllLimited(liveSlots, (s) =>
+    const res = await fetchAllLimited(LIVE_SLOTS, (s) =>
       fetchJSONSafe<Quote>(`/api/hq/stock?symbol=${encodeURIComponent(s.symbol)}`, { signal }),
     );
     if (signal.aborted) return;
     setQuotes((prev) => {
       const next = { ...prev };
-      res.forEach((q, i) => { if (q) next[liveSlots[i].symbol] = q; });
+      res.forEach((q, i) => { if (q) next[LIVE_SLOTS[i].symbol] = q; });
       return next;
     });
   }, POLL_MS), []);
