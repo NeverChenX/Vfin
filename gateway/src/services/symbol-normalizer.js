@@ -64,6 +64,25 @@ export function normalizeSymbol(input) {
     };
   }
 
+  // FX / 商品 / 非美海外指数：字母代码（含数字，如 N225）+ 后缀
+  // 必须在通用美股匹配前检查，否则会被当成美股处理
+  if (/^[a-z0-9]{2,8}\.fx$/.test(value)) {
+    const code = value.replace(/\.fx$/, '').toUpperCase();
+    return { market: 'fx', symbol: `${code}.fx` };
+  }
+
+  if (/^[a-z0-9]{1,8}\.cm$/.test(value)) {
+    const code = value.replace(/\.cm$/, '').toUpperCase();
+    return { market: 'cm', symbol: `${code}.cm` };
+  }
+
+  if (/^[a-z0-9]{1,8}\.(jp|de|uk)$/.test(value)) {
+    const lastDot = value.lastIndexOf('.');
+    const code = value.slice(0, lastDot).toUpperCase();
+    const mkt = value.slice(lastDot + 1);
+    return { market: mkt, symbol: `${code}.${mkt}` };
+  }
+
   // 美股代码可能含子类后缀（BRK.B、BF.B 等），保留代码段中的点
   if (/^[a-z]{1,5}(\.[a-z]{1,3})?\.us$/.test(value)) {
     const lastDot = value.lastIndexOf('.');

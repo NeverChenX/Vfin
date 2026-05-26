@@ -102,4 +102,20 @@ describe('normalizeSymbol', () => {
       }
     }
   });
+
+  it('handles forex symbols (.fx)', () => {
+    expect(normalizeSymbol('USDCNY.fx')).toEqual({ market: 'fx', symbol: 'USDCNY.fx' });
+    expect(normalizeSymbol('usdjpy.fx')).toEqual({ market: 'fx', symbol: 'USDJPY.fx' });
+  });
+
+  it('handles commodity symbols (.cm)', () => {
+    expect(normalizeSymbol('XAU.cm')).toEqual({ market: 'cm', symbol: 'XAU.cm' });
+    expect(normalizeSymbol('cl.cm')).toEqual({ market: 'cm', symbol: 'CL.cm' });
+  });
+
+  it('handles non-US international indices (.jp / .de / .uk)', () => {
+    expect(normalizeSymbol('N225.jp')).toEqual({ market: 'jp', symbol: 'N225.jp' });
+    expect(normalizeSymbol('dax.de')).toEqual({ market: 'de', symbol: 'DAX.de' });
+    expect(normalizeSymbol('FTSE.uk')).toEqual({ market: 'uk', symbol: 'FTSE.uk' });
+  });
 });
