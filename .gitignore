@@ -10,3 +10,4 @@ gateway/data/*.sqlite-wal
 gateway/data/*.sqlite-shm
 .env
 .env.local
+.superpowers/
