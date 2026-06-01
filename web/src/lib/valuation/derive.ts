@@ -224,6 +224,80 @@ export function deriveNetMarginSeries(c: CompanyFinancials): ReadonlyArray<{ asO
   });
 }
 
+/** 5 年 FCF 序列：FCF = net_op_cf − |capex|。任一缺失 → 该点 null */
+export function deriveFcfSeries(c: CompanyFinancials): DerivedSeries {
+  const periods = annualPeriods(c, 'CF');
+  return {
+    unit: pickUnit(c),
+    points: periods.map((p) => {
+      const cfo = asNum(p.values.net_op_cf);
+      const capex = asNum(p.values.capex);
+      const fcfRaw =
+        cfo !== null && capex !== null ? cfo - Math.abs(capex) : null;
+      return {
+        period: p.period,
+        asOf: periodToISO(p.period),
+        value: toMillion(fcfRaw),
+      };
+    }),
+  };
+}
+
+/**
+ * 近 N 年 FCF 均值（百万）+ 对应营收均值。
+ * 用于 DCF base FCF & fcfMargin 派生。波动太大时 N 年均值比单年靠谱。
+ */
+export function deriveAverageFcfAndRevenue(
+  c: CompanyFinancials,
+  lastNYears = 3,
+): { fcfAvg: number | null; revAvg: number | null; fcfMargin: number | null; years: number } {
+  const fcfSeries = deriveFcfSeries(c).points;
+  const revSeries = deriveRevenueSeries(c).points;
+  // 取 IS/CF 共有的最近 lastN 年
+  const fcfMap = new Map(fcfSeries.map((p) => [p.period.year, p.value]));
+  const revMap = new Map(revSeries.map((p) => [p.period.year, p.value]));
+  const commonYears = [...fcfMap.keys()]
+    .filter((y) => revMap.has(y))
+    .sort((a, b) => a - b);
+  const tail = commonYears.slice(-lastNYears);
+  const fcfList = tail.map((y) => fcfMap.get(y)!).filter((v): v is number => v !== null && Number.isFinite(v));
+  const revList = tail.map((y) => revMap.get(y)!).filter((v): v is number => v !== null && Number.isFinite(v));
+  if (fcfList.length === 0 || revList.length === 0) {
+    return { fcfAvg: null, revAvg: null, fcfMargin: null, years: tail.length };
+  }
+  const fcfAvg = fcfList.reduce((s, x) => s + x, 0) / fcfList.length;
+  const revAvg = revList.reduce((s, x) => s + x, 0) / revList.length;
+  const fcfMargin = revAvg !== 0 ? fcfAvg / revAvg : null;
+  return { fcfAvg, revAvg, fcfMargin, years: tail.length };
+}
+
+/** CAGR（年复合增长率）从序列首末计算。任一端 ≤ 0 或长度 < 2 → null */
+export function cagr(series: DerivedSeries): number | null {
+  const valid = series.points.filter((p) => p.value !== null && Number.isFinite(p.value));
+  if (valid.length < 2) return null;
+  const first = valid[0].value!;
+  const last = valid[valid.length - 1].value!;
+  if (first <= 0 || last <= 0) return null;
+  const years = valid.length - 1;
+  return Math.pow(last / first, 1 / years) - 1;
+}
+
+/** ROE 序列：ni_parent / parent_equity (用同期 BS) */
+export function deriveRoeSeries(c: CompanyFinancials): ReadonlyArray<{ asOf: string; value: number | null }> {
+  const isPeriods = annualPeriods(c, 'IS');
+  const bsByYear = new Map(
+    annualPeriods(c, 'BS').map((p) => [p.period.year, asNum(p.values.parent_equity)]),
+  );
+  return isPeriods.map((p) => {
+    const ni = asNum(p.values.ni_parent);
+    const eq = bsByYear.get(p.period.year) ?? null;
+    return {
+      asOf: periodToISO(p.period),
+      value: ni !== null && eq !== null && eq !== 0 ? ni / eq : null,
+    };
+  });
+}
+
 /** YoY 增长序列。需要 ≥2 个点；第一个点的 YoY 为 null（无前一期） */
 export function yoy(series: DerivedSeries): ReadonlyArray<{ asOf: string; value: number | null }> {
   const points = series.points;
