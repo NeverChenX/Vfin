@@ -6,6 +6,8 @@ import { ValuationHeader } from '@/components/valuation/ValuationHeader';
 import { ValuationVerdictCards } from '@/components/valuation/ValuationVerdictCards';
 import { SegmentContributionBar } from '@/components/valuation/SegmentContributionBar';
 import { SegmentDetailTable } from '@/components/valuation/SegmentDetailTable';
+import { SensitivityStrip } from '@/components/valuation/SensitivityStrip';
+import { DataCaveats } from '@/components/valuation/DataCaveats';
 
 type Params = Promise<{ ticker: string }>;
 
@@ -55,6 +57,12 @@ export default async function ValuationPage(props: { params: Params }) {
       </div>
       <div className="mt-4">
         <SegmentDetailTable result={result} />
+      </div>
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <SensitivityStrip result={result} />
+        </div>
+        <DataCaveats cfg={cfg} />
       </div>
     </div>
   );
