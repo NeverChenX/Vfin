@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import { getCompany } from '@/data/companies';
 import { computeSotp } from '@/lib/valuation/sotp';
 import { EmptyState } from '@/components/valuation/EmptyState';
+import { ValuationHeader } from '@/components/valuation/ValuationHeader';
+import { ValuationVerdictCards } from '@/components/valuation/ValuationVerdictCards';
 
 type Params = Promise<{ ticker: string }>;
 
@@ -34,19 +36,18 @@ export default async function ValuationPage(props: { params: Params }) {
   const result = computeSotp(cfg, marketCap);
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">
-        {company.name}（{ticker}）— SOTP 估值评估
-      </h1>
-      <pre className="mt-6 overflow-x-auto rounded bg-gray-50 p-4 text-xs">
-        {JSON.stringify(result, null, 2)}
-      </pre>
-      <a
-        href={`/research/${encodeURIComponent(ticker)}`}
-        className="mt-6 inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-      >
-        ← 回研究页
-      </a>
+    <div className="mx-auto max-w-5xl px-6 py-6">
+      <ValuationHeader
+        ticker={ticker}
+        companyName={company.name}
+        market={company.market}
+        currency={result.currency}
+        asOf={result.asOf}
+        isDemo={cfg.isDemo}
+      />
+      <div className="mt-6">
+        <ValuationVerdictCards result={result} />
+      </div>
     </div>
   );
 }
