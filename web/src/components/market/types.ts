@@ -22,7 +22,7 @@ export interface SectorItem {
   pct: number | null; // null = 拿不到
 }
 
-/** 市场宽度数据（Phase 1 = 占位 / null） */
+/** 市场宽度数据。partial=true 时数字是按 total/seen 比例外推的（eastmoney 翻页有页失败）。 */
 export interface BreadthData {
   total: number;
   up: number;
@@ -30,6 +30,9 @@ export interface BreadthData {
   down: number;
   limitUp: number;
   limitDown: number;
+  partial?: boolean;
+  seen?: number;
+  failedPages?: number;
 }
 
 /** 港股专区 */

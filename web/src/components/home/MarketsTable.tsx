@@ -350,10 +350,10 @@ export function MarketsTable({ companies = [] }: Props) {
             <tr className="border-b border-[var(--color-border-base)] text-[11px] text-[var(--color-text-tertiary)]">
               <Th align="left" w="180px">名称 / 代码</Th>
               <Th align="right" w="100px" sortable active={sortKey==='price'} dir={sortDir} onClick={() => toggleSort('price')}>最新价</Th>
-              <Th align="right" w="100px" sortable active={sortKey==='pct'} dir={sortDir} onClick={() => toggleSort('pct')}>24h 涨跌幅</Th>
-              <Th align="right" w="90px" cls="hidden md:table-cell">24h 最高</Th>
-              <Th align="right" w="90px" cls="hidden md:table-cell">24h 最低</Th>
-              <Th align="right" w="110px" sortable active={sortKey==='amount'} dir={sortDir} onClick={() => toggleSort('amount')} cls="hidden lg:table-cell">24h 成交额</Th>
+              <Th align="right" w="100px" sortable active={sortKey==='pct'} dir={sortDir} onClick={() => toggleSort('pct')}>今日 涨跌幅</Th>
+              <Th align="right" w="90px" cls="hidden md:table-cell">今日 最高</Th>
+              <Th align="right" w="90px" cls="hidden md:table-cell">今日 最低</Th>
+              <Th align="right" w="110px" sortable active={sortKey==='amount'} dir={sortDir} onClick={() => toggleSort('amount')} cls="hidden lg:table-cell">今日 成交额</Th>
               <Th align="left"  w="130px" cls="hidden lg:table-cell">财报数据</Th>
               <Th align="center" w="130px" cls="hidden sm:table-cell">近 30 日</Th>
               <Th align="right" w="100px">操作</Th>
@@ -473,10 +473,15 @@ const Row = memo(function RowImpl({
   const handleRemove = () => onRemove(item.symbol);
   const hasQuote = !!quote?.price && quote.price > 0;
   const price = quote?.price ?? 0;
-  const yclose = quote?.yclose ?? quote?.open ?? price;
-  const change = price - yclose;
-  const pct = yclose ? (change / yclose) * 100 : 0;
-  const dir: 'up' | 'down' | 'flat' = !hasQuote ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
+  // yclose 严格要求真实存在。不允许 ?? open ?? price 兜底 —— open 是当日开盘价
+  // ≠ 昨收，price 兜底会让 change 永远 = 0，渲染成假的"+0.00%"。
+  // 没有 yclose 就显示 `--`（用户看到 -- 会去查，看到 0% 会误判持平）。
+  const yclose = quote?.yclose;
+  const hasYclose = typeof yclose === 'number' && yclose > 0;
+  const hasChange = hasQuote && hasYclose;
+  const change = hasChange ? price - yclose! : 0;
+  const pct = hasChange ? (change / yclose!) * 100 : 0;
+  const dir: 'up' | 'down' | 'flat' = !hasChange ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
   const colorCls = dir === 'up' ? 'text-up' : dir === 'down' ? 'text-down' : 'text-flat';
   const { primary, secondary } = buildDisplayName(item.symbol, quote?.name);
   const aShare = isAShare(item.symbol);
@@ -513,7 +518,7 @@ const Row = memo(function RowImpl({
         {hasQuote ? price.toFixed(2) : '--'}
       </td>
       <td className="px-3 py-2.5 num text-right">
-        {hasQuote ? (
+        {hasChange ? (
           <span
             className={`inline-flex items-center justify-end gap-1 rounded-md px-2 py-0.5 text-[12.5px] font-semibold ${
               dir === 'up' ? 'bg-up/10 text-up' : dir === 'down' ? 'bg-down/10 text-down' : 'text-flat'

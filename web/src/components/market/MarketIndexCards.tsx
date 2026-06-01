@@ -47,11 +47,14 @@ export function MarketIndexCards() {
 function Card({ cfg, quote }: { cfg: IndexConfig; quote?: Quote }) {
   const hasQuote = quote?.price !== undefined && quote.price !== null && quote.price > 0;
   const price = quote?.price ?? 0;
-  const yclose = quote?.yclose ?? price;
-  const change = hasQuote ? price - yclose : 0;
-  const pct = hasQuote && yclose ? (change / yclose) * 100 : 0;
-  const dir: 'up' | 'down' | 'flat' = !hasQuote ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
-  const colorCls = pctToTextClass(hasQuote ? pct : null);
+  // yclose 必须真实存在；不允许 ?? price 兜底（会让 change=0、pct=0% 误导成"持平"）。
+  const yclose = quote?.yclose;
+  const hasYclose = typeof yclose === 'number' && yclose > 0;
+  const hasChange = hasQuote && hasYclose;
+  const change = hasChange ? price - yclose! : 0;
+  const pct = hasChange ? (change / yclose!) * 100 : 0;
+  const dir: 'up' | 'down' | 'flat' = !hasChange ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
+  const colorCls = pctToTextClass(hasChange ? pct : null);
   const sign = change > 0 ? '+' : '';
 
   return (
@@ -68,7 +71,7 @@ function Card({ cfg, quote }: { cfg: IndexConfig; quote?: Quote }) {
         {hasQuote ? fmtPrice(price) : '--'}
       </div>
       <div className={`num mt-0.5 text-[11px] sm:text-[12px] ${colorCls}`}>
-        {hasQuote ? `${sign}${change.toFixed(2)}  ${sign}${pct.toFixed(2)}%` : '--'}
+        {hasChange ? `${sign}${change.toFixed(2)}  ${sign}${pct.toFixed(2)}%` : '--'}
       </div>
       <div className="mt-2 -mx-1">
         <MiniSparkline symbol={cfg.symbol} dir={dir} width={120} height={30} />

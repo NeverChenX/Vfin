@@ -154,9 +154,14 @@ export function parseEastmoneyHkQuote(raw) {
   if (!Number.isFinite(Number(d.f43)) || Number(d.f43) === 0) {
     throw new Error('Eastmoney HK quote: f43 missing (halted or unknown symbol)');
   }
-  // f59 = decimal places (eastmoney's per-instrument scale field). Default 2
-  // if missing to match the historical INTL-index assumption.
-  const decimals = Number.isFinite(Number(d.f59)) ? Number(d.f59) : 2;
+  // f59 = decimal places (eastmoney's per-instrument scale field).
+  // 强制要求 f59 — 否则无法正确缩放价格（01810 是 3 位 /1000、HSI 是 2 位 /100）。
+  // 缺失时抛错让 registry fallback 到 tencent，比"猜 scale=2"安全得多
+  // （01810 用 /100 会显示 286.20，差 10 倍，是金融数据里最危险的 bug）。
+  if (!Number.isFinite(Number(d.f59))) {
+    throw new Error('Eastmoney HK quote: f59 (decimal scale) missing — cannot determine price scale');
+  }
+  const decimals = Number(d.f59);
   const scale = 10 ** decimals;
   return {
     code: d.f57 || '',

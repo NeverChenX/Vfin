@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { fetchAllLimited, fetchJSONSafe, startVisibilityPoll, QUOTE_POLL_MS } from '@/lib/poll';
 import { pctToTextClass } from './color-mapping';
-import type { Quote } from './types';
+import type { Quote, HKConnectData } from './types';
 
 interface HKIndex {
   symbol: string;
@@ -15,8 +15,11 @@ const HK_INDICES: ReadonlyArray<HKIndex> = [
   { symbol: 'HSCEI.hk',  label: '国企指数' },
 ];
 
+const HK_CONNECT_POLL_MS = 60_000;
+
 export function HKZone() {
   const [quotes, setQuotes] = useState<Record<string, Quote>>({});
+  const [connect, setConnect] = useState<HKConnectData | null>(null);
 
   useEffect(() => startVisibilityPoll(async (signal) => {
     const res = await fetchAllLimited(HK_INDICES, (i) =>
@@ -30,12 +33,18 @@ export function HKZone() {
     });
   }, QUOTE_POLL_MS), []);
 
+  useEffect(() => startVisibilityPoll(async (signal) => {
+    const data = await fetchJSONSafe<HKConnectData>('/api/hq/hk-connect', { signal });
+    if (signal.aborted) return;
+    if (data) setConnect(data);
+  }, HK_CONNECT_POLL_MS), []);
+
   return (
     <div className="rounded-md border border-[var(--color-border-base)] bg-[var(--color-bg-elev1)] p-3 sm:p-4">
       <div className="mb-2 text-[11px] uppercase tracking-wider text-[var(--color-text-tertiary)]">港股专区</div>
       <div className="grid grid-cols-3 gap-2">
         {HK_INDICES.map((i) => <HKCard key={i.symbol} cfg={i} quote={quotes[i.symbol]} />)}
-        <HKConnectPlaceholder />
+        <HKConnectCard data={connect} />
       </div>
     </div>
   );
@@ -44,9 +53,12 @@ export function HKZone() {
 function HKCard({ cfg, quote }: { cfg: HKIndex; quote?: Quote }) {
   const hasQuote = quote?.price !== undefined && quote.price !== null && quote.price > 0;
   const price = quote?.price ?? 0;
-  const yclose = quote?.yclose ?? price;
-  const pct = hasQuote && yclose ? ((price - yclose) / yclose) * 100 : 0;
-  const colorCls = pctToTextClass(hasQuote ? pct : null);
+  // yclose 必须真实存在；不允许 ?? price 兜底，否则 yclose 缺失会显示假"+0.00%"。
+  const yclose = quote?.yclose;
+  const hasYclose = typeof yclose === 'number' && yclose > 0;
+  const hasChange = hasQuote && hasYclose;
+  const pct = hasChange ? ((price - yclose!) / yclose!) * 100 : 0;
+  const colorCls = pctToTextClass(hasChange ? pct : null);
   const sign = pct > 0 ? '+' : '';
   return (
     <div className="rounded-sm bg-[var(--color-bg-elev2)] p-2">
@@ -55,18 +67,40 @@ function HKCard({ cfg, quote }: { cfg: HKIndex; quote?: Quote }) {
         {hasQuote ? price.toFixed(2) : '--'}
       </div>
       <div className={`num text-[10px] ${colorCls}`}>
-        {hasQuote ? `${sign}${pct.toFixed(2)}%` : '--'}
+        {hasChange ? `${sign}${pct.toFixed(2)}%` : '--'}
       </div>
     </div>
   );
 }
 
-function HKConnectPlaceholder() {
+function HKConnectCard({ data }: { data: HKConnectData | null }) {
+  const south = data?.southboundNet ?? null;
+  const north = data?.northboundNet ?? null;
+  const hasSouth = south !== null;
+  const hasNorth = north !== null;
+
+  // 上方主指标：南向（沪深→港）净流入，更贴近港股语境
+  const southPositive = hasSouth && south > 0;
+  const southColor = !hasSouth
+    ? 'text-[var(--color-text-tertiary)]'
+    : southPositive ? 'text-up' : south < 0 ? 'text-down' : 'text-[var(--color-text-primary)]';
+  const sign = hasSouth && south > 0 ? '+' : '';
+  const fmtYuan = (v: number): string => {
+    const abs = Math.abs(v);
+    if (abs >= 1e8) return `${(v / 1e8).toFixed(1)}亿`;
+    if (abs >= 1e4) return `${(v / 1e4).toFixed(0)}万`;
+    return v.toFixed(0);
+  };
+
   return (
-    <div className="flex flex-col rounded-sm border border-dashed border-[var(--color-border-base)] bg-[var(--color-bg-elev2)] p-2">
-      <div className="text-[11px] text-[var(--color-text-secondary)]">港股通净流入</div>
-      <div className="num mt-auto text-[12px] text-[var(--color-text-tertiary)]">暂不可用</div>
-      <div className="text-[9px] text-[var(--color-text-disabled)]">Phase 2 接入</div>
+    <div className="flex flex-col rounded-sm bg-[var(--color-bg-elev2)] p-2">
+      <div className="text-[11px] text-[var(--color-text-secondary)]">南向净流入</div>
+      <div className={`num mt-auto text-[14px] font-bold ${southColor}`}>
+        {hasSouth ? `${sign}${fmtYuan(south)}` : '--'}
+      </div>
+      <div className="num text-[10px] text-[var(--color-text-tertiary)]">
+        北向 {hasNorth ? fmtYuan(north) : '--'}
+      </div>
     </div>
   );
 }

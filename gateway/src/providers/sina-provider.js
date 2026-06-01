@@ -81,6 +81,17 @@ export class SinaProvider extends BaseProvider {
   async fetchQuote(context) {
     this.ensureMockableMode(context.providerMode, 'quote');
 
+    // 防御性拒绝：parseSinaQuote 仅适配 A 股 `,` 分隔顺序；
+    // sina HK / 美股的 list= 返回完全不同的字段序，硬走 A-share parser 会把
+    // open=高、yclose=低、now=日期 全错位 → 显示的价格、涨跌全错。
+    // HK 由 eastmoney 主路、tencent 兜底；US 由 tencent 主路；sina 不应被点到。
+    if (context.market === 'hk' || context.market === 'us') {
+      throw this.createError(
+        `Sina quote: market "${context.market}" disabled (parseSinaQuote is A-share only)`,
+        { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' }
+      );
+    }
+
     if (context.providerMode === 'live') {
       try {
         const data = await fetchSinaQuote(context);

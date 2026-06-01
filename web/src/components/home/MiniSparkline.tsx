@@ -38,9 +38,11 @@ async function loadSpark(symbol: string, signal?: AbortSignal): Promise<number[]
       { signal, timeoutMs: 6000 },
     );
     const items = d?.items ?? [];
+    // 过滤 close <= 0：停牌日 / 数据缺失会让 close=0，参与 min/max 归一化后会画出
+    // 直插到底的尖刺，把"短期回调"画成"崩盘"。金融图必须丢弃这些点。
     const values = items
       .map((i) => Number(i.close))
-      .filter((n) => Number.isFinite(n));
+      .filter((n) => Number.isFinite(n) && n > 0);
     sparkCache.set(symbol, { values, promise: null, t: Date.now() });
     return values;
   })();

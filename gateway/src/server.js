@@ -1,13 +1,22 @@
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { setDefaultResultOrder } from 'node:dns';
 import { loadConfig } from './config.js';
+
+// 强制 IPv4-first DNS：eastmoney push2 / 部分 sina 节点对 IPv6 入站
+// 会立刻 RST（undici 报 "other side closed"），但 IPv4 入站工作正常。
+// 在 gateway 启动时设置一次，让所有上游 fetch 默认走 v4，
+// 这能直接修掉 breadth/HK Connect/HK quote 等多个间歇性 fetch failed。
+setDefaultResultOrder('ipv4first');
 import { errorHandler } from './middleware/error-handler.js';
 import { traceIdMiddleware } from './middleware/trace-id.js';
 import { createMarketRouter } from './routes/market-routes.js';
 import { createWatchlistRouter } from './routes/watchlist-routes.js';
 import { createHqchartDataService } from './services/hqchart-data-service.js';
 import { createWatchlistService } from './services/watchlist-service.js';
+import { createBreadthService } from './services/breadth-service.js';
+import { createHkConnectService } from './services/hk-connect-service.js';
 import { createProviderRegistry } from './providers/provider-registry.js';
 
 // C1: strict CORS.
@@ -43,10 +52,19 @@ function corsMiddleware(req, res, next) {
   return next();
 }
 
-export function createApp({ watchlistService, hqchartDataService, providerOrder, providerMode } = {}) {
+export function createApp({
+  watchlistService,
+  hqchartDataService,
+  breadthService,
+  hkConnectService,
+  providerOrder,
+  providerMode
+} = {}) {
   const app = express();
   let defaultWatchlistService;
   let defaultHqchartDataService;
+  let defaultBreadthService;
+  let defaultHkConnectService;
   const service = watchlistService ?? (() => {
     if (!defaultWatchlistService) {
       defaultWatchlistService = createWatchlistService();
@@ -62,6 +80,14 @@ export function createApp({ watchlistService, hqchartDataService, providerOrder,
     }
 
     return defaultHqchartDataService;
+  });
+  const breadth = breadthService ?? (() => {
+    if (!defaultBreadthService) defaultBreadthService = createBreadthService();
+    return defaultBreadthService;
+  });
+  const hkConnect = hkConnectService ?? (() => {
+    if (!defaultHkConnectService) defaultHkConnectService = createHkConnectService();
+    return defaultHkConnectService;
   });
 
   app.disable('x-powered-by');
@@ -87,7 +113,11 @@ export function createApp({ watchlistService, hqchartDataService, providerOrder,
   // host:3816 — wrong on reverse-proxy / cloudflared deployments). Standalone
   // health check is /api/health/live; the rest is not a public surface.
 
-  app.use('/api', createMarketRouter({ hqchartDataService: marketDataService }));
+  app.use('/api', createMarketRouter({
+    hqchartDataService: marketDataService,
+    breadthService: breadth,
+    hkConnectService: hkConnect
+  }));
   app.use('/api/watchlist', createWatchlistRouter({ watchlistService: service, projectRoot }));
   app.use(errorHandler);
 
