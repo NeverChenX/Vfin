@@ -57,7 +57,7 @@ VFin 现有 `/research/[ticker]` 已能展示一家公司的 BS/IS/CF 三大报�
     "sotpAsOf": "2025-12-31",       // 整体 SOTP 的截止日期（财年/半年报）
     "netCash": 49000,               // 净现金（百万，原币）— 加回 SOTP，可为负
     "netCashAsOf": "2025-12-31",    // 净现金对应资产负债表时点
-    "marketCapOverride": null,      // 可选：若市值不通过 KeyMetricsRow 取，此处覆盖
+    "marketCapOverride": null,      // 可选：若 KeyMetricsRow.market_cap 不可用/币种不匹配，用此值（百万，原币）
     "segments": [
       {
         "id": "smartphone",
