@@ -28,7 +28,6 @@ export interface ValuationConfig {
   netCashAsOf: string;
   marketCapOverride: number | null;
   segments: BusinessSegment[];
-  isDemo?: boolean;
 }
 
 export interface SegmentValuation {
