@@ -698,6 +698,81 @@
   },
   "_source": "stockanalysis.com",
   "_fetchedAt": "2026-05-14T15:09:28.089Z",
+  "valuation": {
+    "sotpCurrency": "HKD",
+    "sotpAsOf": "2025-06-30",
+    "netCash": 49000,
+    "netCashAsOf": "2025-06-30",
+    "marketCapOverride": 723400,
+    "isDemo": true,
+    "segments": [
+      {
+        "id": "smartphone",
+        "name": "智能手机",
+        "method": "PS",
+        "metricLabel": "TTM 营收 (HKD 百万)",
+        "metricValue": 200000,
+        "metricAsOf": "2025-06-30",
+        "peers": [
+          {
+            "name": "Apple Inc.",
+            "ticker": "AAPL",
+            "multiple": 7.5,
+            "asOf": "2025-06-30",
+            "source": "DEMO — 待人工核对"
+          },
+          {
+            "name": "Samsung Electronics",
+            "ticker": "005930.KS",
+            "multiple": 1.2,
+            "asOf": "2025-06-30",
+            "source": "DEMO — 待人工核对"
+          }
+        ],
+        "rationale": "硬件业务按 PS。Apple 高端品牌带显著溢价，Samsung 大众市场偏低估，小米介于两者之间。所有数字为演示占位，必须人工核对替换。"
+      },
+      {
+        "id": "iot",
+        "name": "IoT 与生活消费品",
+        "method": "PS",
+        "metricLabel": "TTM 营收 (HKD 百万)",
+        "metricValue": 90000,
+        "metricAsOf": "2025-06-30",
+        "peers": [
+          { "name": "Anker Innovations", "ticker": "300866.SZ", "multiple": 2.4, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
+          { "name": "iRobot", "ticker": "IRBT", "multiple": 0.8, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" }
+        ],
+        "rationale": "智能家电/可穿戴消费电子，与 Anker 业务最接近；iRobot 处境特殊（收购失败后估值低），仅作下限参考。"
+      },
+      {
+        "id": "internet",
+        "name": "互联网服务",
+        "method": "PE",
+        "metricLabel": "TTM 归母净利润 (HKD 百万)",
+        "metricValue": 8000,
+        "metricAsOf": "2025-06-30",
+        "peers": [
+          { "name": "Tencent", "ticker": "00700.HK", "multiple": 18, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
+          { "name": "Meta", "ticker": "META", "multiple": 25, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" }
+        ],
+        "rationale": "高毛利广告与增值服务，按净利润给互联网行业 PE。MIUI 用户基数大但 ARPU 低于头部平台。"
+      },
+      {
+        "id": "ev",
+        "name": "智能电动汽车",
+        "method": "PS",
+        "metricLabel": "TTM 营收 (HKD 百万)",
+        "metricValue": 20000,
+        "metricAsOf": "2025-06-30",
+        "peers": [
+          { "name": "Tesla", "ticker": "TSLA", "multiple": 8.0, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
+          { "name": "Li Auto", "ticker": "LI", "multiple": 1.3, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
+          { "name": "NIO", "ticker": "NIO", "multiple": 1.0, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" }
+        ],
+        "rationale": "新能源车业务，与新势力（蔚小理）同业可比。Tesla 给上限，蔚来给下限。"
+      }
+    ]
+  },
   "_validation": {
     "passedAt": "2026-05-14T15:09:28.089Z",
     "passed": false,
