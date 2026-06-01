@@ -9,8 +9,32 @@
  *   - Next.js app dir = 本文件所在目录（web/）
  */
 import { createServer } from 'node:http';
+import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 自定义 server 不会经过 Next CLI，因此 .env.local 必须自己加载——必须在 import 'next'
+// 之前完成，否则 server-only 模块（如 lib/auth.ts）在第一次 import 时读不到
+// SESSION_SECRET，会 fallback 到 ephemeral 随机密钥，导致每次重启所有 cookie 失效。
+for (const envFile of ['.env.local', '.env']) {
+  const p = path.join(__dirname, envFile);
+  if (!existsSync(p)) continue;
+  for (const raw of readFileSync(p, 'utf-8').split('\n')) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const eq = line.indexOf('=');
+    if (eq < 0) continue;
+    const k = line.slice(0, eq).trim();
+    let v = line.slice(eq + 1).trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+      v = v.slice(1, -1);
+    }
+    if (!(k in process.env)) process.env[k] = v;
+  }
+}
 
 // Turbopack 必须在 import next 之前通过 env 开启（Next 15 自定义 server 用法）
 if (process.env.NODE_ENV !== 'production' && process.env.NEXT_DISABLE_TURBOPACK !== '1') {
@@ -18,9 +42,6 @@ if (process.env.NODE_ENV !== 'production' && process.env.NEXT_DISABLE_TURBOPACK 
 }
 
 const next = (await import('next')).default;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // ---- 锁定 gateway SQLite 路径（必须在 import gateway 之前设置）----
 const gatewayDbPath = path.resolve(__dirname, '../gateway/data/vfin-gateway.sqlite');

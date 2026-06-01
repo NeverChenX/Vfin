@@ -187,6 +187,9 @@ export async function POST(req: Request) {
       industry,
       _source: company._sourceName,
       _fetchedAt: new Date().toISOString(),
+      // 真实"财报公告/发布日"：仅 SEC fetcher 暴露（EDGAR `filed` 字段）。
+      // A 股 / 港股暂无（需接 cninfo / HKEX disclosure，下一步）。
+      _latestFiledAt: (company as { _latestFiledAt?: string })._latestFiledAt,
       _validation: validation,
       // C5: explicit on-disk quarantine flag so any consumer can detect
       // "this row is single-source unverified" without re-running validation.

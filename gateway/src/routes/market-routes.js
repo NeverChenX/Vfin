@@ -79,7 +79,7 @@ function loadTradeRecords() {
   return tradeMap;
 }
 
-export function createMarketRouter({ hqchartDataService } = {}) {
+export function createMarketRouter({ hqchartDataService, breadthService, hkConnectService } = {}) {
   const router = Router();
   const resolveService = () => {
     if (typeof hqchartDataService === 'function') {
@@ -87,6 +87,10 @@ export function createMarketRouter({ hqchartDataService } = {}) {
     }
     return hqchartDataService ?? createHqchartDataService();
   };
+  const resolveBreadth = () =>
+    typeof breadthService === 'function' ? breadthService() : breadthService;
+  const resolveHkConnect = () =>
+    typeof hkConnectService === 'function' ? hkConnectService() : hkConnectService;
 
   function createHandler(methodName) {
     return (req, res, next) => {
@@ -190,6 +194,35 @@ export function createMarketRouter({ hqchartDataService } = {}) {
   router.get('/trade-detail', createHandler('getTradeDetail'));
   router.get('/news', createHandler('getNews'));
   router.get('/announcements', createHandler('getAnnouncements'));
+
+  // Phase 2: market breadth (沪深 A 股 up/down/limit-up/limit-down 聚合)
+  router.get('/breadth', async (req, res, next) => {
+    const svc = resolveBreadth();
+    if (!svc) {
+      return res.status(503).json({ error: 'breadth service not configured' });
+    }
+    try {
+      const market = (req.query.market || 'cn').toString();
+      const data = await svc.get(market);
+      return res.status(200).json(data);
+    } catch (err) {
+      return next(err);
+    }
+  });
+
+  // Phase 2: Stock-Connect 南向 / 北向当日净流入
+  router.get('/hk-connect', async (_req, res, next) => {
+    const svc = resolveHkConnect();
+    if (!svc) {
+      return res.status(503).json({ error: 'hk-connect service not configured' });
+    }
+    try {
+      const data = await svc.get();
+      return res.status(200).json(data);
+    } catch (err) {
+      return next(err);
+    }
+  });
 
   return router;
 }

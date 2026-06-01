@@ -696,15 +696,16 @@
       ]
     }
   },
+  "_latestFiledAt": "2026-04-23",
   "_source": "SEC EDGAR · CIK0001318605",
-  "_fetchedAt": "2026-05-14T15:13:48.865Z",
+  "_fetchedAt": "2026-06-01T10:01:06.759Z",
   "_validation": {
-    "passedAt": "2026-05-14T15:13:48.865Z",
+    "passedAt": "2026-06-01T10:01:06.759Z",
     "passed": false,
     "sources": {
       "primary": {
         "name": "SEC EDGAR · CIK0001318605",
-        "fetchedAt": "2026-05-14T15:13:48.865Z"
+        "fetchedAt": "2026-06-01T10:01:06.759Z"
       },
       "secondary": {
         "name": "PENDING — 辅源未接入 (按项目零容忍要求需补)",
@@ -992,5 +993,6 @@
       "⚠️ 单源抓取 — 项目硬性要求\"至少 2 个独立数据源 + 交叉校验\"，自动 passed=false 直到接入辅源",
       "内部一致性校验：25/30 项通过"
     ]
-  }
+  },
+  "_quarantined": true
 }

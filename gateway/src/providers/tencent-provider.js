@@ -38,6 +38,17 @@ export class TencentProvider extends BaseProvider {
   async fetchQuote(context) {
     this.ensureMockableMode(context.providerMode, 'quote');
 
+    // Tencent has no real market for FX / commodity / non-US intl indices.
+    // A garbage `${market}${code}` response (e.g. deDAX → empty payload parsed
+    // as zeros) used to short-circuit the registry's fallback chain; throw
+    // UNSUPPORTED so sina/eastmoney get a turn.
+    if (['fx', 'cm', 'jp', 'de', 'uk'].includes(context.market)) {
+      throw this.createError(
+        `Tencent quote: unsupported market "${context.market}"`,
+        { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' }
+      );
+    }
+
     if (context.providerMode === 'live') {
       try {
         const code = buildTencentSymbol(context);

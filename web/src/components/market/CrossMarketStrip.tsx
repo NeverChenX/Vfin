@@ -15,20 +15,22 @@ interface SlotConfig {
   liveInP1: boolean;
 }
 
+// Phase 2: sina-provider 已上线 FX (USDCNY/USDJPY)、商品 (XAU/CL)、日经 N225；
+// DAX/FTSE 走 eastmoney provider 已上线。liveInP1 字段名沿用历史命名，全部已点亮。
 const SLOTS: ReadonlyArray<SlotConfig> = [
-  // 美股 — Phase 1 可用
+  // 美股
   { symbol: 'DJI.us',  label: '道指',   liveInP1: true },
   { symbol: 'IXIC.us', label: '纳指',   liveInP1: true },
   { symbol: 'INX.us',  label: '标普',   liveInP1: true },
-  // 非美海外指数 — Phase 2
-  { symbol: 'N225.jp', label: '日经',   liveInP1: false },
-  { symbol: 'DAX.de',  label: 'DAX',    liveInP1: false },
-  // 商品 — Phase 2
-  { symbol: 'XAU.cm',  label: '黄金',   liveInP1: false },
-  { symbol: 'CL.cm',   label: '原油',   liveInP1: false },
-  // 汇率 — Phase 2，highlight
-  { symbol: 'USDCNY.fx', label: 'USDCNY', highlight: true, liveInP1: false },
-  { symbol: 'USDJPY.fx', label: 'USDJPY', highlight: true, liveInP1: false },
+  // 非美海外指数
+  { symbol: 'N225.jp', label: '日经',   liveInP1: true },
+  { symbol: 'DAX.de',  label: 'DAX',    liveInP1: true },
+  // 商品
+  { symbol: 'XAU.cm',  label: '黄金',   liveInP1: true },
+  { symbol: 'CL.cm',   label: '原油',   liveInP1: true },
+  // 汇率（中美 / 美日 — 用户重点关注）
+  { symbol: 'USDCNY.fx', label: 'USDCNY', highlight: true, liveInP1: true },
+  { symbol: 'USDJPY.fx', label: 'USDJPY', highlight: true, liveInP1: true },
 ];
 
 // 提到模块顶层，避免 useEffect 闭包捕获 render-time 引用（被 react-hooks/exhaustive-deps 标红的潜在坑）

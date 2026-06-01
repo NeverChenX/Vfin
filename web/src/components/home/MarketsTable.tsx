@@ -17,6 +17,9 @@ export interface CompanyMeta {
   isStale: boolean;
   fetchedAt?: string;
   updatedAt?: string;
+  // 真实"财报公告/披露日"，仅美股（SEC EDGAR `filed`）可用；
+  // A 股 / 港股暂无 → 前端降级显示"同步 X 天前"
+  latestFiledAt?: string;
 }
 
 interface Props {
@@ -673,7 +676,15 @@ function FinancialMeta({ company }: { company?: CompanyMeta }) {
   const fetched = company.fetchedAt || company.updatedAt;
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="num inline-flex items-center gap-1">
+      <span
+        className="num inline-flex items-center gap-1"
+        title={
+          company.dataAsOf
+            ? `财报期间末日：${company.dataAsOf}（≠ 公告/发布时间）`
+            : undefined
+        }
+      >
+        <span className="text-[10px] text-[var(--color-text-tertiary)]">数据期间</span>
         <span className={company.isStale ? 'text-[var(--color-down)]' : 'text-[var(--color-text-primary)]'}>
           {periodLabel}
         </span>
@@ -687,11 +698,21 @@ function FinancialMeta({ company }: { company?: CompanyMeta }) {
           </span>
         )}
       </span>
-      {fetched && (
-        <span className="num text-[10px] text-[var(--color-text-tertiary)]">
-          {fmtAgo(fetched)}
+      {company.latestFiledAt ? (
+        <span
+          className="num text-[10px] text-[var(--color-text-tertiary)]"
+          title={`财报公告日（SEC EDGAR filed）：${company.latestFiledAt}`}
+        >
+          公告 {fmtAgo(company.latestFiledAt)}
         </span>
-      )}
+      ) : fetched ? (
+        <span
+          className="num text-[10px] text-[var(--color-text-tertiary)]"
+          title={`上次本地同步时间：${new Date(fetched).toLocaleString('zh-CN')}（A 股/港股暂无公告日数据源）`}
+        >
+          同步 {fmtAgo(fetched)}
+        </span>
+      ) : null}
     </div>
   );
 }

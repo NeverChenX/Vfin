@@ -22,6 +22,12 @@ export interface CompanyListEntry {
   updatedAt: string;
   source?: string;
   fetchedAt?: string;
+  /**
+   * 真实"财报公告/披露日"，仅 SEC EDGAR 提供（`filed` 字段）。
+   * A 股 / 港股暂为 undefined（需后续接 cninfo / HKEX disclosure）。
+   * 前端用它显示"公告 X 天前"；缺失时降级到 fetchedAt 的"同步 X 天前"。
+   */
+  latestFiledAt?: string;
   isDemoFetched?: boolean;
 }
 
@@ -135,7 +141,7 @@ function computeAllCompanies(): CompanyListEntry[] {
     const rec = readCompany(ticker);
     if (!rec) continue;
     const { dataAsOf, coverage } = dataAsOfFromCompany(rec.data);
-    const meta = rec.data as unknown as { _demo?: boolean; _source?: string; _fetchedAt?: string; market?: 'A'|'HK'|'US' };
+    const meta = rec.data as unknown as { _demo?: boolean; _source?: string; _fetchedAt?: string; _latestFiledAt?: string; market?: 'A'|'HK'|'US' };
     const market = meta.market ?? marketGroup(rec.data.ticker);
     const expectedAsOf = expectedLatestPeriodEnd(market, new Date());
     // isStale 判定：dataAsOf 早于 expectedAsOf
@@ -162,6 +168,7 @@ function computeAllCompanies(): CompanyListEntry[] {
       updatedAt: new Date(rec.mtime).toISOString(),
       source: meta._source,
       fetchedAt: meta._fetchedAt,
+      latestFiledAt: meta._latestFiledAt,
       isDemoFetched: meta._demo ?? false,
     });
   }

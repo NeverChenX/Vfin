@@ -130,9 +130,32 @@ function getAnnualInstant(
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
+/**
+ * 扫所有 us-gaap facts 取最大的 `filed` 日期。
+ *
+ * SEC `filed` 字段是 EDGAR 系统收到该 filing 的日期，等同于"财报公告日 / 披露日"。
+ * 同一份 10-K 会被切成几百个 fact records，但它们 filed 相同；取整库最大值 = 最近一次提交。
+ *
+ * 失败/缺数据返回 null —— 零容忍：宁可前端降级显示"同步时间"，也不臆造一个日期。
+ */
+function latestFilingDate(facts: SECFactsResponse): string | null {
+  let max: string | null = null;
+  const gaap = facts.facts['us-gaap'];
+  if (!gaap) return null;
+  for (const concept of Object.values(gaap)) {
+    for (const recs of Object.values(concept.units || {})) {
+      for (const r of recs) {
+        // YYYY-MM-DD 字符串可直接字典序比较
+        if (r.filed && (max === null || r.filed > max)) max = r.filed;
+      }
+    }
+  }
+  return max;
+}
+
 export async function fetchSECCompany(
   ticker: string,
-): Promise<CompanyFinancials & { _sourceName?: string }> {
+): Promise<CompanyFinancials & { _sourceName?: string; _latestFiledAt?: string }> {
   const meta = US_TICKER_CIK[ticker.toUpperCase()];
   if (!meta) throw new Error(`未知美股 ticker: ${ticker}。当前已收录: ${Object.keys(US_TICKER_CIK).join(', ')}`);
 
@@ -448,5 +471,6 @@ export async function fetchSECCompany(
       CF: { periods: cfPeriods },
     },
     _sourceName: `SEC EDGAR · CIK${String(meta.cik).padStart(10, '0')}`,
-  } as CompanyFinancials & { _sourceName?: string };
+    _latestFiledAt: latestFilingDate(facts) ?? undefined,
+  } as CompanyFinancials & { _sourceName?: string; _latestFiledAt?: string };
 }

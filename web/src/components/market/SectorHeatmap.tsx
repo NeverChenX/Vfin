@@ -37,7 +37,12 @@ export function SectorHeatmap() {
       <div className="mb-2 flex items-baseline justify-between">
         <span className="text-[11px] uppercase tracking-wider text-[var(--color-text-tertiary)]">A 股行业热度</span>
         {degraded && (
-          <span className="text-[10px] text-[var(--color-text-tertiary)]">数据不完整</span>
+          <span
+            className="text-[10px] text-[var(--color-down)]"
+            title="申万一级行业指数（801xxx.sh）：腾讯/新浪不提供该代码的行情，仅 eastmoney push2 支持；当前网络拉不到 push2 → 全部行业显示 — 。换网络或接入 akshare/tushare 可解。"
+          >
+            数据源不可达
+          </span>
         )}
       </div>
       <div className="grid grid-cols-4 gap-1 sm:grid-cols-6 lg:grid-cols-8">
