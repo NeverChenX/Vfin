@@ -4,6 +4,7 @@ import { computeSotp } from '@/lib/valuation/sotp';
 import { EmptyState } from '@/components/valuation/EmptyState';
 import { ValuationHeader } from '@/components/valuation/ValuationHeader';
 import { ValuationVerdictCards } from '@/components/valuation/ValuationVerdictCards';
+import { SegmentContributionBar } from '@/components/valuation/SegmentContributionBar';
 
 type Params = Promise<{ ticker: string }>;
 
@@ -47,6 +48,9 @@ export default async function ValuationPage(props: { params: Params }) {
       />
       <div className="mt-6">
         <ValuationVerdictCards result={result} />
+      </div>
+      <div className="mt-4">
+        <SegmentContributionBar result={result} />
       </div>
     </div>
   );
