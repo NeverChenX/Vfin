@@ -55,6 +55,14 @@ export default async function ResearchPage(props: { params: Params; searchParams
         <LeftWatchlistPanel activeSymbol={ticker} mode="research" />
 
         <div className="min-w-0 flex-1 overflow-y-auto">
+          <div className="sticky top-0 z-10 flex h-9 items-center justify-end border-b border-gray-100 bg-white px-4">
+            <a
+              href={`/valuation/${encodeURIComponent(ticker)}`}
+              className="rounded border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+            >
+              估值评估 →
+            </a>
+          </div>
           <ResearchWorkspace
             company={company}
             ticker={ticker}
