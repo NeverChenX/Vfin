@@ -1,3 +1,5 @@
+import type { ValuationConfig } from './valuation';
+
 export type PeriodGranularity = 'Y' | 'H' | 'Q';
 
 export interface PeriodKey {
@@ -99,6 +101,8 @@ export interface CompanyFinancials {
     CF: { periods: PeriodValues[] };
   };
   ratios?: KeyMetricsRow[];
+  /** SOTP 分部估值配置；缺省时估值页显示 EmptyState */
+  valuation?: ValuationConfig;
   /** 多源交叉校验报告。**无此字段或 passed=false 的 JSON 视为不可信，需重抓** */
   _validation?: ValidationReport;
 }
