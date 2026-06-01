@@ -112,6 +112,68 @@ export function parseSinaIntlIndex(raw) {
   };
 }
 
+/**
+ * Eastmoney push2 stock-quote API returns prices scaled (DAX/FTSE × 100).
+ * Caller passes `scale` (typically 100) so we divide back to natural units.
+ *
+ * Field map (from secid=100.GDAXI fields=f43,f44,f45,f46,f57,f58,f60):
+ *   f43 = current price, f44 = high, f45 = low, f46 = open,
+ *   f57 = code (e.g. GDAXI), f58 = name (e.g. 德国DAX30), f60 = prevClose
+ */
+export function parseEastmoneyIntlIndex(raw, scale = 100) {
+  const d = raw?.data;
+  if (!d) throw new Error('Eastmoney intl-index: empty data payload');
+  const s = scale || 1;
+  return {
+    code: d.f57 || '',
+    name: d.f58 || '',
+    price: toNumber(d.f43) / s,
+    high: toNumber(d.f44) / s,
+    low: toNumber(d.f45) / s,
+    open: toNumber(d.f46) / s,
+    prevClose: toNumber(d.f60) / s
+  };
+}
+
+/**
+ * Eastmoney push2 HK quote — real-time (vs Tencent's 15-min-delayed free feed).
+ *
+ * Field map (secid=116.<code> fields=f43,f44,f45,f46,f47,f48,f57,f58,f59,f60,f86):
+ *   f43 price · f44 high · f45 low · f46 open · f60 prevClose
+ *   f47 volume (shares) · f48 turnover (HKD)
+ *   f57 code · f58 name
+ *   f59 decimal places (e.g. 3 for 01810, 2 for HSI index) — drives price scale
+ *   f86 unix timestamp (seconds)
+ *
+ * Rejects when f43 is 0/missing — happens for halted/未上市 symbols. Throw lets
+ * the registry fall through to tencent rather than render a price=0 quote.
+ */
+export function parseEastmoneyHkQuote(raw) {
+  const d = raw?.data;
+  if (!d) throw new Error('Eastmoney HK quote: empty data payload');
+  if (!Number.isFinite(Number(d.f43)) || Number(d.f43) === 0) {
+    throw new Error('Eastmoney HK quote: f43 missing (halted or unknown symbol)');
+  }
+  // f59 = decimal places (eastmoney's per-instrument scale field). Default 2
+  // if missing to match the historical INTL-index assumption.
+  const decimals = Number.isFinite(Number(d.f59)) ? Number(d.f59) : 2;
+  const scale = 10 ** decimals;
+  return {
+    code: d.f57 || '',
+    name: d.f58 || '',
+    price: toNumber(d.f43) / scale,
+    high: toNumber(d.f44) / scale,
+    low: toNumber(d.f45) / scale,
+    open: toNumber(d.f46) / scale,
+    prevClose: toNumber(d.f60) / scale,
+    volume: toNumber(d.f47),
+    turnover: toNumber(d.f48),
+    time: Number.isFinite(Number(d.f86)) && Number(d.f86) > 0
+      ? new Date(Number(d.f86) * 1000).toISOString().replace('Z', '+00:00')
+      : beijingNow()
+  };
+}
+
 export function parseTencentMinute(raw) {
   const list = raw?.data ?? [];
   const points = list.map((item) => {

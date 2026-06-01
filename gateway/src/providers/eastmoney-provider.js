@@ -4,9 +4,18 @@ import {
   parseEastmoneyTradeDetail,
   parseEastmoneyAnnouncements,
   parseEastmoneyCapital,
-  parseEastmoneyKline
+  parseEastmoneyKline,
+  parseEastmoneyIntlIndex,
+  parseEastmoneyHkQuote
 } from './live-mappers.js';
 import { createTimestamp } from '../utils/time.js';
+
+// secid for non-US international indices on eastmoney push2 API.
+// scale=100 means quotes come in centi-units and need /100.
+const EASTMONEY_INTL_SECID = {
+  'DAX.de':  { secid: '100.GDAXI', scale: 100 },
+  'FTSE.uk': { secid: '100.FTSE',  scale: 100 }
+};
 
 function buildEastmoneySecId({ market, symbol }) {
   const lastDot = symbol?.lastIndexOf('.') ?? -1;
@@ -14,7 +23,13 @@ function buildEastmoneySecId({ market, symbol }) {
   if (market === 'sh') return `1.${code}`;
   if (market === 'sz') return `0.${code}`;
   if (market === 'us') return `105.${code}`;
-  if (market === 'hk') return `116.${code.padStart(5, '0')}`;
+  if (market === 'hk') {
+    // HK stocks (numeric codes like 01810) → 116. prefix, padded to 5 digits.
+    // HK indices (alphabetic codes like HSI / HSCEI / HSTECH) → 100. prefix,
+    // no padding. `padStart` on `HSI` would yield `00HSI` (404).
+    if (/^\d+$/.test(code)) return `116.${code.padStart(5, '0')}`;
+    return `100.${code}`;
+  }
   return null;
 }
 
@@ -31,6 +46,125 @@ function resolveEastmoneyPeriod(period) {
 export class EastmoneyProvider extends BaseProvider {
   constructor() {
     super({ name: 'eastmoney' });
+  }
+
+  /**
+   * Quote support:
+   *   - HK stocks (.hk) — real-time via push2 (tencent's free HK feed is
+   *     15-min delayed and is the reason this branch exists at all)
+   *   - International indices DAX (.de) / FTSE (.uk) via push2
+   *   - Everything else throws UNSUPPORTED so registry falls back to
+   *     sina/tencent without raising a client error.
+   */
+  async fetchQuote(context) {
+    this.ensureMockableMode(context.providerMode, 'quote');
+
+    if (context.market === 'hk') {
+      return this.#fetchHkQuote(context);
+    }
+
+    const cfg = EASTMONEY_INTL_SECID[context.symbol];
+    if (!cfg) {
+      throw this.createError(
+        `Eastmoney quote: unsupported symbol "${context.symbol}"`,
+        { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' }
+      );
+    }
+
+    if (context.providerMode !== 'live') {
+      return {
+        symbol: context.symbol,
+        market: context.market,
+        name: 'Mock Index',
+        now: 1000,
+        prevClose: 990,
+        open: 995,
+        high: 1010,
+        low: 990,
+        volume: 0,
+        turnover: 0,
+        timestamp: createTimestamp()
+      };
+    }
+
+    const url = `https://push2.eastmoney.com/api/qt/stock/get?secid=${cfg.secid}&fields=f43,f44,f45,f46,f57,f58,f60`;
+    try {
+      const json = await fetchJson(url);
+      const q = parseEastmoneyIntlIndex(json, cfg.scale);
+      return {
+        symbol: context.symbol,
+        market: context.market,
+        name: q.name,
+        now: q.price,
+        prevClose: q.prevClose,
+        open: q.open,
+        high: q.high,
+        low: q.low,
+        volume: 0,
+        turnover: 0,
+        timestamp: createTimestamp()
+      };
+    } catch (error) {
+      throw this.createError(`Eastmoney intl-quote failed: ${error.message}`, { cause: error });
+    }
+  }
+
+  async #fetchHkQuote(context) {
+    if (context.providerMode !== 'live') {
+      return {
+        symbol: context.symbol,
+        market: 'hk',
+        name: `Mock HK ${context.symbol}`,
+        now: 28.5,
+        prevClose: 28.04,
+        open: 28.04,
+        high: 28.72,
+        low: 28.04,
+        volume: 29800000,
+        turnover: 846754880,
+        timestamp: createTimestamp()
+      };
+    }
+
+    const secid = buildEastmoneySecId(context);
+    if (!secid) {
+      throw this.createError(
+        `Eastmoney HK quote: cannot build secid for "${context.symbol}"`,
+        { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' }
+      );
+    }
+    const url = `https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f44,f45,f46,f47,f48,f57,f58,f59,f60,f86`;
+    // Eastmoney push2 frequently closes connections under burst load (the
+    // homepage polls all HK symbols every 5s with concurrency 6). One quick
+    // retry recovers from the common SocketError "other side closed" without
+    // letting the user fall back to Tencent's pre-market-frozen snapshot,
+    // which is what the original "01810 stuck at +0.00%" bug looked like.
+    let lastErr;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const json = await fetchJson(url);
+        const q = parseEastmoneyHkQuote(json);
+        return {
+          symbol: context.symbol,
+          market: 'hk',
+          name: q.name,
+          now: q.price,
+          prevClose: q.prevClose,
+          open: q.open,
+          high: q.high,
+          low: q.low,
+          volume: q.volume,
+          turnover: q.turnover,
+          timestamp: q.time
+        };
+      } catch (error) {
+        lastErr = error;
+        if (attempt === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+      }
+    }
+    throw this.createError(`Eastmoney HK quote failed: ${lastErr?.message ?? 'unknown'}`, { cause: lastErr });
   }
 
   async fetchKline(context) {

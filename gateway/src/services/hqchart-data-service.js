@@ -34,14 +34,24 @@ function createCacheKey(operation, context) {
   });
 }
 
-function createExecutionContext(params, defaultProviderMode) {
+function createExecutionContext(params, defaultProviderMode, operation) {
   const { symbol, market } = normalizeSymbol(params.symbol);
+
+  // HK quote routing: tencent's free `qt.gtimg.cn` HK feed is 15-min delayed
+  // (the user-visible "01810 stuck at +0.00%" bug). Eastmoney push2 is
+  // real-time and free, so prefer it for HK quotes. Other markets are
+  // unchanged because tencent serves A-share/US in real-time.
+  // Kline/minute/capital paths are untouched (eastmoney still last fallback).
+  let provider = params.provider;
+  if (!provider && operation === 'quote' && market === 'hk') {
+    provider = 'eastmoney';
+  }
 
   return {
     symbol,
     market,
     providerMode: params.providerMode ?? defaultProviderMode,
-    provider: params.provider,
+    provider,
     period: params.period,
     day: params.day,
     count: params.count,
@@ -163,7 +173,7 @@ export function createHqchartDataService({
   providerMode = 'live'
 } = {}) {
   async function execute(operation, params = {}) {
-    const context = createExecutionContext(params, providerMode);
+    const context = createExecutionContext(params, providerMode, operation);
     const cacheKey = createCacheKey(operation, context);
     const ttlMs = cacheTtlMs ?? ttlForOperation(operation, context);
 
