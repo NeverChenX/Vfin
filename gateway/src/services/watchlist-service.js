@@ -1,8 +1,10 @@
 import { createDatabaseConnection } from '../db/connection.js';
 import { normalizeSymbol } from './symbol-normalizer.js';
+import { inferAssetType } from './asset-type.js';
 
 function toWatchlistItem(row) {
   return {
+    assetType: inferAssetType(row.symbol, row.market),
     createdAt: row.created_at,
     displayName: row.display_name,
     market: row.market,

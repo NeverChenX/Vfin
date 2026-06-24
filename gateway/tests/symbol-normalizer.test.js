@@ -118,4 +118,15 @@ describe('normalizeSymbol', () => {
     expect(normalizeSymbol('dax.de')).toEqual({ market: 'de', symbol: 'DAX.de' });
     expect(normalizeSymbol('FTSE.uk')).toEqual({ market: 'uk', symbol: 'FTSE.uk' });
   });
+
+  it('handles cryptocurrency symbols (.crypto)', () => {
+    expect(normalizeSymbol('BTCUSD.crypto')).toEqual({ market: 'crypto', symbol: 'BTCUSD.crypto' });
+    expect(normalizeSymbol('btcusd.crypto')).toEqual({ market: 'crypto', symbol: 'BTCUSD.crypto' });
+  });
+
+  it('maps common Bitcoin aliases to the BTC crypto instrument', () => {
+    expect(normalizeSymbol('BTC')).toEqual({ market: 'crypto', symbol: 'BTCUSD.crypto' });
+    expect(normalizeSymbol('bitcoin')).toEqual({ market: 'crypto', symbol: 'BTCUSD.crypto' });
+    expect(normalizeSymbol('比特币')).toEqual({ market: 'crypto', symbol: 'BTCUSD.crypto' });
+  });
 });

@@ -1,0 +1,76 @@
+{
+  "ticker": "000333.SZ",
+  "name": "美的集团",
+  "asOf": "2026-06-15 12:05 CST",
+  "currency": "CNY",
+  "validationPolicy": "price, PE, and PB require at least two independent sources before display or downstream inference",
+  "validated": {
+    "price": {
+      "value": 81.04,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "Tencent Finance",
+          "value": 81.04,
+          "cache": "web/src/data/source-cache/000333/2026-06-15/tencent-sz000333.raw.txt"
+        },
+        {
+          "name": "Sina Finance HQ",
+          "value": 81.04,
+          "cache": "web/src/data/source-cache/000333/2026-06-15/sina-hq-sz000333.raw.txt"
+        },
+        {
+          "name": "Yahoo Finance chart",
+          "value": 81.04,
+          "cache": "web/src/data/source-cache/000333/2026-06-15/yahoo-chart-000333.raw.json"
+        }
+      ]
+    },
+    "pe_ttm": {
+      "value": 13.96,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "Tencent Finance",
+          "value": 13.96,
+          "cache": "web/src/data/source-cache/000333/2026-06-15/tencent-sz000333.raw.txt"
+        },
+        {
+          "name": "Moomoo",
+          "value": 13.96,
+          "sourceNote": "Search snippet for 000333-SZ live quote on 2026-06-15"
+        },
+        {
+          "name": "Google Finance",
+          "value": 13.94,
+          "sourceNote": "Search snippet for 000333:SHE live quote on 2026-06-15"
+        }
+      ],
+      "tolerance": "0.02x live quote rounding"
+    },
+    "pb": {
+      "value": 2.66,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "Tencent Finance",
+          "value": 2.66,
+          "cache": "web/src/data/source-cache/000333/2026-06-15/tencent-sz000333.raw.txt"
+        },
+        {
+          "name": "Moomoo",
+          "value": 2.65,
+          "sourceNote": "Search snippet for 000333-SZ live quote on 2026-06-15"
+        }
+      ],
+      "tolerance": "0.01x live quote rounding"
+    }
+  },
+  "usedForInference": {
+    "valuationMultiple": {
+      "field": "pe_ttm",
+      "value": 13.96,
+      "reason": "PE-TTM is double validated and the Xiaomi IoT segment metric is annualized before applying this multiple."
+    }
+  }
+}

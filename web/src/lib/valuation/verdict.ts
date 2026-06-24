@@ -42,3 +42,48 @@ export function verdictTone(v: Verdict): VerdictTone {
     case 'STRONG_OVER':  return 'negative-strong';
   }
 }
+
+export interface ValuationGapSummary {
+  direction: '低估' | '高估' | '持平';
+  amount: number;
+  pct: number;
+}
+
+export function valuationGapSummary(
+  estimatedValue: number | null,
+  currentMarketCap: number | null,
+): ValuationGapSummary | null {
+  if (
+    estimatedValue === null ||
+    currentMarketCap === null ||
+    !Number.isFinite(estimatedValue) ||
+    !Number.isFinite(currentMarketCap) ||
+    currentMarketCap === 0
+  ) {
+    return null;
+  }
+
+  const gap = estimatedValue - currentMarketCap;
+  return {
+    direction: gap > 0 ? '低估' : gap < 0 ? '高估' : '持平',
+    amount: Math.abs(gap),
+    pct: Math.abs(gap / currentMarketCap),
+  };
+}
+
+export function valuationCoverageRatio(
+  estimatedValue: number | null,
+  currentMarketCap: number | null,
+): number | null {
+  if (
+    estimatedValue === null ||
+    currentMarketCap === null ||
+    !Number.isFinite(estimatedValue) ||
+    !Number.isFinite(currentMarketCap) ||
+    estimatedValue === 0
+  ) {
+    return null;
+  }
+
+  return currentMarketCap / estimatedValue;
+}

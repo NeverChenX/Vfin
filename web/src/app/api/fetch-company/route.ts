@@ -1,73 +1,25 @@
 import { NextResponse } from 'next/server';
-import { writeFileSync, existsSync, mkdirSync, renameSync } from 'node:fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 import { fetchSinaCompany } from '@/lib/fetchers/sina';
-import { fetchSECCompany, US_TICKER_CIK } from '@/lib/fetchers/sec';
+import { fetchSECCompany } from '@/lib/fetchers/sec';
 import { fetchHKCompany } from '@/lib/fetchers/hk';
 import { fetchLocalCSVCompany, hasLocalCSV } from '@/lib/fetchers/local-csv';
+import { fetchAshareLatestNoticeDate } from '@/lib/fetchers/eastmoney-disclosure';
+import { resolveCompanyQuery, type FetchMarket } from '@/lib/fetchers/resolve-company-query';
 import { selfConsistencyChecks } from '@/lib/finance/cross-validate';
+import { assertCuratedFieldsPreserved, mergeFetchedCompany } from '@/lib/companies/merge-fetched-company';
 import { invalidateCompanyListCache } from '@/data/companies';
 import { requireAuth } from '@/lib/auth-guard';
-import type { ValidationReport } from '@/types/finance';
+import type { CompanyFinancials, ValidationReport } from '@/types/finance';
 
-// 6 位 A 股代码
-const A_SHARE_RE = /^\d{6}$/;
-// 1-5 位字母（美股）
-const US_TICKER_RE = /^[A-Za-z]{1,5}$/;
-// 4-5 位数字（港股，可带前导 0）
-const HK_TICKER_RE = /^0?\d{4,5}$/;
-
-// 名称 → 代码（A 股 + 美股 + 港股）
-const NAME_LOOKUP: Record<string, string> = {
-  // A 股
-  贵州茅台: '600519',
-  五粮液: '000858',
-  招商银行: '600036',
-  比亚迪: '002594',
-  宁德时代: '300750',
-  中国广核: '003816',
-  长江电力: '600900',
-  国电南瑞: '600406',
-  // 美股
-  特斯拉: 'TSLA',
-  苹果: 'AAPL',
-  微软: 'MSFT',
-  英伟达: 'NVDA',
-  谷歌: 'GOOGL',
-  亚马逊: 'AMZN',
-  脸书: 'META',
-  Meta: 'META',
-  奈飞: 'NFLX',
-  // 港股
-  中广核新能源: '01811',
-  腾讯: '00700',
-  腾讯控股: '00700',
-  阿里巴巴: '09988',
-  美团: '03690',
-  小米: '01810',
-};
-
-type Market = 'A' | 'US' | 'HK' | 'unknown';
-
-function detectMarket(s: string): Market {
-  if (A_SHARE_RE.test(s)) return 'A';
-  if (US_TICKER_RE.test(s) && US_TICKER_CIK[s.toUpperCase()]) return 'US';
-  if (HK_TICKER_RE.test(s)) return 'HK';
-  return 'unknown';
-}
-
-function resolveTicker(query: string): { ticker: string | null; market: Market; reason?: string } {
-  const q = query.trim();
-  const direct = detectMarket(q);
-  if (direct !== 'unknown') return { ticker: q.toUpperCase(), market: direct };
-  // 中文别名
-  const aliased = NAME_LOOKUP[q];
-  if (aliased) return { ticker: aliased, market: detectMarket(aliased) };
-  // 模糊匹配
-  for (const [name, code] of Object.entries(NAME_LOOKUP)) {
-    if (name.includes(q) || q.includes(name)) return { ticker: code, market: detectMarket(code) };
+function readExistingJson(path: string): Partial<CompanyFinancials> | null {
+  if (!existsSync(path)) return null;
+  try {
+    return JSON.parse(readFileSync(path, 'utf-8')) as Partial<CompanyFinancials>;
+  } catch {
+    return null;
   }
-  return { ticker: null, market: 'unknown', reason: '请输入 A 股代码（如 600519）或美股代码（如 TSLA）或公司名（如 特斯拉 / 贵州茅台）' };
 }
 
 function guessIndustry(name: string): string {
@@ -100,7 +52,7 @@ export async function POST(req: Request) {
   const strict = body.strict === true || body.strict === '1' || body.strict === 1;
   if (!query) return NextResponse.json({ error: '请提供公司名称或代码' }, { status: 400 });
 
-  const { ticker, market, reason } = resolveTicker(query);
+  const { ticker, market, reason } = resolveCompanyQuery(query);
   if (!ticker) return NextResponse.json({ error: reason ?? '无法解析代码' }, { status: 400 });
 
   // C4: defense-in-depth ticker whitelist before any filesystem op. resolveTicker
@@ -115,6 +67,7 @@ export async function POST(req: Request) {
     process.env.VFIN_COMPANIES_DIR ?? join(process.cwd(), 'src', 'data', 'companies');
   mkdirSync(outDir, { recursive: true });
   const outPath = join(outDir, `${ticker}.json`);
+  const existing = readExistingJson(outPath);
 
   if (existsSync(outPath) && !force) {
     return NextResponse.json({ ticker, message: '已存在，直接打开', mode: 'cache' });
@@ -125,17 +78,18 @@ export async function POST(req: Request) {
     let industry: string;
 
     // 优先：本地权威 CSV（100% 准确，覆盖外网通道拿不到的明细）
-    const lookupTicker = market === 'HK' ? ticker.padStart(5, '0') : ticker;
+    const resolvedMarket: FetchMarket = market;
+    const lookupTicker = resolvedMarket === 'HK' ? ticker.padStart(5, '0') : ticker;
     if (hasLocalCSV(lookupTicker)) {
       company = fetchLocalCSVCompany(lookupTicker);
       industry = company.industry;
-    } else if (market === 'US') {
+    } else if (resolvedMarket === 'US') {
       company = await fetchSECCompany(ticker);
       industry = company.industry;
-    } else if (market === 'A') {
+    } else if (resolvedMarket === 'A') {
       company = await fetchSinaCompany(ticker);
       industry = guessIndustry(company.name);
-    } else if (market === 'HK') {
+    } else if (resolvedMarket === 'HK') {
       const hk = ticker.padStart(5, '0');
       company = await fetchHKCompany(hk);
       industry = guessIndustry(company.name);
@@ -182,19 +136,29 @@ export async function POST(req: Request) {
       );
     }
 
+    // 公告日：
+    //  - 美股已由 fetchSECCompany 写入 _latestFiledAt（EDGAR `filed`）
+    //  - A 股走东方财富 RPT_LICO_FN_CPD 的 NOTICE_DATE（datacenter-web 网络可达）
+    //  - 港股暂无（HKEX disclosure 接口可达但 stockId 参数协议未定，留 spike）
+    let latestFiledAt = (company as { _latestFiledAt?: string })._latestFiledAt;
+    if (!latestFiledAt && market === 'A') {
+      latestFiledAt = (await fetchAshareLatestNoticeDate(ticker)) ?? undefined;
+    }
+
+    const merged = mergeFetchedCompany(company, existing);
     const out = {
-      ...company,
+      ...merged,
       industry,
       _source: company._sourceName,
       _fetchedAt: new Date().toISOString(),
-      // 真实"财报公告/发布日"：仅 SEC fetcher 暴露（EDGAR `filed` 字段）。
-      // A 股 / 港股暂无（需接 cninfo / HKEX disclosure，下一步）。
-      _latestFiledAt: (company as { _latestFiledAt?: string })._latestFiledAt,
+      // 真实"财报公告日"。零容错——拿不到就 undefined，前端显示 `--` 不臆造。
+      _latestFiledAt: latestFiledAt,
       _validation: validation,
       // C5: explicit on-disk quarantine flag so any consumer can detect
       // "this row is single-source unverified" without re-running validation.
       _quarantined: !validation.passed,
     };
+    assertCuratedFieldsPreserved(existing, out);
     delete (out as { _sourceName?: string })._sourceName;
     // Atomic write so concurrent readers never see a half-written JSON.
     const tmp = `${outPath}.${process.pid}.tmp`;

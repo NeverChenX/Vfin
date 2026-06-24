@@ -2,7 +2,7 @@
  * 比率计算（ROE / ROA / 毛利率 / 净利率）
  *
  * 设计：从 IS + BS 计算这些"派生"指标。
- * PE / PB / 股息率 需要市值，目前只有 CSV 通道（01811）有；其他通道留 null。
+ * PE / PB / 股息率 需要市值，优先使用 JSON 中已有 ratios 或调用方补充的行情数据。
  */
 
 import type { CompanyFinancials, KeyMetricsRow, PeriodKey, PeriodValues } from '@/types/finance';

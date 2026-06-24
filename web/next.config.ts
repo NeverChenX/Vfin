@@ -22,8 +22,18 @@ const nextConfig: NextConfig = {
       // 旧 React 版行情页废弃 — 统一走 /hq-classic
       {
         source: '/trade/:ticker',
-        destination: '/hq-classic?symbol=:ticker',
+        destination: '/company/:ticker?tab=kline',
         permanent: true,
+      },
+      {
+        source: '/research/:ticker',
+        destination: '/company/:ticker?tab=financials',
+        permanent: false,
+      },
+      {
+        source: '/valuation/:ticker',
+        destination: '/company/:ticker?tab=valuation',
+        permanent: false,
       },
     ];
   },

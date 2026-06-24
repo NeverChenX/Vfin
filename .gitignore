@@ -8,6 +8,8 @@ gateway/data/*.db-journal
 # WAL files (created at runtime after C6 WAL mode switch)
 gateway/data/*.sqlite-wal
 gateway/data/*.sqlite-shm
+gateway/data/hq-cache/
+web/data/hq-cache/
 .env
 .env.local
 .superpowers/

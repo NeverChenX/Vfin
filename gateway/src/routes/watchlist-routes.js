@@ -1,17 +1,64 @@
 import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import iconv from 'iconv-lite';
+import { fetchText } from '../providers/http-client.js';
 
 function resolveWatchlistService(watchlistService) {
   return typeof watchlistService === 'function' ? watchlistService() : watchlistService;
 }
 
+const nameCache = new Map();
+const NAME_CACHE_TTL_MS = 30 * 60_000;
+
+function toTencentSymbol(symbol) {
+  const lower = String(symbol || '').toLowerCase();
+  const [code, market] = lower.split('.');
+  if (market === 'hk') return `hk${code.padStart(5, '0')}`;
+  if (market === 'sh') return `sh${code}`;
+  if (market === 'sz') return `sz${code}`;
+  if (market === 'bj') return `bj${code}`;
+  if (market === 'us') return `us${code.toUpperCase()}`;
+  return null;
+}
+
+async function fetchTencentDisplayName(symbol) {
+  const cached = nameCache.get(symbol);
+  if (cached && Date.now() - cached.at < NAME_CACHE_TTL_MS) return cached.name;
+
+  const q = toTencentSymbol(symbol);
+  if (!q) return null;
+  const buf = await fetchText(`https://qt.gtimg.cn/q=${q}`, {
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+    responseType: 'arrayBuffer',
+    timeoutMs: 2500,
+  });
+  const text = iconv.decode(Buffer.from(buf), 'gbk');
+  const match = text.match(/="(.*)";/);
+  const name = match?.[1]?.split('~')?.[1]?.trim();
+  if (name) nameCache.set(symbol, { name, at: Date.now() });
+  return name || null;
+}
+
+async function withDisplayNames(items) {
+  return Promise.all(items.map(async (item) => {
+    if (item.displayName && item.displayName !== item.symbol) return item;
+    try {
+      const name = await fetchTencentDisplayName(item.symbol);
+      return name ? { ...item, displayName: name } : item;
+    } catch {
+      return item;
+    }
+  }));
+}
+
 export function createWatchlistRouter({ watchlistService, projectRoot }) {
   const router = express.Router();
 
-  router.get('/', (_req, res, next) => {
+  router.get('/', async (_req, res, next) => {
     try {
-      return res.status(200).json({ items: resolveWatchlistService(watchlistService).list() });
+      const items = resolveWatchlistService(watchlistService).list();
+      return res.status(200).json({ items: await withDisplayNames(items) });
     } catch (error) {
       return next(error);
     }

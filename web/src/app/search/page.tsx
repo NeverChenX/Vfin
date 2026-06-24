@@ -15,7 +15,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
             搜索 “{q}”
           </h1>
           <p className="mt-1 text-[11.5px] text-[var(--color-text-tertiary)]">
-            点击结果进入行情交易页
+            点击结果进入公司详情页
           </p>
         </header>
         <SearchResults q={q} />

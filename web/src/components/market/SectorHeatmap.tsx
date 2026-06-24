@@ -1,14 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { fetchAllLimited, fetchJSONSafe, startVisibilityPoll } from '@/lib/poll';
+import { fetchJSONSafe, startVisibilityPoll } from '@/lib/poll';
 import { pctToHeatColor } from './color-mapping';
 import { SHENWAN_INDUSTRIES } from './shenwan-symbols';
-import type { Quote, SectorItem } from './types';
+import type { SectorItem } from './types';
 
-const POLL_MS = 10_000; // 见 spec 第 5 节
+const POLL_MS = 30_000; // sectors-service 已在 gateway 缓存 30s，前端不必比它更密
 const VALID_RATIO_THRESHOLD = 0.8;
 
+// 数据源切换历史：
+//   - 旧实现：前端并发 31 次 /api/hq/stock?symbol=801010.sh 之类申万指数代码，
+//     而腾讯/新浪都不返回这些代码（v_pv_none_match），全部落 mock=0 → 全 "—"。
+//   - 现实现：gateway /api/hq/sectors 走 push2delay 拉东财 BK 板块（申万一级 31 类
+//     1:1 同名映射，闭市后返回收盘数据），一次请求拿齐 31 个，30s 缓存。
 export function SectorHeatmap() {
   const [items, setItems] = useState<SectorItem[]>(
     SHENWAN_INDUSTRIES.map((s) => ({ code: s.code, name: s.name, pct: null }))
@@ -16,17 +21,16 @@ export function SectorHeatmap() {
   const [degraded, setDegraded] = useState(false);
 
   useEffect(() => startVisibilityPoll(async (signal) => {
-    const res = await fetchAllLimited(SHENWAN_INDUSTRIES, (s) =>
-      fetchJSONSafe<Quote>(`/api/hq/stock?symbol=${encodeURIComponent(s.code)}`, { signal }),
+    const json = await fetchJSONSafe<{ items: SectorItem[] }>(
+      '/api/hq/sectors',
+      { signal },
     );
     if (signal.aborted) return;
-    const next: SectorItem[] = SHENWAN_INDUSTRIES.map((s, i) => {
-      const q = res[i];
-      if (!q || q.price === undefined || q.yclose === undefined || !q.yclose) {
-        return { code: s.code, name: s.name, pct: null };
-      }
-      return { code: s.code, name: s.name, pct: ((q.price - q.yclose) / q.yclose) * 100 };
-    });
+    const next = json?.items ?? [];
+    if (next.length === 0) {
+      setDegraded(true);
+      return;
+    }
     const validCount = next.filter((x) => x.pct !== null).length;
     setDegraded(validCount / next.length < VALID_RATIO_THRESHOLD);
     setItems(next);

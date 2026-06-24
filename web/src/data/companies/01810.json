@@ -4,7 +4,7 @@
   "nameEn": "Xiaomi Corporation",
   "industry": "综合",
   "market": "HK",
-  "currency": "USD",
+  "currency": "CNY",
   "unit": "yuan",
   "accountingStandard": "IFRS",
   "statements": {
@@ -124,9 +124,9 @@
             "rev_main": 365906350000,
             "rev_other": 0,
             "rev_total": 365906350000,
-            "cogs_main": 338495975000,
+            "cogs_main": 338815605000,
             "cogs_other": 0,
-            "gross_profit": 27410375000,
+            "gross_profit": 27090745000,
             "selling_exp": 0,
             "admin_exp": 0,
             "rd_exp": 0,
@@ -135,12 +135,12 @@
             "credit_impairment": 0,
             "fair_value_change": 0,
             "other_op_inc": 0,
-            "ebit": 23020978000,
+            "ebit": 22701348000,
             "interest_exp": 0,
             "interest_inc": 0,
             "invest_inc": 0,
             "fx_gain": 0,
-            "non_op_net": 5105675000,
+            "non_op_net": 5425305000,
             "ebt": 28126653000,
             "tax_exp": 4468527000,
             "ni_parent": 23578449000,
@@ -159,9 +159,9 @@
             "rev_main": 457286687000,
             "rev_other": 0,
             "rev_total": 457286687000,
-            "cogs_main": 418507944000,
+            "cogs_main": 418412288000,
             "cogs_other": 0,
-            "gross_profit": 38778743000,
+            "gross_profit": 38874399000,
             "selling_exp": 0,
             "admin_exp": 0,
             "rd_exp": 0,
@@ -170,12 +170,12 @@
             "credit_impairment": 0,
             "fair_value_change": 0,
             "other_op_inc": 0,
-            "ebit": 32373527000,
+            "ebit": 32469183000,
             "interest_exp": 0,
             "interest_inc": 0,
             "invest_inc": 0,
             "fx_gain": 0,
-            "non_op_net": 17273338000,
+            "non_op_net": 17177682000,
             "ebt": 49646865000,
             "tax_exp": 8003476000,
             "ni_parent": 41566439000,
@@ -696,90 +696,120 @@
       ]
     }
   },
-  "_source": "stockanalysis.com",
-  "_fetchedAt": "2026-05-14T15:09:28.089Z",
+  "ratios": [
+    {
+      "period": {
+        "year": 2025,
+        "granularity": "Y"
+      },
+      "values": {
+        "pe_ttm": 18.109,
+        "pb": 2.313,
+        "dividend_yield": null,
+        "dividend_status": "none",
+        "market_cap": 674941.82635928,
+        "market_cap_currency": "HKD"
+      }
+    }
+  ],
   "valuation": {
-    "sotpCurrency": "HKD",
-    "sotpAsOf": "2025-06-30",
-    "netCash": 49000,
-    "netCashAsOf": "2025-06-30",
-    "marketCapOverride": 723400,
-    "isDemo": true,
+    "sotpCurrency": "CNY",
+    "sotpAsOf": "2026-03-31",
+    "netCash": null,
+    "netCashAsOf": "2026-03-31",
+    "marketCapOverride": 583014.75161094,
+    "currentMarketData": {
+      "asOf": "2026-06-10",
+      "currency": "HKD",
+      "price": 25.9,
+      "change": -1.3,
+      "changePct": -0.0478,
+      "volume": 147427989,
+      "marketCap": 674941.82635928,
+      "sharesOutstanding": null,
+      "validationStatus": "degraded_single_source",
+      "sources": [
+        "Yahoo Finance chart API 1810.HK, cached web/src/data/source-cache/01810/2026-06-10/yahoo-chart-1810.json",
+        "StockAnalysis HKG:1810 statistics, cached web/src/data/source-cache/01810/2026-06-10/stockanalysis-statistics-1810.html"
+      ],
+      "note": "市值与行情数据来自缓存公开结构化/统计源，当前未完成双源逐字段交叉校验，按单源降级显示。"
+    },
     "segments": [
       {
-        "id": "smartphone",
-        "name": "智能手机",
-        "method": "PS",
-        "metricLabel": "TTM 营收 (HKD 百万)",
-        "metricValue": 200000,
-        "metricAsOf": "2025-06-30",
+        "id": "smartphones_internet_services",
+        "name": "手机与互联网服务",
+        "method": "PE",
+        "metricLabel": "Q1 2026 推导净利润年化 (CNY 百万)",
+        "metricValue": 20455.296,
+        "metricAsOf": "2026-03-31",
+        "source": "Xiaomi Q1 2026 results announcement, cached under web/src/data/source-cache/01810/2026/Q1/; allocation facts cached in web/src/data/source-cache/01810/2026-06-10/sotp-peer-facts.json",
         "peers": [
           {
-            "name": "Apple Inc.",
+            "name": "Apple",
             "ticker": "AAPL",
-            "multiple": 7.5,
-            "asOf": "2025-06-30",
-            "source": "DEMO — 待人工核对"
-          },
-          {
-            "name": "Samsung Electronics",
-            "ticker": "005930.KS",
-            "multiple": 1.2,
-            "asOf": "2025-06-30",
-            "source": "DEMO — 待人工核对"
+            "netIncome": null,
+            "marketValue": 29035536.149,
+            "valuationMultiple": 35.24,
+            "valuationMultipleLabel": "PE-TTM 双源校验",
+            "asOf": "2026-06-12 / TTM",
+            "source": "AAPL price/PE/PB double validation: finance quote price USD 291.13 and PE 35.2458; StockAnalysis cached statistics PE 35.22, PB 40.02, market cap USD 4.27T; Yahoo/GuruFocus/FullRatio search corroborates PE around 35.1-35.2 and Yahoo/StockAnalysis corroborates PB around 40.0. Parsed facts cached in web/src/data/source-cache/AAPL/2026-06-15/validated-market-multiples.json."
           }
         ],
-        "rationale": "硬件业务按 PS。Apple 高端品牌带显著溢价，Samsung 大众市场偏低估，小米介于两者之间。所有数字为演示占位，必须人工核对替换。"
+        "rationale": "Q1 2026 集团净利润扣除智能电动汽车、AI 等创新业务经营亏损后，按手机、IoT、互联网服务毛利占比分摊；手机与互联网服务合并使用正利润 PE；peer 使用双源校验后的 Apple PE-TTM，不再用单源市值除净利润反推 PE。"
       },
       {
-        "id": "iot",
+        "id": "iot_lifestyle",
         "name": "IoT 与生活消费品",
-        "method": "PS",
-        "metricLabel": "TTM 营收 (HKD 百万)",
-        "metricValue": 90000,
-        "metricAsOf": "2025-06-30",
-        "peers": [
-          { "name": "Anker Innovations", "ticker": "300866.SZ", "multiple": 2.4, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
-          { "name": "iRobot", "ticker": "IRBT", "multiple": 0.8, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" }
-        ],
-        "rationale": "智能家电/可穿戴消费电子，与 Anker 业务最接近；iRobot 处境特殊（收购失败后估值低），仅作下限参考。"
-      },
-      {
-        "id": "internet",
-        "name": "互联网服务",
         "method": "PE",
-        "metricLabel": "TTM 归母净利润 (HKD 百万)",
-        "metricValue": 8000,
-        "metricAsOf": "2025-06-30",
+        "metricLabel": "Q1 2026 推导净利润年化 (CNY 百万)",
+        "metricValue": 10883.1,
+        "metricAsOf": "2026-03-31",
+        "source": "Xiaomi Q1 2026 results announcement, cached under web/src/data/source-cache/01810/2026/Q1/; allocation facts cached in web/src/data/source-cache/01810/2026-06-10/sotp-peer-facts.json. Annualized from Q1 because peer multiple is PE-TTM.",
         "peers": [
-          { "name": "Tencent", "ticker": "00700.HK", "multiple": 18, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
-          { "name": "Meta", "ticker": "META", "multiple": 25, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" }
+          {
+            "name": "美的集团",
+            "ticker": "000333.SZ",
+            "netIncome": null,
+            "marketValue": 616993,
+            "valuationMultiple": 13.96,
+            "valuationMultipleLabel": "PE-TTM 双源校验",
+            "asOf": "2026-06-15 12:05",
+            "source": "Tencent quote sz000333 cached web/src/data/source-cache/000333/2026-06-15/tencent-sz000333.raw.txt; Yahoo/Sina price validation cached in the same folder; PE/PB corroborated by Moomoo/Google/CFI search snippets; parsed facts cached in web/src/data/source-cache/000333/2026-06-15/validated-market-multiples.json."
+          }
         ],
-        "rationale": "高毛利广告与增值服务，按净利润给互联网行业 PE。MIUI 用户基数大但 ARPU 低于头部平台。"
+        "rationale": "IoT 与生活消费品按 Q1 2026 毛利占比分摊净利润并年化；peer 使用双源校验后的美的 PE-TTM，不再用市值除单季利润反推 PE。"
       },
       {
-        "id": "ev",
-        "name": "智能电动汽车",
+        "id": "smart_ev_ai_new",
+        "name": "智能电动汽车、AI 等创新业务",
         "method": "PS",
-        "metricLabel": "TTM 营收 (HKD 百万)",
-        "metricValue": 20000,
-        "metricAsOf": "2025-06-30",
+        "metricLabel": "Q1 2026 收入年化",
+        "metricValue": 79457.6,
+        "metricAsOf": "2026-03-31",
+        "source": "Xiaomi Q1 2026 results announcement: Smart EV, AI and other new initiatives revenue RMB 19,864.4m; cached in web/src/data/source-cache/01810/2026-06-10/sotp-peer-facts.json",
         "peers": [
-          { "name": "Tesla", "ticker": "TSLA", "multiple": 8.0, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
-          { "name": "Li Auto", "ticker": "LI", "multiple": 1.3, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" },
-          { "name": "NIO", "ticker": "NIO", "multiple": 1.0, "asOf": "2025-06-30", "source": "DEMO — 待人工核对" }
+          {
+            "name": "理想汽车",
+            "ticker": "2015.HK",
+            "netIncome": 91931.644,
+            "marketValue": 97399.908,
+            "asOf": "2026 Q1 / 2026-06-10",
+            "source": "StockAnalysis HKG:2015 quarterly revenue and market cap; Tencent Finance quote; Yahoo Finance FX. Peer facts are not fully cross-validated."
+          }
         ],
-        "rationale": "新能源车业务，与新势力（蔚小理）同业可比。Tesla 给上限，蔚来给下限。"
+        "rationale": "该业务 Q1 仍为经营亏损，PE 不适用；按最新季度收入年化并使用可比新能源车公司 PS。"
       }
     ]
   },
+  "_source": "stockanalysis.com",
+  "_fetchedAt": "2026-06-12T08:52:17.215Z",
   "_validation": {
-    "passedAt": "2026-05-14T15:09:28.089Z",
+    "passedAt": "2026-06-12T08:52:17.215Z",
     "passed": false,
     "sources": {
       "primary": {
         "name": "stockanalysis.com",
-        "fetchedAt": "2026-05-14T15:09:28.089Z"
+        "fetchedAt": "2026-06-12T08:52:17.215Z"
       },
       "secondary": {
         "name": "PENDING — 辅源未接入 (按项目零容忍要求需补)",
@@ -1072,5 +1102,6 @@
       "⚠️ 单源抓取 — 项目硬性要求\"至少 2 个独立数据源 + 交叉校验\"，自动 passed=false 直到接入辅源",
       "内部一致性校验：15/30 项通过"
     ]
-  }
+  },
+  "_quarantined": true
 }

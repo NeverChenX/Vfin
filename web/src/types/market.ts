@@ -8,6 +8,7 @@ export interface WatchlistItem {
   displayName?: string;
   market?: string;
   category?: string;
+  assetType?: 'stock' | 'bond' | 'crypto' | 'other';
 }
 
 export interface QuoteSnapshot {
@@ -20,6 +21,11 @@ export interface QuoteSnapshot {
   low?: number;
   volume?: number;
   amount?: number;
+  peTtm?: number | null;
+  pb?: number | null;
+  marketMultiplesValidationStatus?: 'verified' | 'degraded_single_source' | 'unavailable';
+  marketMultiplesSources?: string[];
+  timestamp?: string;
 }
 
 export interface WatchlistApiResponse {

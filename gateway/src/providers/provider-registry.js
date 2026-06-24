@@ -1,6 +1,8 @@
 import { createSinaProvider } from './sina-provider.js';
 import { createTencentProvider } from './tencent-provider.js';
 import { createEastmoneyProvider } from './eastmoney-provider.js';
+import { createCryptoProvider } from './crypto-provider.js';
+import { createYahooProvider } from './yahoo-provider.js';
 
 function createRegistryError(message, { statusCode = 502, code = 'PROVIDER_REGISTRY_ERROR', attempts = [] } = {}) {
   const error = new Error(message);
@@ -22,7 +24,9 @@ export function createProviderRegistry({
   const providerMap = providers ?? new Map([
     ['sina', createSinaProvider()],
     ['tencent', createTencentProvider()],
-    ['eastmoney', createEastmoneyProvider()]
+    ['eastmoney', createEastmoneyProvider()],
+    ['crypto', createCryptoProvider()],
+    ['yahoo', createYahooProvider()]
   ]);
 
   function getProvider(name, { statusCode = 500, code = 'UNKNOWN_PROVIDER' } = {}) {

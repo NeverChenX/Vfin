@@ -1,7 +1,6 @@
 import { AppShell } from '@/components/shell/AppShell';
 import { MarketIndexCards } from '@/components/market/MarketIndexCards';
 import { SectorHeatmap } from '@/components/market/SectorHeatmap';
-import { MarketBreadth } from '@/components/market/MarketBreadth';
 import { HKZone } from '@/components/market/HKZone';
 import { CrossMarketStrip } from '@/components/market/CrossMarketStrip';
 import { MarketsTable } from '@/components/home/MarketsTable';
@@ -23,7 +22,6 @@ export default function Home() {
   return (
     <AppShell>
       <div className="mx-auto max-w-[1400px] px-3 py-4 sm:px-6 sm:py-6">
-        {/* 标题区 */}
         <section className="mb-3 sm:mb-4">
           <div className="flex flex-wrap items-baseline justify-between gap-y-1">
             <h1 className="text-[18px] font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-[22px]">
@@ -46,10 +44,9 @@ export default function Home() {
           <MarketIndexCards />
         </section>
 
-        {/* L2 · A 股全景（双列：行业热力图 + 市场宽度）*/}
-        <section className="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-[2fr_1fr]">
+        {/* L2 · A 股行业热力图 */}
+        <section className="mb-4">
           <SectorHeatmap />
-          <MarketBreadth />
         </section>
 
         {/* L3 · 港股专区 */}

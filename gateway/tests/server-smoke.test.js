@@ -61,7 +61,7 @@ describe('gateway health smoke', () => {
     expect(response.body.traceId).toBe('trace-a');
   });
 
-  it('adds CORS headers to api responses for browser-based demos', async () => {
+  it('omits CORS headers for unlisted cross-origin callers by default', async () => {
     const app = createApp();
 
     const response = await request(app)
@@ -70,12 +70,27 @@ describe('gateway health smoke', () => {
       .query({ symbol: '600000', providerMode: 'mock' });
 
     expect(response.status).toBe(200);
-    expect(response.headers['access-control-allow-origin']).toBe('*');
-    expect(response.headers['access-control-allow-methods']).toContain('GET');
-    expect(response.headers['access-control-allow-headers']).toContain('Content-Type');
+    expect(response.headers['access-control-allow-origin']).toBeUndefined();
   });
 
-  it('handles CORS preflight for watchlist mutations', async () => {
+  it('returns a local Chinese Bitcoin result before remote stock suggestions', async () => {
+    const app = createApp();
+
+    const response = await request(app)
+      .get('/api/search')
+      .query({ q: 'BTC', limit: 8 });
+
+    expect(response.status).toBe(200);
+    expect(response.body.items[0]).toMatchObject({
+      symbol: 'BTCUSD.crypto',
+      code: 'BTC',
+      name: '比特币',
+      market: 'crypto',
+      typeLabel: '数字货币',
+    });
+  });
+
+  it('rejects CORS preflight for unlisted cross-origin watchlist mutations by default', async () => {
     const app = createApp();
 
     const response = await request(app)
@@ -84,10 +99,7 @@ describe('gateway health smoke', () => {
       .set('Access-Control-Request-Method', 'POST')
       .set('Access-Control-Request-Headers', 'content-type');
 
-    expect(response.status).toBe(204);
-    expect(response.headers['access-control-allow-origin']).toBe('*');
-    expect(response.headers['access-control-allow-methods']).toContain('POST');
-    expect(response.headers['access-control-allow-methods']).toContain('DELETE');
-    expect(response.headers['access-control-allow-headers']).toContain('content-type');
+    expect(response.status).toBe(403);
+    expect(response.headers['access-control-allow-origin']).toBeUndefined();
   });
 });

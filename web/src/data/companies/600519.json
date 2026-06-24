@@ -2352,14 +2352,15 @@
     }
   },
   "_source": "Sina · money.finance.sina.com.cn",
-  "_fetchedAt": "2026-05-14T15:08:44.213Z",
+  "_fetchedAt": "2026-06-01T13:10:23.617Z",
+  "_latestFiledAt": "2026-04-25",
   "_validation": {
-    "passedAt": "2026-05-14T15:08:44.213Z",
+    "passedAt": "2026-06-01T13:10:23.464Z",
     "passed": false,
     "sources": {
       "primary": {
         "name": "Sina · money.finance.sina.com.cn",
-        "fetchedAt": "2026-05-14T15:08:44.213Z"
+        "fetchedAt": "2026-06-01T13:10:23.464Z"
       },
       "secondary": {
         "name": "PENDING — 辅源未接入 (按项目零容忍要求需补)",
@@ -2652,5 +2653,6 @@
       "⚠️ 单源抓取 — 项目硬性要求\"至少 2 个独立数据源 + 交叉校验\"，自动 passed=false 直到接入辅源",
       "内部一致性校验：25/30 项通过"
     ]
-  }
+  },
+  "_quarantined": true
 }

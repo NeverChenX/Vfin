@@ -59,8 +59,8 @@ export class EastmoneyProvider extends BaseProvider {
   async fetchQuote(context) {
     this.ensureMockableMode(context.providerMode, 'quote');
 
-    if (context.market === 'hk') {
-      return this.#fetchHkQuote(context);
+    if (['sh', 'sz', 'hk', 'us'].includes(context.market)) {
+      return this.#fetchStockQuote(context);
     }
 
     const cfg = EASTMONEY_INTL_SECID[context.symbol];
@@ -109,12 +109,12 @@ export class EastmoneyProvider extends BaseProvider {
     }
   }
 
-  async #fetchHkQuote(context) {
+  async #fetchStockQuote(context) {
     if (context.providerMode !== 'live') {
       return {
         symbol: context.symbol,
-        market: 'hk',
-        name: `Mock HK ${context.symbol}`,
+        market: context.market,
+        name: `Mock ${context.symbol}`,
         now: 28.5,
         prevClose: 28.04,
         open: 28.04,
@@ -122,6 +122,8 @@ export class EastmoneyProvider extends BaseProvider {
         low: 28.04,
         volume: 29800000,
         turnover: 846754880,
+        peTtm: 12.34,
+        pb: 1.23,
         timestamp: createTimestamp()
       };
     }
@@ -129,11 +131,11 @@ export class EastmoneyProvider extends BaseProvider {
     const secid = buildEastmoneySecId(context);
     if (!secid) {
       throw this.createError(
-        `Eastmoney HK quote: cannot build secid for "${context.symbol}"`,
+        `Eastmoney quote: cannot build secid for "${context.symbol}"`,
         { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' }
       );
     }
-    const url = `https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f44,f45,f46,f47,f48,f57,f58,f59,f60,f86`;
+    const url = `https://push2.eastmoney.com/api/qt/stock/get?secid=${secid}&fields=f43,f44,f45,f46,f47,f48,f57,f58,f59,f60,f86,f162,f167`;
     // Eastmoney push2 frequently closes connections under burst load (the
     // homepage polls all HK symbols every 5s with concurrency 6). One quick
     // retry recovers from the common SocketError "other side closed" without
@@ -146,7 +148,7 @@ export class EastmoneyProvider extends BaseProvider {
         const q = parseEastmoneyHkQuote(json);
         return {
           symbol: context.symbol,
-          market: 'hk',
+          market: context.market,
           name: q.name,
           now: q.price,
           prevClose: q.prevClose,
@@ -155,6 +157,8 @@ export class EastmoneyProvider extends BaseProvider {
           low: q.low,
           volume: q.volume,
           turnover: q.turnover,
+          peTtm: q.peTtm,
+          pb: q.pb,
           timestamp: q.time
         };
       } catch (error) {
@@ -164,7 +168,8 @@ export class EastmoneyProvider extends BaseProvider {
         }
       }
     }
-    throw this.createError(`Eastmoney HK quote failed: ${lastErr?.message ?? 'unknown'}`, { cause: lastErr });
+    const label = context.market === 'hk' ? 'Eastmoney HK quote' : 'Eastmoney quote';
+    throw this.createError(`${label} failed: ${lastErr?.message ?? 'unknown'}`, { cause: lastErr });
   }
 
   async fetchKline(context) {

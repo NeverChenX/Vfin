@@ -36,7 +36,7 @@ export function formatMoney(
 
 export function formatMultiple(m: number | null | undefined): string {
   if (m === null || m === undefined || !Number.isFinite(m)) return '--';
-  return `${m.toFixed(1)}x`;
+  return `${m.toFixed(2)}x`;
 }
 
 export function formatPct(p: number | null | undefined): string {

@@ -6,8 +6,8 @@ interface Props {
 
 export function DataCaveats({ cfg }: Props) {
   return (
-    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
-      <div className="font-semibold">⚠ 数据时点 / 局限说明</div>
+    <div className="rounded-lg border border-[rgba(240,185,11,0.35)] bg-[rgba(240,185,11,0.08)] p-4 text-xs text-[var(--color-text-secondary)]">
+      <div className="font-semibold text-[var(--color-brand)]">数据时点 / 局限说明</div>
       <ul className="mt-2 list-disc space-y-1 pl-5">
         <li>
           SOTP 整体截止日：<span className="font-mono">{cfg.sotpAsOf}</span>

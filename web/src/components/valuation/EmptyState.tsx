@@ -22,7 +22,7 @@ export function EmptyState({ ticker, companyName }: EmptyStateProps) {
         字段结构参考 <code>docs/superpowers/specs/2026-06-01-sotp-valuation-design.md</code> §3.1
       </p>
       <a
-        href={`/research/${encodeURIComponent(ticker)}`}
+          href={`/company/${encodeURIComponent(ticker)}?tab=financials`}
         className="mt-8 inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
       >
         ← 回研究页

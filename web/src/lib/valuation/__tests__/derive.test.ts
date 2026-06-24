@@ -10,6 +10,7 @@ import {
   deriveNetMarginSeries,
   yoy,
   getLatestAnnualPeriod,
+  getLatestPeriod,
 } from '../derive';
 import type { CompanyFinancials, PeriodValues } from '@/types/finance';
 
@@ -80,6 +81,22 @@ describe('getLatestAnnualPeriod', () => {
   });
   it('全空 → null', () => {
     expect(getLatestAnnualPeriod(mkCompany({}))).toBeNull();
+  });
+});
+
+describe('getLatestPeriod', () => {
+  it('取 IS/BS/CF 三表中最晚的任意报表期，季度优先于更早年报', () => {
+    const c = mkCompany({
+      is: [
+        mkIS(2025, 110, 33, 12),
+        {
+          period: { year: 2026, granularity: 'Q', index: 1 },
+          values: { rev_total: 99, gross_profit: 22, ni_parent: 4 },
+        },
+      ],
+      bs: [mkBS(2025, { cash: 100 })],
+    });
+    expect(getLatestPeriod(c)).toEqual({ year: 2026, granularity: 'Q', index: 1 });
   });
 });
 

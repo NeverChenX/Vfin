@@ -79,7 +79,7 @@ function loadTradeRecords() {
   return tradeMap;
 }
 
-export function createMarketRouter({ hqchartDataService, breadthService, hkConnectService } = {}) {
+export function createMarketRouter({ hqchartDataService, breadthService, hkConnectService, sectorsService } = {}) {
   const router = Router();
   const resolveService = () => {
     if (typeof hqchartDataService === 'function') {
@@ -91,6 +91,8 @@ export function createMarketRouter({ hqchartDataService, breadthService, hkConne
     typeof breadthService === 'function' ? breadthService() : breadthService;
   const resolveHkConnect = () =>
     typeof hkConnectService === 'function' ? hkConnectService() : hkConnectService;
+  const resolveSectors = () =>
+    typeof sectorsService === 'function' ? sectorsService() : sectorsService;
 
   function createHandler(methodName) {
     return (req, res, next) => {
@@ -104,9 +106,21 @@ export function createMarketRouter({ hqchartDataService, breadthService, hkConne
   }
 
   router.get('/search', async (req, res) => {
+    let localItems = [];
     try {
       const q = (req.query.q || '').trim();
       if (!q) return res.json({ items: [] });
+
+      const lowerQ = q.toLowerCase();
+      if (['btc', 'bitcoin', '比特币'].some((alias) => alias.includes(lowerQ) || lowerQ.includes(alias))) {
+        localItems.push({
+          symbol: 'BTCUSD.crypto',
+          code: 'BTC',
+          name: '比特币',
+          market: 'crypto',
+          typeLabel: '数字货币'
+        });
+      }
 
       // 新浪 suggest API; type: 11=A股 12=指数 13=板块 14=沪基金 15=深基金 31=港股 41=美股 81=可转债
       const url = `https://suggest3.sinajs.cn/suggest/type=11,12,13,14,15,31,41,81&key=${encodeURIComponent(q)}`;
@@ -163,9 +177,9 @@ export function createMarketRouter({ hqchartDataService, breadthService, hkConne
         return [...groups.values()];
       })();
 
-      res.json({ items: dedupedItems });
+      res.json({ items: [...localItems, ...dedupedItems] });
     } catch (err) {
-      res.json({ items: [] });
+      res.json({ items: localItems });
     }
   });
 
@@ -205,6 +219,20 @@ export function createMarketRouter({ hqchartDataService, breadthService, hkConne
       const market = (req.query.market || 'cn').toString();
       const data = await svc.get(market);
       return res.status(200).json(data);
+    } catch (err) {
+      return next(err);
+    }
+  });
+
+  // Phase 2: 申万一级 31 行业实时涨跌（push2delay 拉 BK 板块数据）
+  router.get('/sectors', async (_req, res, next) => {
+    const svc = resolveSectors();
+    if (!svc) {
+      return res.status(503).json({ error: 'sectors service not configured' });
+    }
+    try {
+      const data = await svc.get();
+      return res.status(200).json({ items: data });
     } catch (err) {
       return next(err);
     }

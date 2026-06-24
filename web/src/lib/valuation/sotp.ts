@@ -20,11 +20,30 @@ function mean(xs: number[]): number {
 }
 
 export function computeSegmentValuation(segment: BusinessSegment): SegmentValuation {
-  const peerCount = segment.peers.length;
-  const multiples = segment.peers
-    .map((p) => p.multiple)
-    .filter((m): m is number => Number.isFinite(m));
+  const peerImpliedMultiples: Record<string, number> = {};
+  const multiples = segment.peers.flatMap((p) => {
+    if (p.valuationMultiple !== undefined && p.valuationMultiple !== null) {
+      if (!Number.isFinite(p.valuationMultiple)) return [];
+      if (segment.method === 'PE' && p.valuationMultiple <= 0) return [];
+      peerImpliedMultiples[p.ticker] = p.valuationMultiple;
+      return [p.valuationMultiple];
+    }
+
+    const hasNetIncome =
+      p.netIncome !== null && Number.isFinite(p.netIncome) && p.netIncome !== 0;
+    const hasMarketValue = p.marketValue !== null && Number.isFinite(p.marketValue);
+    const hasUsablePeDenominator =
+      segment.method !== 'PE' || ((p.netIncome ?? 0) > 0);
+    if (!hasNetIncome || !hasMarketValue) return [];
+    if (!hasUsablePeDenominator) return [];
+    const multiple = (p.marketValue as number) / (p.netIncome as number);
+    peerImpliedMultiples[p.ticker] = multiple;
+    return [multiple];
+  });
+  const peerCount = multiples.length;
   const hasMetric = segment.metricValue !== null && Number.isFinite(segment.metricValue);
+  const hasUsablePeMetric =
+    segment.method !== 'PE' || ((segment.metricValue ?? 0) > 0);
   const hasPeers = multiples.length > 0;
 
   const peerMedian = hasPeers ? median(multiples) : null;
@@ -40,17 +59,31 @@ export function computeSegmentValuation(segment: BusinessSegment): SegmentValuat
   } else if (!hasMetric) {
     excluded = true;
     excludeReason = '指标值缺失';
+  } else if (!hasUsablePeMetric) {
+    excluded = true;
+    excludeReason = 'PE 口径不适用于负利润业务，请改用收入或 EBITDA 等正指标';
   } else if (!hasPeers) {
     excluded = true;
-    excludeReason = '无对标公司倍数';
+    excludeReason = segment.method === 'PE'
+      ? '无可用正利润 PE 对标公司倍数'
+      : '无对标公司倍数';
   } else {
     impliedValue = (segment.metricValue as number) * (peerMedian as number);
   }
 
-  return { segment, peerMedian, peerMean, peerCount, impliedValue, excluded, excludeReason };
+  return {
+    segment,
+    peerMedian,
+    peerMean,
+    peerCount,
+    peerImpliedMultiples,
+    impliedValue,
+    excluded,
+    excludeReason,
+  };
 }
 
-export function computeSotp(cfg: ValuationConfig, currentMarketCap: number): SotpResult {
+export function computeSotp(cfg: ValuationConfig, currentMarketCap: number | null): SotpResult {
   const segments = cfg.segments.map(computeSegmentValuation);
   const segmentsTotal = segments
     .filter((s) => !s.excluded && s.impliedValue !== null)
@@ -58,7 +91,9 @@ export function computeSotp(cfg: ValuationConfig, currentMarketCap: number): Sot
   const excludedCount = segments.filter((s) => s.excluded).length;
   const sotpTotal = segmentsTotal + (cfg.netCash ?? 0);
   const impliedUpsidePct =
-    currentMarketCap !== 0 ? (sotpTotal - currentMarketCap) / currentMarketCap : 0;
+    currentMarketCap !== null && currentMarketCap !== 0
+      ? (sotpTotal - currentMarketCap) / currentMarketCap
+      : null;
 
   return {
     segments,
@@ -68,7 +103,7 @@ export function computeSotp(cfg: ValuationConfig, currentMarketCap: number): Sot
     sotpTotal,
     currentMarketCap,
     impliedUpsidePct,
-    verdict: classifyVerdict(impliedUpsidePct),
+    verdict: classifyVerdict(impliedUpsidePct ?? 0),
     currency: cfg.sotpCurrency,
     asOf: cfg.sotpAsOf,
   };

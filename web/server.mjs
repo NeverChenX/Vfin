@@ -86,6 +86,14 @@ const server = createServer((req, res) => {
   return handleNext(req, res);
 });
 
+server.on('error', (err) => {
+  // Listen failures such as EADDRINUSE must make systemd mark the service failed.
+  // Keeping the process alive here creates a "running" service with no open port.
+  // eslint-disable-next-line no-console
+  console.error('[fatal] http server error:', err);
+  process.exit(1);
+});
+
 server.listen(port, hostname, () => {
   // eslint-disable-next-line no-console
   console.log(`▲ VFin (next+gateway) ready on http://${hostname}:${port}  [${dev ? 'dev' : 'prod'}]`);
@@ -123,7 +131,8 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('uncaughtException', (err) => {
   // eslint-disable-next-line no-console
-  console.error('[uncaughtException]', err);
+  console.error('[fatal] uncaughtException:', err);
+  process.exit(1);
 });
 process.on('unhandledRejection', (reason) => {
   // eslint-disable-next-line no-console

@@ -82,7 +82,7 @@ export function SearchResults({ q }: Props) {
                 className="border-b border-[var(--color-border-base)] bg-[var(--color-bg-elev2)] hover:bg-[var(--color-bg-elev3)] last:border-b-0"
               >
                 <Link
-                  href={`/trade/${h.symbol}`}
+                  href={`/company/${encodeURIComponent(h.symbol)}?tab=kline`}
                   className="flex items-center justify-between gap-3 px-4 py-2 text-[12.5px]"
                 >
                   <span className="num text-[var(--color-brand)]">{h.symbol}</span>

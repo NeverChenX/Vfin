@@ -42,7 +42,7 @@ export class TencentProvider extends BaseProvider {
     // A garbage `${market}${code}` response (e.g. deDAX → empty payload parsed
     // as zeros) used to short-circuit the registry's fallback chain; throw
     // UNSUPPORTED so sina/eastmoney get a turn.
-    if (['fx', 'cm', 'jp', 'de', 'uk'].includes(context.market)) {
+    if (['fx', 'cm', 'jp', 'de', 'uk', 'crypto'].includes(context.market)) {
       throw this.createError(
         `Tencent quote: unsupported market "${context.market}"`,
         { statusCode: 502, code: 'UNSUPPORTED_PROVIDER_OPERATION' }
@@ -73,6 +73,8 @@ export class TencentProvider extends BaseProvider {
           minPrice: data.low,
           totalVolume: data.volume,
           totalAmount: data.turnover,
+          peTtm: data.peTtm,
+          pb: data.pb,
           time: data.time
         };
       } catch (error) {
@@ -90,6 +92,8 @@ export class TencentProvider extends BaseProvider {
       minPrice: 12,
       totalVolume: 123456,
       totalAmount: 1523456,
+      peTtm: 12.34,
+      pb: 1.23,
       time: createTimestamp()
     };
   }

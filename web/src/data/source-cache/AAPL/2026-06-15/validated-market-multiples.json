@@ -1,0 +1,91 @@
+{
+  "ticker": "AAPL",
+  "name": "Apple Inc.",
+  "asOf": "2026-06-12 / TTM",
+  "currency": "USD",
+  "validationPolicy": "price, PE, and PB require at least two independent sources before display or downstream inference",
+  "fx": {
+    "USDCNY": {
+      "value": 6.7727,
+      "cache": "web/src/data/source-cache/01810/2026-06-10/peers/yahoo-fx-USDCNY-X.json"
+    }
+  },
+  "validated": {
+    "price": {
+      "value": 291.13,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "Finance quote",
+          "value": 291.13
+        },
+        {
+          "name": "FullRatio",
+          "value": 291.13,
+          "sourceNote": "Search snippet reports AAPL stock price USD291.13 for PE calculation as of Jun 12, 2026."
+        }
+      ]
+    },
+    "pe_ttm": {
+      "value": 35.24,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "Finance quote",
+          "value": 35.2458
+        },
+        {
+          "name": "StockAnalysis cached statistics",
+          "value": 35.22,
+          "cache": "web/src/data/source-cache/01810/2026-06-10/peers/stockanalysis-aapl-statistics.html"
+        },
+        {
+          "name": "Yahoo Finance / GuruFocus / FullRatio",
+          "valueRange": "35.12-35.20",
+          "sourceNote": "Search snippets corroborate current AAPL PE-TTM near 35.2."
+        }
+      ],
+      "tolerance": "0.13x across current quote/page sources"
+    },
+    "pb": {
+      "value": 40.02,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "StockAnalysis cached statistics",
+          "value": 40.02,
+          "cache": "web/src/data/source-cache/01810/2026-06-10/peers/stockanalysis-aapl-statistics.html"
+        },
+        {
+          "name": "Yahoo Finance key statistics",
+          "value": 40.15,
+          "sourceNote": "Search snippet reports Price/Book 40.15."
+        }
+      ],
+      "tolerance": "0.13x across current quote/page sources"
+    },
+    "market_cap_cny_millions": {
+      "value": 29035536.149,
+      "status": "verified",
+      "sources": [
+        {
+          "name": "Finance quote",
+          "valueUsd": 4287143406490
+        },
+        {
+          "name": "StockAnalysis cached statistics",
+          "valueUsd": 4267411285800,
+          "cache": "web/src/data/source-cache/01810/2026-06-10/peers/stockanalysis-aapl-statistics.html"
+        }
+      ],
+      "note": "Displayed CNY value uses the current finance quote market cap and cached USDCNY 6.7727."
+    }
+  },
+  "usedForInference": {
+    "valuationMultiple": {
+      "field": "pe_ttm",
+      "value": 35.24,
+      "reason": "PE-TTM is double validated and the Xiaomi smartphones + internet-services metric is annualized before applying this multiple."
+    }
+  }
+}

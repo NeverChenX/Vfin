@@ -1,4 +1,5 @@
 function toNumber(value, fallback = 0) {
+  if (value === null || value === undefined || value === '') return fallback;
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
 }
@@ -115,7 +116,13 @@ export function createHqchartNormalizer() {
         high: toNumber(raw.high ?? raw.maxPrice),
         low: toNumber(raw.low ?? raw.minPrice),
         volume: toNumber(raw.volume ?? raw.totalVolume),
-        amount: toNumber(raw.turnover ?? raw.totalAmount)
+        amount: toNumber(raw.turnover ?? raw.totalAmount),
+        peTtm: toNumber(raw.peTtm, null),
+        pb: toNumber(raw.pb, null),
+        marketMultiplesValidationStatus: raw.marketMultiplesValidationStatus,
+        marketMultiplesSources: raw.marketMultiplesSources,
+        validationStatus: raw.validationStatus,
+        validationSources: raw.validationSources
       };
     },
 

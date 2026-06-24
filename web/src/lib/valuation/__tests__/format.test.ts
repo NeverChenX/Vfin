@@ -52,9 +52,11 @@ describe('formatMoney', () => {
 });
 
 describe('formatMultiple', () => {
-  it('1 位小数 + x', () => {
-    expect(formatMultiple(1.67)).toBe('1.7x');
-    expect(formatMultiple(20)).toBe('20.0x');
+  it('估值倍数保留 2 位小数，避免 PE/PB 基础输入被过度四舍五入', () => {
+    expect(formatMultiple(1.04)).toBe('1.04x');
+    expect(formatMultiple(1.67)).toBe('1.67x');
+    expect(formatMultiple(13.96)).toBe('13.96x');
+    expect(formatMultiple(20)).toBe('20.00x');
   });
   it('null → "--"', () => {
     expect(formatMultiple(null)).toBe('--');

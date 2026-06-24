@@ -14,6 +14,8 @@ const NORMALIZER_METHODS = {
   news: 'normalizeNews',
   announcements: 'normalizeAnnouncements'
 };
+const KLINE_HISTORY_TTL_MS = 30 * 60_000;
+const KLINE_TAIL_REFRESH_COUNT = 10;
 
 function sortObjectEntries(value) {
   return Object.keys(value)
@@ -37,14 +39,21 @@ function createCacheKey(operation, context) {
 function createExecutionContext(params, defaultProviderMode, operation) {
   const { symbol, market } = normalizeSymbol(params.symbol);
 
-  // HK quote routing: tencent's free `qt.gtimg.cn` HK feed is 15-min delayed
-  // (the user-visible "01810 stuck at +0.00%" bug). Eastmoney push2 is
-  // real-time and free, so prefer it for HK quotes. Other markets are
-  // unchanged because tencent serves A-share/US in real-time.
-  // Kline/minute/capital paths are untouched (eastmoney still last fallback).
+  // Quote routing: Eastmoney is the intended live source for HK quotes
+  // (Tencent's free HK feed is delayed) and for European indices wired in
+  // eastmoney-provider. Other markets keep the default provider chain.
   let provider = params.provider;
-  if (!provider && operation === 'quote' && market === 'hk') {
+  if (!provider && operation === 'quote' && ['hk', 'de', 'uk'].includes(market)) {
     provider = 'eastmoney';
+  }
+  if (!provider && operation === 'quote' && market === 'crypto') {
+    provider = 'crypto';
+  }
+  if (!provider && operation === 'kline' && market === 'crypto') {
+    provider = 'crypto';
+  }
+  if (!provider && operation === 'kline' && ['IXIC.us', 'N225.jp', 'XAU.cm'].includes(symbol)) {
+    provider = 'yahoo';
   }
 
   return {
@@ -95,6 +104,34 @@ function uniqueKlineItems(items) {
   }
 
   return [...map.values()];
+}
+
+function mergeKlineItemsBySlot(historyItems, latestItems, limit) {
+  const bySlot = new Map();
+  for (const item of [...(historyItems ?? []), ...(latestItems ?? [])]) {
+    const key = `${item.date ?? ''} ${item.time ?? ''}`.trim();
+    if (!key) continue;
+    bySlot.set(key, item);
+  }
+  const merged = sortKlineItems([...bySlot.values()]);
+  return Number.isFinite(limit) && limit > 0 ? merged.slice(-limit) : merged;
+}
+
+function isLongDailyKlineRequest(params) {
+  return (params.period ?? 'day') === 'day' && Number(params.count ?? 0) >= 120;
+}
+
+function createKlineHistoryCacheKey(context) {
+  return JSON.stringify({
+    operation: 'kline-history',
+    context: sortObjectEntries({
+      symbol: context.symbol,
+      market: context.market,
+      provider: context.provider,
+      providerMode: context.providerMode,
+      period: context.period ?? 'day',
+    }),
+  });
 }
 
 // H13: coerce all numerics through a finite-guard so a single string/null
@@ -164,6 +201,47 @@ function ttlForOperation(operation, context) {
   return 5_000;
 }
 
+function stockCode(symbol) {
+  return String(symbol ?? '').split('.')[0];
+}
+
+function isConvertibleBondCode(code) {
+  return /^(110|113|123|127|128)\d{3}$/.test(code);
+}
+
+function isStockForMarketMultiples(context) {
+  const code = stockCode(context.symbol);
+  if (['sh', 'sz'].includes(context.market)) {
+    return /^\d{6}$/.test(code) && !isConvertibleBondCode(code);
+  }
+  if (context.market === 'hk') {
+    return /^\d{5}$/.test(code);
+  }
+  if (context.market === 'us') {
+    return /^[A-Z]{1,5}(\.[A-Z]{1,3})?$/.test(code);
+  }
+  return false;
+}
+
+function nullableNumber(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function multiplesAgree(left, right) {
+  const leftPe = nullableNumber(left?.peTtm);
+  const rightPe = nullableNumber(right?.peTtm);
+  const leftPb = nullableNumber(left?.pb);
+  const rightPb = nullableNumber(right?.pb);
+  if (leftPe === null || rightPe === null || leftPb === null || rightPb === null) return false;
+  return Math.abs(leftPe - rightPe) <= 0.02 && Math.abs(leftPb - rightPb) <= 0.02;
+}
+
+function hasMarketMultiples(quote) {
+  return nullableNumber(quote?.peTtm) !== null && nullableNumber(quote?.pb) !== null;
+}
+
 export function createHqchartDataService({
   providerRegistry = createProviderRegistry(),
   cacheService = createCacheService(),
@@ -172,6 +250,65 @@ export function createHqchartDataService({
   cacheTtlMs, // 兼容旧参数；优先用 ttlForOperation
   providerMode = 'live'
 } = {}) {
+  const backgroundKlineRefreshes = new Set();
+
+  async function fetchProviderQuoteForMultiples(context, provider) {
+    const result = await providerRegistry.execute('quote', { ...context, provider });
+    return normalizer.normalizeQuote(result.data, { ...context, provider: result.provider });
+  }
+
+  async function enrichMarketMultiples(payload, context) {
+    if (!isStockForMarketMultiples(context)) return payload;
+    const sourceNames = ['tencent', 'eastmoney'];
+    try {
+      const results = await Promise.allSettled(
+        sourceNames.map((provider) => fetchProviderQuoteForMultiples(context, provider))
+      );
+      const quotes = results
+        .map((result, index) => result.status === 'fulfilled' ? { provider: sourceNames[index], quote: result.value } : null)
+        .filter(Boolean);
+      const tencent = quotes.find((item) => item.provider === 'tencent')?.quote;
+      const eastmoney = quotes.find((item) => item.provider === 'eastmoney')?.quote;
+
+      if (multiplesAgree(tencent, eastmoney)) {
+        return {
+          ...payload,
+          peTtm: nullableNumber(tencent.peTtm),
+          pb: nullableNumber(tencent.pb),
+          marketMultiplesValidationStatus: 'verified',
+          marketMultiplesSources: ['tencent', 'eastmoney'],
+        };
+      }
+
+      const single = quotes.find((item) => hasMarketMultiples(item.quote));
+      if (single) {
+        return {
+          ...payload,
+          peTtm: nullableNumber(single.quote.peTtm),
+          pb: nullableNumber(single.quote.pb),
+          marketMultiplesValidationStatus: 'degraded_single_source',
+          marketMultiplesSources: [single.provider],
+        };
+      }
+
+      return {
+        ...payload,
+        peTtm: null,
+        pb: null,
+        marketMultiplesValidationStatus: 'unavailable',
+        marketMultiplesSources: ['tencent', 'eastmoney'],
+      };
+    } catch {
+      return {
+        ...payload,
+        peTtm: null,
+        pb: null,
+        marketMultiplesValidationStatus: 'unavailable',
+        marketMultiplesSources: ['tencent', 'eastmoney'],
+      };
+    }
+  }
+
   async function execute(operation, params = {}) {
     const context = createExecutionContext(params, providerMode, operation);
     const cacheKey = createCacheKey(operation, context);
@@ -190,18 +327,76 @@ export function createHqchartDataService({
         );
 
         const methodName = NORMALIZER_METHODS[operation];
-        return normalizer[methodName](result.data, {
+        const payload = normalizer[methodName](result.data, {
           ...context,
           provider: result.provider
         });
+        return operation === 'quote' ? enrichMarketMultiples(payload, context) : payload;
       },
       { ttlMs }
     );
   }
 
+  async function getIncrementalDailyKline(params) {
+    const context = createExecutionContext(params, providerMode, 'kline');
+    const historyKey = createKlineHistoryCacheKey(context);
+    const count = Number(params.count ?? 0);
+    const ttlMs = cacheTtlMs ?? KLINE_HISTORY_TTL_MS;
+    const staleHistory = cacheService.getStale?.(historyKey);
+    const freshHistory = cacheService.get?.(historyKey);
+    if (freshHistory && Array.isArray(freshHistory.items) && freshHistory.items.length > 0) {
+      return {
+        ...freshHistory,
+        items: freshHistory.items.slice(-count),
+      };
+    }
+
+    const historyItems = Array.isArray(staleHistory?.items) ? staleHistory.items : [];
+
+    if (historyItems.length > 0) {
+      if (!backgroundKlineRefreshes.has(historyKey)) {
+        backgroundKlineRefreshes.add(historyKey);
+        execute('kline', {
+          ...params,
+          count: Math.min(KLINE_TAIL_REFRESH_COUNT, count),
+          offset: undefined,
+          allHistory: undefined,
+        })
+          .then((latest) => {
+            const mergedItems = mergeKlineItemsBySlot(historyItems, latest.items ?? [], count);
+            const merged = {
+              ...latest,
+              period: params.period ?? 'day',
+              items: mergedItems,
+            };
+            cacheService.set?.(historyKey, merged, ttlMs);
+          })
+          .catch(() => {
+            // Keep stale history visible; freshness is retried on the next request.
+          })
+          .finally(() => {
+            backgroundKlineRefreshes.delete(historyKey);
+          });
+      }
+      return {
+        ...staleHistory,
+        items: historyItems.slice(-count),
+      };
+    }
+
+    const full = await execute('kline', params);
+    if (Array.isArray(full.items) && full.items.length > 0) {
+      cacheService.set?.(historyKey, full, ttlMs);
+    }
+    return full;
+  }
+
   async function getKline(params = {}) {
     const period = params.period ?? 'day';
     const allHistory = toBoolean(params.allHistory);
+    if (!allHistory && isLongDailyKlineRequest(params)) {
+      return getIncrementalDailyKline(params);
+    }
     if (!allHistory || !isLongCycle(period)) {
       return execute('kline', params);
     }

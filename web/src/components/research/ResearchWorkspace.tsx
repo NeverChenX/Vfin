@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { ResearchToolbar, defaultPeriodsCount } from '@/components/shell/ResearchToolbar';
 import { StatementTabs } from '@/components/shell/StatementTabs';
 import { StatementTable } from '@/components/statement/StatementTable';
-import { MarketBadge } from '@/components/shell/MarketBadge';
-import { KeyMetricsStrip } from '@/components/companies/KeyMetricsStrip';
 import { STATEMENT_SCHEMAS } from '@/lib/finance/schemas';
 import type {
   AnalysisOverlay,
@@ -18,6 +16,7 @@ import type {
 interface Props {
   company: CompanyFinancials;
   ticker: string;
+  basePath?: string;
   initial: {
     statementId: StatementId;
     granularity: PeriodGranularity;
@@ -33,7 +32,7 @@ interface Props {
  *
  * URL 同步用 history.replaceState（不触发 Next.js router），保留深链接能力。
  */
-export function ResearchWorkspace({ company, ticker, initial }: Props) {
+export function ResearchWorkspace({ company, ticker, basePath, initial }: Props) {
   const [statementId, setStatementId] = useState<StatementId>(initial.statementId);
   const [granularity, setGranularity] = useState<PeriodGranularity>(initial.granularity);
   const [periodsCount, setPeriodsCount] = useState<number>(initial.periodsCount);
@@ -54,9 +53,10 @@ export function ResearchWorkspace({ company, ticker, initial }: Props) {
     if (unit !== 'auto') sp.set('unit', unit);
 
     const qs = sp.toString();
-    const url = `/research/${encodeURIComponent(ticker)}${qs ? `?${qs}` : ''}`;
+    const base = basePath ?? `/research/${encodeURIComponent(ticker)}`;
+    const url = qs ? `${base}${base.includes('?') ? '&' : '?'}${qs}` : base;
     window.history.replaceState(null, '', url);
-  }, [statementId, granularity, periodsCount, overlays, unit, ticker]);
+  }, [statementId, granularity, periodsCount, overlays, unit, ticker, basePath]);
 
   // 切换 granularity 时若 periodsCount 不在新粒度的合法选项中，重置为默认
   const onGranularityChange = useCallback((g: PeriodGranularity) => {
@@ -97,32 +97,6 @@ export function ResearchWorkspace({ company, ticker, initial }: Props) {
       />
 
       <div className="px-4 py-2">
-        <header className="mb-2 flex flex-wrap items-baseline gap-2.5 border-b border-[var(--color-border-base)] pb-2">
-          <a
-            href={`/hq-classic?symbol=${encodeURIComponent(ticker)}`}
-            className="rounded border border-[var(--color-border-base)] bg-[var(--color-bg-elev2)] px-2 py-0.5 text-[11px] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
-            title="切换到行情"
-          >
-            行情 →
-          </a>
-          <h1 className="text-[15px] font-bold tracking-tight text-[var(--color-text-primary)]">
-            {company.name}
-          </h1>
-          {company.nameEn && company.nameEn !== company.name && (
-            <span className="text-[12px] text-[var(--color-text-tertiary)]">{company.nameEn}</span>
-          )}
-          <span className="font-mono text-[11px] text-[var(--color-text-tertiary)]">{company.ticker}</span>
-          <MarketBadge market={company.market} />
-          <span className="rounded-sm border border-[var(--color-border-base)] bg-[var(--color-bg-elev2)] px-1.5 py-0.5 text-[10px] text-[var(--color-text-secondary)]">
-            {company.industry}
-          </span>
-          <span className="ml-auto font-mono text-[10.5px] text-[var(--color-text-tertiary)]">
-            {company.accountingStandard} · {company.currency}
-          </span>
-        </header>
-
-        <KeyMetricsStrip company={company} />
-
         <StatementTable
           company={company}
           statementId={statementId}

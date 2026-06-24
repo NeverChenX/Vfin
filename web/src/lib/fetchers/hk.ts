@@ -5,7 +5,7 @@
  * 把全部年度数据以 JS 数组形式内嵌在 HTML 里（每个数组顺序：[TTM, 最近5年]）。
  * 正则抽取后映射到本地 schema。
  *
- * 单位：raw（百万美元的 1e6 倍，stockanalysis 用美元；个别港币计价公司用 HKD）。
+ * 单位：raw（页面 financial currency 的 1e6 倍）。
  */
 
 import type { CompanyFinancials } from '@/types/finance';
@@ -49,6 +49,31 @@ async function fetchPage(url: string): Promise<ScrapedPage> {
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
+export function parseStockAnalysisFinancialCurrency(html: string): 'CNY' | 'HKD' | 'USD' | null {
+  const match = html.match(/financial:"(CNY|HKD|USD)"/);
+  return match ? (match[1] as 'CNY' | 'HKD' | 'USD') : null;
+}
+
+const HK_ZH_NAME: Record<string, string> = {
+  '01811': '中广核新能源',
+  '00700': '腾讯控股',
+  '09988': '阿里巴巴',
+  '03690': '美团',
+  '03698': '徽商银行',
+  '09678': '云知声',
+  '01810': '小米集团',
+  '00939': '建设银行',
+  '01398': '工商银行',
+  '00005': '汇丰控股',
+  '01299': '友邦保险',
+  '02318': '中国平安',
+};
+
+export function resolveHKChineseName(ticker: string, fallback: string): string {
+  const padded = ticker.trim().padStart(5, '0');
+  return HK_ZH_NAME[padded] ?? fallback;
+}
+
 /** stockanalysis 数组的常规索引：[0]=TTM, [1]=最新FY, [2]=次新FY, ...
  *  返回 null 表示该期间数据缺失（区别于 0 真值）。 */
 function pickFY(arr: Array<number | null> | undefined, fyOffset: number): number | null {
@@ -81,23 +106,8 @@ export async function fetchHKCompany(
   // 公司名（中英）
   const nameMatch = (overview?.raw ?? '').match(/<h1[^>]*>([^<]+)\s*\(/);
   const nameEn = nameMatch ? nameMatch[1].trim() : `公司 ${ticker}`;
-  // 中文名表（常见港股）
-  const HK_ZH_NAME: Record<string, string> = {
-    '01811': '中广核新能源',
-    '00700': '腾讯控股',
-    '09988': '阿里巴巴',
-    '03690': '美团',
-    '01810': '小米集团',
-    '00939': '建设银行',
-    '01398': '工商银行',
-    '00005': '汇丰控股',
-    '01299': '友邦保险',
-    '02318': '中国平安',
-  };
-  const padded = ticker.padStart(5, '0');
-  const nameZh = HK_ZH_NAME[padded] ?? nameEn;
-  // 港股一律按 USD 计价（用户明确要求）
-  const currency = 'USD' as const;
+  const nameZh = resolveHKChineseName(ticker, nameEn);
+  const currency = parseStockAnalysisFinancialCurrency(overview?.raw ?? '') ?? 'HKD';
 
   // ─── 映射到 schema ───
   // stockanalysis 的数组顺序：[0]=TTM, [1]=最新FY, [2]=次新FY, ...

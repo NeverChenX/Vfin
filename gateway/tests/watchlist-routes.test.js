@@ -45,7 +45,10 @@ describe('watchlist routes', () => {
 
     expect(listed.status).toBe(200);
     expect(listed.body.items).toHaveLength(1);
-    expect(listed.body.items[0]).toEqual(added.body.item);
+    expect(listed.body.items[0]).toMatchObject({
+      ...added.body.item,
+      displayName: expect.any(String)
+    });
 
     const removed = await request(app).delete('/api/watchlist/700');
 
@@ -56,6 +59,24 @@ describe('watchlist routes', () => {
 
     expect(listedAfterDelete.status).toBe(200);
     expect(listedAfterDelete.body).toEqual({ items: [] });
+  });
+
+  it('labels watchlist items by asset type', async () => {
+    watchlistService = createWatchlistService({ dbPath: ':memory:' });
+    const app = createApp({ watchlistService });
+
+    await request(app).post('/api/watchlist').send({ symbol: '600000' });
+    await request(app).post('/api/watchlist').send({ symbol: '110081' });
+    await request(app).post('/api/watchlist').send({ symbol: 'BTCUSD.crypto' });
+
+    const listed = await request(app).get('/api/watchlist');
+
+    expect(listed.status).toBe(200);
+    expect(Object.fromEntries(listed.body.items.map((item) => [item.symbol, item.assetType]))).toEqual({
+      '600000.sh': 'stock',
+      '110081.sh': 'bond',
+      'BTCUSD.crypto': 'crypto',
+    });
   });
 
   it('returns 400 for invalid add requests', async () => {
@@ -76,7 +97,7 @@ describe('watchlist routes', () => {
     });
   });
 
-  it('filters and cleans legacy invalid symbols during list', async () => {
+  it('filters legacy invalid symbols during list without deleting rows', async () => {
     const db = createDatabaseConnection({ dbPath: ':memory:' });
     db.prepare(
       `
@@ -101,7 +122,7 @@ describe('watchlist routes', () => {
     const persisted = db
       .prepare('SELECT symbol FROM watchlist_items ORDER BY symbol ASC')
       .all();
-    expect(persisted).toEqual([{ symbol: '00700.hk' }]);
+    expect(persisted).toEqual([{ symbol: '00700.hk' }, { symbol: 'INVALID.us' }]);
   });
 
   it('falls back to 500 when a route error has an invalid status code', async () => {
@@ -307,8 +328,12 @@ describe('watchlist routes', () => {
       { name: 'schema_migrations' },
       { name: 'watchlist_items' }
     ]);
-    expect(firstMigrations).toEqual([{ id: '001_create_watchlist_items.sql' }, { id: '002_add_category.sql' }]);
-    expect(secondMigrations).toEqual([{ id: '001_create_watchlist_items.sql' }, { id: '002_add_category.sql' }]);
+    expect(firstMigrations).toEqual([
+      { id: '001_create_watchlist_items.sql' },
+      { id: '002_add_category.sql' },
+      { id: '003_normalize_category_default.sql' }
+    ]);
+    expect(secondMigrations).toEqual(firstMigrations);
     expect(persistedRows).toEqual([{ symbol: '00700.hk' }]);
   });
 });

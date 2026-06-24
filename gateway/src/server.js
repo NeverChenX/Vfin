@@ -14,9 +14,11 @@ import { traceIdMiddleware } from './middleware/trace-id.js';
 import { createMarketRouter } from './routes/market-routes.js';
 import { createWatchlistRouter } from './routes/watchlist-routes.js';
 import { createHqchartDataService } from './services/hqchart-data-service.js';
+import { createCacheService } from './services/cache-service.js';
 import { createWatchlistService } from './services/watchlist-service.js';
 import { createBreadthService } from './services/breadth-service.js';
 import { createHkConnectService } from './services/hk-connect-service.js';
+import { createSectorsService } from './services/sectors-service.js';
 import { createProviderRegistry } from './providers/provider-registry.js';
 
 // C1: strict CORS.
@@ -57,6 +59,7 @@ export function createApp({
   hqchartDataService,
   breadthService,
   hkConnectService,
+  sectorsService,
   providerOrder,
   providerMode
 } = {}) {
@@ -65,6 +68,7 @@ export function createApp({
   let defaultHqchartDataService;
   let defaultBreadthService;
   let defaultHkConnectService;
+  let defaultSectorsService;
   const service = watchlistService ?? (() => {
     if (!defaultWatchlistService) {
       defaultWatchlistService = createWatchlistService();
@@ -76,7 +80,12 @@ export function createApp({
     if (!defaultHqchartDataService) {
       const order = providerOrder && providerOrder.length ? providerOrder : ['sina', 'tencent'];
       const registry = createProviderRegistry({ primary: order[0], fallback: order.slice(1) });
-      defaultHqchartDataService = createHqchartDataService({ providerRegistry: registry, providerMode });
+      const persistDir = path.resolve(process.cwd(), 'data', 'hq-cache');
+      defaultHqchartDataService = createHqchartDataService({
+        providerRegistry: registry,
+        providerMode,
+        cacheService: createCacheService({ persistDir }),
+      });
     }
 
     return defaultHqchartDataService;
@@ -88,6 +97,10 @@ export function createApp({
   const hkConnect = hkConnectService ?? (() => {
     if (!defaultHkConnectService) defaultHkConnectService = createHkConnectService();
     return defaultHkConnectService;
+  });
+  const sectors = sectorsService ?? (() => {
+    if (!defaultSectorsService) defaultSectorsService = createSectorsService();
+    return defaultSectorsService;
   });
 
   app.disable('x-powered-by');
@@ -116,7 +129,8 @@ export function createApp({
   app.use('/api', createMarketRouter({
     hqchartDataService: marketDataService,
     breadthService: breadth,
-    hkConnectService: hkConnect
+    hkConnectService: hkConnect,
+    sectorsService: sectors
   }));
   app.use('/api/watchlist', createWatchlistRouter({ watchlistService: service, projectRoot }));
   app.use(errorHandler);

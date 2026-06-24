@@ -1,0 +1,24 @@
+{
+  "cacheVersion": 1,
+  "quote": {
+    "source": "Eastmoney push2 HK quote",
+    "timestamp": "2026-06-23T04:05:00.000Z",
+    "price": 22.82,
+    "prevClose": 23.72,
+    "open": 23.5,
+    "high": 23.6,
+    "low": 22.74,
+    "change": -0.8999999999999986,
+    "changePct": -0.0379,
+    "volume": 116038779,
+    "amount": 2672568560,
+    "marketCapHkdMillions": 589712.05973708
+  },
+  "validationSources": [
+    "Eastmoney push2 HK quote",
+    "Tencent Finance HK quote"
+  ],
+  "quoteVerified": true,
+  "hkdToCny": 0.865834,
+  "fxSource": "ExchangeRate-API HKD/CNY"
+}

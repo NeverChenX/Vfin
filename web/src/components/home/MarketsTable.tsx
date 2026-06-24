@@ -6,12 +6,18 @@ import Link from 'next/link';
 import { buildDisplayName, isAShare } from '@/lib/symbol-utils';
 import { fetchJSONSafe, fetchAllLimited, startVisibilityPoll, QUOTE_POLL_MS } from '@/lib/poll';
 import { ensurePortfolioSynced } from '@/lib/sync-once';
+import { WATCHLIST_CHANGED_EVENT } from '@/lib/watchlist-client';
 import { periodLabelFromDate } from '@/lib/finance/period';
+import { assetTypeClass, assetTypeLabel, inferAssetType } from '@/lib/asset-type';
+import { ASSET_LIST_METRIC_COLUMNS, formatMarketMultiple, latestMarketMultiples } from './asset-list-metrics';
+import type { KeyMetricsRow } from '@/types/finance';
 import type { WatchlistItem, QuoteSnapshot, WatchlistApiResponse } from '@/types/market';
 import { MiniSparkline } from './MiniSparkline';
 
 export interface CompanyMeta {
   ticker: string;
+  name?: string;
+  shortName?: string;
   dataAsOf: string;
   expectedAsOf?: string;
   isStale: boolean;
@@ -20,6 +26,7 @@ export interface CompanyMeta {
   // 真实"财报公告/披露日"，仅美股（SEC EDGAR `filed`）可用；
   // A 股 / 港股暂无 → 前端降级显示"同步 X 天前"
   latestFiledAt?: string;
+  ratios?: KeyMetricsRow[];
 }
 
 interface Props {
@@ -51,6 +58,7 @@ export function MarketsTable({ companies = [] }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [filter, setFilter] = useState('');
+  const [portfolioBusy, setPortfolioBusy] = useState(false);
   // 同步状态：symbol → 'pending' | 'success' | 'error: ...'
   const [syncState, setSyncState] = useState<Record<string, string>>({});
   const [syncToast, setSyncToast] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
@@ -91,6 +99,12 @@ export function MarketsTable({ companies = [] }: Props) {
   }, []);
 
   useEffect(() => {
+    const onChanged = () => refresh();
+    window.addEventListener(WATCHLIST_CHANGED_EVENT, onChanged);
+    return () => window.removeEventListener(WATCHLIST_CHANGED_EVENT, onChanged);
+  }, []);
+
+  useEffect(() => {
     if (items.length === 0) return;
     return startVisibilityPoll(async (signal) => {
       const results = await fetchAllLimited(items, (it) =>
@@ -113,6 +127,30 @@ export function MarketsTable({ companies = [] }: Props) {
     await fetch(`/api/hq/watchlist/${encodeURIComponent(symbol)}`, { method: 'DELETE' });
     refresh();
   }, []);
+
+  const onSyncPortfolio = useCallback(async () => {
+    if (portfolioBusy) return;
+    setPortfolioBusy(true);
+    try {
+      const res = await fetch('/api/hq/watchlist/sync-portfolio', { method: 'POST' });
+      const data: { imported?: number; removed?: number; error?: string } = await res.json();
+      if (!res.ok) {
+        setSyncToast({ kind: 'err', text: data.error || `同步失败：HTTP ${res.status}` });
+        return;
+      }
+      const imported = data.imported || 0;
+      const removed = data.removed || 0;
+      const text = imported || removed
+        ? `已同步持仓：新增 ${imported}，移除 ${removed}`
+        : '持仓已是最新';
+      setSyncToast({ kind: 'ok', text });
+      refresh();
+    } catch (e: unknown) {
+      setSyncToast({ kind: 'err', text: (e as Error).message || '同步持仓失败' });
+    } finally {
+      setPortfolioBusy(false);
+    }
+  }, [portfolioBusy]);
 
   // 同步：调 /api/fetch-company 抓取 / 刷新该股票的静态财报数据
   const onSync = useCallback(async (symbol: string, name?: string) => {
@@ -215,7 +253,9 @@ export function MarketsTable({ companies = [] }: Props) {
     if (q) {
       arr = arr.filter((it) => {
         const quote = quotes[it.symbol];
-        const name = (quote?.name || it.displayName || '').toLowerCase();
+        const localCompany = candidateKeys(it.symbol).map((k) => companyByTicker.get(k)).find(Boolean);
+        const companyName = localCompany?.shortName || localCompany?.name || '';
+        const name = (companyName || quote?.name || it.displayName || '').toLowerCase();
         return it.symbol.toLowerCase().includes(q) || name.includes(q);
       });
     }
@@ -242,7 +282,7 @@ export function MarketsTable({ companies = [] }: Props) {
 
   // ── render ─────────────────────────────────────────────────
   if (!loaded) {
-    return <div className="px-4 py-16 text-center text-[var(--color-text-tertiary)]">加载自选股…</div>;
+    return <MarketsTableLoading />;
   }
 
   if (items.length === 0) {
@@ -314,6 +354,17 @@ export function MarketsTable({ companies = [] }: Props) {
         />
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-border-base)] px-2 py-2 sm:px-4">
+        <button
+          type="button"
+          disabled={portfolioBusy}
+          onClick={onSyncPortfolio}
+          className="h-8 rounded border border-[var(--color-border-base)] px-3 text-[12px] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] disabled:cursor-not-allowed disabled:text-[var(--color-text-disabled)]"
+        >
+          {portfolioBusy ? '同步中…' : '同步持仓'}
+        </button>
+      </div>
+
       {/* 二级：市场子分类（A股 / 港股 / 美股 / 全部） */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-[var(--color-border-base)] px-2 py-1.5 sm:px-4">
         {(
@@ -354,8 +405,9 @@ export function MarketsTable({ companies = [] }: Props) {
               <Th align="left" w="180px">名称 / 代码</Th>
               <Th align="right" w="100px" sortable active={sortKey==='price'} dir={sortDir} onClick={() => toggleSort('price')}>最新价</Th>
               <Th align="right" w="100px" sortable active={sortKey==='pct'} dir={sortDir} onClick={() => toggleSort('pct')}>今日 涨跌幅</Th>
-              <Th align="right" w="90px" cls="hidden md:table-cell">今日 最高</Th>
-              <Th align="right" w="90px" cls="hidden md:table-cell">今日 最低</Th>
+              {ASSET_LIST_METRIC_COLUMNS.map((column) => (
+                <Th key={column.key} align="right" w="90px" cls="hidden md:table-cell">{column.label}</Th>
+              ))}
               <Th align="right" w="110px" sortable active={sortKey==='amount'} dir={sortDir} onClick={() => toggleSort('amount')} cls="hidden lg:table-cell">今日 成交额</Th>
               <Th align="left"  w="130px" cls="hidden lg:table-cell">财报数据</Th>
               <Th align="center" w="130px" cls="hidden sm:table-cell">近 30 日</Th>
@@ -411,6 +463,61 @@ export function MarketsTable({ companies = [] }: Props) {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function MarketsTableLoading() {
+  const rows = Array.from({ length: 8 }, (_, i) => i);
+  return (
+    <div className="rounded-md border border-[var(--color-border-base)] bg-[var(--color-bg-elev1)]">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-[var(--color-border-base)] px-3 py-2 text-[11.5px] sm:px-4">
+        <span className="font-semibold text-[var(--color-text-secondary)]">财报数据</span>
+        <span className="text-[var(--color-text-tertiary)]">正在加载资产列表…</span>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--color-border-base)] px-2 py-2 sm:px-4">
+        <div className="h-7 w-20 animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+        <div className="h-7 w-24 animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+        <div className="ml-auto h-8 w-[200px] animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[920px]">
+          <thead>
+            <tr className="border-b border-[var(--color-border-base)] text-[11px] text-[var(--color-text-tertiary)]">
+              <Th align="left" w="180px">名称 / 代码</Th>
+              <Th align="right" w="100px">最新价</Th>
+              <Th align="right" w="100px">今日 涨跌幅</Th>
+              {ASSET_LIST_METRIC_COLUMNS.map((column) => (
+                <Th key={column.key} align="right" w="90px" cls="hidden md:table-cell">{column.label}</Th>
+              ))}
+              <Th align="right" w="110px" cls="hidden lg:table-cell">今日 成交额</Th>
+              <Th align="left" w="130px" cls="hidden lg:table-cell">财报数据</Th>
+              <Th align="center" w="130px" cls="hidden sm:table-cell">近 30 日</Th>
+              <Th align="right" w="100px">操作</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((i) => (
+              <tr key={i} className="border-b border-[var(--color-border-base)] last:border-b-0">
+                <td className="px-3 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="h-[18px] w-8 animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+                    <div className="min-w-0 flex-1">
+                      <div className="h-4 w-24 animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+                      <div className="mt-1.5 h-3 w-16 animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+                    </div>
+                  </div>
+                </td>
+                {Array.from({ length: 8 }, (_, j) => (
+                  <td key={j} className={`px-3 py-2.5 ${j >= 2 && j <= 4 ? 'hidden md:table-cell' : ''} ${j === 5 ? 'hidden lg:table-cell' : ''} ${j === 6 ? 'hidden sm:table-cell' : ''}`}>
+                    <div className="ml-auto h-4 w-16 animate-pulse rounded bg-[var(--color-bg-elev3)]" />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -486,15 +593,26 @@ const Row = memo(function RowImpl({
   const pct = hasChange ? (change / yclose!) * 100 : 0;
   const dir: 'up' | 'down' | 'flat' = !hasChange ? 'flat' : change > 0 ? 'up' : change < 0 ? 'down' : 'flat';
   const colorCls = dir === 'up' ? 'text-up' : dir === 'down' ? 'text-down' : 'text-flat';
-  const { primary, secondary } = buildDisplayName(item.symbol, quote?.name);
+  const stableName = company?.shortName || company?.name || item.displayName || quote?.name;
+  const { primary, secondary } = buildDisplayName(item.symbol, stableName);
   const aShare = isAShare(item.symbol);
   const showsSymbolAsName = primary === item.symbol.toUpperCase();
   const marketTag = marketTagOf(item.symbol);
+  const assetType = inferAssetType(item);
+  const multiples = latestMarketMultiples(company, quote);
+  const multiplesTitle =
+    multiples.validationStatus === 'verified'
+      ? `最新 PE/PB 已由 ${quote?.marketMultiplesSources?.join(' + ') || '双源'} 交叉验证`
+      : multiples.validationStatus === 'degraded_single_source'
+        ? `PE/PB 来自 ${quote?.marketMultiplesSources?.join(' + ') || '单一公开行情源'}，未完全双源验证`
+      : multiples.validationStatus === 'cached'
+        ? '使用已缓存的最近验证 PE/PB；实时双源最新值暂不可用'
+        : 'PE/PB 暂不可用：当前没有可显示的真实行情倍数';
 
   return (
     <tr className="group border-b border-[var(--color-border-base)] transition-colors last:border-b-0 hover:bg-[var(--color-bg-elev2)]">
       <td className="px-3 py-2.5">
-        <Link href={`/trade/${item.symbol}`} className="flex items-center gap-2 min-w-0">
+        <Link href={`/company/${encodeURIComponent(item.symbol)}?tab=kline`} className="flex items-center gap-2 min-w-0">
           {/* 市场标签（A股/港股/美股），按市场配色 */}
           <span
             className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[9.5px] font-semibold leading-[14px] ${marketTagClass(marketTag)}`}
@@ -511,8 +629,16 @@ const Row = memo(function RowImpl({
                 <span className="font-mono text-[10px] text-[var(--color-text-tertiary)]">{secondary}</span>
               )}
             </div>
-            <div className="num truncate text-[10.5px] text-[var(--color-text-tertiary)]">
-              {item.symbol.toUpperCase()}
+            <div className="flex min-w-0 items-center gap-1">
+              <span
+                className={`shrink-0 rounded border px-1 py-0 text-[9px] leading-[13px] ${assetTypeClass(assetType)}`}
+                title={`资产类型：${assetTypeLabel(assetType)}`}
+              >
+                {assetTypeLabel(assetType)}
+              </span>
+              <span className="num truncate text-[10.5px] text-[var(--color-text-tertiary)]">
+                {item.symbol.toUpperCase()}
+              </span>
             </div>
           </div>
         </Link>
@@ -534,11 +660,11 @@ const Row = memo(function RowImpl({
           <span className="text-[var(--color-text-disabled)]">--</span>
         )}
       </td>
-      <td className="hidden px-3 py-2.5 num text-right text-[12.5px] text-[var(--color-text-secondary)] md:table-cell">
-        {quote?.high ? quote.high.toFixed(2) : '--'}
+      <td className="hidden px-3 py-2.5 num text-right text-[12.5px] text-[var(--color-text-secondary)] md:table-cell" title={multiplesTitle}>
+        {formatMarketMultiple(multiples.peTtm)}
       </td>
-      <td className="hidden px-3 py-2.5 num text-right text-[12.5px] text-[var(--color-text-secondary)] md:table-cell">
-        {quote?.low ? quote.low.toFixed(2) : '--'}
+      <td className="hidden px-3 py-2.5 num text-right text-[12.5px] text-[var(--color-text-secondary)] md:table-cell" title={multiplesTitle}>
+        {formatMarketMultiple(multiples.pb)}
       </td>
       <td className="hidden px-3 py-2.5 num text-right text-[12.5px] text-[var(--color-text-secondary)] lg:table-cell">
         {fmtAmount(quote?.amount)}
@@ -561,7 +687,7 @@ const Row = memo(function RowImpl({
         />
         {company ? (
           <Link
-            href={`/research/${item.symbol}`}
+            href={`/company/${encodeURIComponent(item.symbol)}?tab=financials`}
             className="ml-2 inline-block rounded bg-[var(--color-brand)] px-2.5 py-1 text-[11px] font-semibold text-[var(--color-bg-base)] hover:bg-[var(--color-brand-hover)]"
             title="财报研究"
           >
@@ -577,7 +703,7 @@ const Row = memo(function RowImpl({
           </span>
         )}
         <Link
-          href={`/trade/${item.symbol}`}
+          href={`/company/${encodeURIComponent(item.symbol)}?tab=kline`}
           className="ml-2 inline-block rounded bg-[var(--color-brand)] px-2.5 py-1 text-[11px] font-semibold text-[var(--color-bg-base)] hover:bg-[var(--color-brand-hover)]"
         >
           行情
@@ -661,7 +787,7 @@ function SyncButton({
     <button
       type="button"
       disabled={isPending}
-      onClick={() => onSync(item.symbol, quote?.name)}
+      onClick={() => onSync(item.symbol, company?.name || quote?.name)}
       title={title}
       className={`inline-block rounded px-2 py-1 text-[11px] transition-colors ${cls}`}
     >
@@ -672,63 +798,47 @@ function SyncButton({
 
 function FinancialMeta({ company }: { company?: CompanyMeta }) {
   if (!company) return <span className="text-[var(--color-text-disabled)]">—</span>;
-  const periodLabel = company.dataAsOf ? periodLabelFromDate(company.dataAsOf) : '—';
-  const fetched = company.fetchedAt || company.updatedAt;
+  const periodLabel = company.dataAsOf ? periodLabelFromDate(company.dataAsOf) : '--';
+  // 公告日：显示绝对日期，不显示 N 天前。零容错——没有真实数据就 `--`，不臆造。
+  // 数据源：美股 SEC EDGAR `filed`、A 股东方财富 RPT_LICO_FN_CPD `NOTICE_DATE`、
+  // 港股暂未接入（HKEX disclosure 待 spike）。
+  const filed = company.latestFiledAt || '--';
+  const periodCls = company.isStale ? 'text-[var(--color-down)]' : 'text-[var(--color-text-primary)]';
   return (
     <div className="flex flex-col gap-0.5">
       <span
-        className="num inline-flex items-center gap-1"
-        title={
-          company.dataAsOf
-            ? `财报期间末日：${company.dataAsOf}（≠ 公告/发布时间）`
-            : undefined
-        }
+        className="num inline-flex items-baseline gap-1"
+        title={company.dataAsOf ? `财报期间末日：${company.dataAsOf}` : undefined}
       >
-        <span className="text-[10px] text-[var(--color-text-tertiary)]">数据期间</span>
-        <span className={company.isStale ? 'text-[var(--color-down)]' : 'text-[var(--color-text-primary)]'}>
-          {periodLabel}
-        </span>
+        <span className="text-[10px] text-[var(--color-text-tertiary)]">期间</span>
+        <span className={periodCls}>{periodLabel}</span>
         {company.isStale && (
           <span
             className="rounded-sm border border-[var(--color-down)]/40 px-1 text-[9px] leading-[14px] text-[var(--color-down)]"
             style={{ backgroundColor: 'rgba(246,70,93,0.1)' }}
-            title={`期望最新期：${company.expectedAsOf ?? '—'}`}
+            title={`期望最新期：${company.expectedAsOf ?? '—'}（点右侧"更新"重新抓）`}
           >
             过期
           </span>
         )}
       </span>
-      {company.latestFiledAt ? (
-        <span
-          className="num text-[10px] text-[var(--color-text-tertiary)]"
-          title={`财报公告日（SEC EDGAR filed）：${company.latestFiledAt}`}
-        >
-          公告 {fmtAgo(company.latestFiledAt)}
+      <span
+        className="num inline-flex items-baseline gap-1"
+        title={
+          company.latestFiledAt
+            ? `财报公告日：${company.latestFiledAt}`
+            : '该市场暂未接入公告日数据源'
+        }
+      >
+        <span className="text-[10px] text-[var(--color-text-tertiary)]">公告</span>
+        <span className={filed === '--' ? 'text-[var(--color-text-disabled)]' : 'text-[var(--color-text-secondary)]'}>
+          {filed}
         </span>
-      ) : fetched ? (
-        <span
-          className="num text-[10px] text-[var(--color-text-tertiary)]"
-          title={`上次本地同步时间：${new Date(fetched).toLocaleString('zh-CN')}（A 股/港股暂无公告日数据源）`}
-        >
-          同步 {fmtAgo(fetched)}
-        </span>
-      ) : null}
+      </span>
     </div>
   );
 }
 
-
-function fmtAgo(iso: string): string {
-  const t = new Date(iso).getTime();
-  if (!Number.isFinite(t)) return '';
-  const diff = Date.now() - t;
-  const day = 86400000;
-  if (diff < 0) return new Date(iso).toLocaleDateString();
-  if (diff < 3600000) return `${Math.max(1, Math.floor(diff / 60000))} 分钟前`;
-  if (diff < day) return `${Math.floor(diff / 3600000)} 小时前`;
-  if (diff < 30 * day) return `${Math.floor(diff / day)} 天前`;
-  return new Date(iso).toLocaleDateString('zh-CN');
-}
 
 function fmtAmount(n: number | undefined): string {
   if (!n) return '--';

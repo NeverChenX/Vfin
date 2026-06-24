@@ -1,0 +1,2056 @@
+Hong Kong Exchanges and Clearing Limited and The Stock Exchange of Hong Kong Limited take no responsibility for the
+contents of this announcement, make no representation as to its accuracy or completeness and expressly disclaim any liability
+whatsoever for any loss howsoever arising from or in reliance upon the whole or any part of the contents of this announcement.
+
+
+
+
+                                           XIAOMI CORPORATION
+                                                 小米集團
+      (A company controlled through weighted voting rights and incorporated in the Cayman Islands with limited liability)
+                      Stock Codes: 1810 (HKD counter) and 81810 (RMB counter)
+
+
+                  RESULTS ANNOUNCEMENT
+         FOR THE THREE MONTHS ENDED MARCH 31, 2026
+The board (the “Board”) of directors (the “Directors”) of Xiaomi Corporation 小米集團 (the
+“Company”) is pleased to announce the unaudited consolidated results of the Company and its
+subsidiaries (collectively, the “Group”) for the three months ended March 31, 2026. These interim
+results have been prepared in accordance with International Accounting Standard 34, “Interim
+Financial Reporting”, and reviewed by PricewaterhouseCoopers, the independent auditor of the
+Company, in accordance with International Standard on Review Engagements 2410, “Review of
+interim financial information performed by the independent auditor of the entity”, issued by the
+International Auditing and Assurance Standards Board. The interim results have also been reviewed
+by the audit committee of the Company (the “Audit Committee”).
+
+In this announcement, “we”, “us”, and “our” refer to the Company and where the context otherwise
+requires, the Group.
+
+KEY HIGHLIGHTS
+
+                                                                       Unaudited
+                                                                   Three months ended
+                                                                                                                  Quarter-
+                                      March 31,         March 31,     Year-over- December 31,                  over-quarter
+                                          2026               2025   year change              2025                   change
+                                                    (Renminbi (“RMB”) in millions, unless specified)
+
+Revenue                                 99,141.6          111,293.3             -10.9%         116,916.5             -15.2%
+Gross profit                            21,810.1           25,405.9             -14.2%          24,362.8             -10.5%
+Operating profit                         5,312.6           13,125.4             -59.5%           6,228.7             -14.7%
+Profit before income tax                 5,728.7           13,168.0             -56.5%           7,120.5             -19.5%
+Profit for the period                    4,734.6           10,892.7             -56.5%           6,543.8             -27.6%
+Non-IFRS Measure:
+  Adjusted Net Profit1                    6,072.1          10,675.6             -43.1%            6,349.1             -4.4%
+1
+     See the section entitled “Non-IFRS Measure: Adjusted Net Profit” for more information about the non-IFRS measure.
+
+                                                              1
+BUSINESS REVIEW AND OUTLOOK
+
+1. Overall Performance
+
+    In the first quarter of 2026, geopolitical uncertainties weighed on the global economy,
+    while significant increases in key component prices, including memory and commodities,
+    along with intensifying industry competition, continued to create headwinds. In response to
+    these challenges, we continued to optimize our operating efficiency and strengthened our
+    foundational core technologies, including artificial intelligence (AI) capabilities, to empower
+    our “Human × Car × Home” ecosystem. Total revenue for the first quarter of 2026 reached
+    RMB99.1 billion. Segment-wise, in the first quarter of 2026, revenue of our smartphone ×
+    AIoT segment reached RMB79.3 billion; revenue of our smart electric vehicle (“EV”), AI and
+    other new initiatives segment reached RMB19.9 billion. In this quarter, our adjusted net profit
+    reached RMB6.1 billion.
+
+    In the first quarter of 2026, our smartphone shipments reached 33.8 million units. According
+    to Omdia, we maintained top 3 global smartphone shipment ranking for the 23rd consecutive
+    quarter, with a market share of 11.3%. As of March 31, 2026, the number of connected IoT
+    devices on our AIoT platform (excluding smartphones, tablets and laptops) reached 1,118.7
+    million, up 18.5% year-over-year. In the first quarter of 2026, we achieved total deliveries
+    of 80,856 vehicles, up 6.6% year-over-year. In March 2026, our global monthly active users
+    (“MAU”)2 reached 746.2 million, up 3.8% year-over-year.
+
+    We continued to execute on our 2020–2030 goal of investing in foundational core technologies
+    and becoming a global leader in the evolving realm of cutting-edge technologies. In the first
+    quarter of 2026, our research and development (“R&D”) expenses increased by 33.4% year-
+    over-year to RMB9.0 billion. As of March 31, 2026, our research and development personnel
+    reached a record high of 26,048.
+
+    We continued to advance our AI capabilities. In the R&D of foundation models, on April 23,
+    2026, we officially launched the public beta of the Xiaomi MiMo-V2.5 large model series,
+    which comprises MiMo-V2.5, V2.5-Pro, V2.5-TTS Series and V2.5-ASR. Notably, Xiaomi
+    MiMo-V2.5-Pro has delivered state-of-the-art, global leading performance among agent models
+    in areas such as general agent capabilities, complex software engineering, and long-range
+    tasks, representing a comprehensive leap forward compared to the previous generation, Xiaomi
+    MiMo-V2-Pro. According to the Artificial Analysis Intelligence Index, Xiaomi MiMo-V2.5-Pro
+    tied for first place among global open-source models, and ranked among the top five models
+    globally in overall performance. Xiaomi MiMo-V2.5-Pro also tied for first place among global
+    open-source models on the Artificial Analysis Agentic Index.3 On April 28, 2026, we officially
+    open-sourced the Xiaomi MiMo-V2.5 series under the MIT License, supporting commercial
+    inference deployment and secondary training without additional authorization requirements.
+
+
+
+
+2
+    Including smartphones and tablets.
+3
+    As of April 23, 2026.
+
+                                                2
+    We leverage our AI capabilities to comprehensively empower our “Human × Car × Home”
+    ecosystem. In April 2026, we launched a limited closed beta of Xiaomi miclaw on PC and
+    Xiaomi Smart Home Screen. With this expansion of applicable device categories, Xiaomi
+    miclaw now operates across smartphones, tablets, PCs, and Xiaomi Smart Home Screen,
+    marking a significant upgrade in its cross-device capabilities. Furthermore, the China Academy
+    of Information and Communications Technology (“CAICT”) recently initiated an evaluation
+    of mobile intelligent assistants (Claw), and Xiaomi miclaw was among the first in the Chinese
+    Mainland to pass this authoritative assessment. This recognition underscored our technological
+    strength and product experience in intelligent assistants, highlighting our forward-looking
+    strategy in advancing AI applications across the “Human × Car × Home” ecosystem.
+
+    We keep exploring the frontier of physical intelligence. In April 2026, we officially released
+    and open-sourced the complete real-world post-training workflow for the embodied intelligence
+    model Xiaomi-Robotics-0. The release provides comprehensive access to the full suite of data
+    processing, training methodology, and inference codebase. Through this open-source initiative,
+    we aim to lower the technical barriers to advancing robotic intelligence across the industry.
+
+    We steadily improved the operational efficiency of our new retail stores. As of March 2026,
+    the total number of our Xiaomi stores in the Chinese Mainland surpassed 16,000, with the
+    number of our large-format stores (over 500 square meters) exceeding 260. At the same time,
+    we steadily expanded our new retail model in the overseas markets, with the total number of
+    overseas new retail stores surpassing 520, covering Southeast Asia, Europe, East Asia, Latin
+    America, the Middle East and Africa, etc.
+
+    In the first quarter of 2026, we continued to improve operating efficiency, with the operating
+    expense ratio of our Smartphone × AIoT segment reaching 14.9%, down 2.5 percentage points
+    quarter-over-quarter. Meanwhile, we continued to invest proactively in the future, and our
+    capital expenditures for the quarter amounted to approximately RMB3.3 billion, up 20.0%
+    year-over-year. We are committed to continuously enhancing shareholder value, and have
+    been actively repurchasing our shares in the open market. Since the beginning of this year4, we
+    have repurchased approximately 250.5 million shares in the amount of approximately HK$8.4
+    billion, exceeding last year’s total repurchase amount.
+
+2. Smartphone × AIoT
+
+    In the first quarter of 2026, revenue from our smartphone × AIoT segment reached RMB79.3
+    billion. The gross profit margin of our smartphone × AIoT segment reached 22.5%.
+
+
+
+
+4
+    From January 1, 2026 to May 22, 2026.
+
+                                                3
+    Smartphones
+
+    In the first quarter of 2026, the smartphone industry faced broad headwinds from continued
+    sharp increases in memory costs. By focusing on optimizing our sales mix and channel
+    management, our global smartphone shipments reached 33.8 million units in this quarter, and
+    our smartphone revenue reached RMB44.3 billion, with a gross profit margin of 10.1%.
+
+    According to Omdia, in the first quarter of 2026, our global smartphone shipments ranked No. 3
+    with a market share of 11.3%, marking the 23rd consecutive quarter among the top three
+    globally. In the first quarter of 2026, our smartphone shipments ranked No. 2 in Latin America,
+    with a market share of 17.4%, up 2.0 percentage points quarter-over-quarter. We ranked No. 3
+    in Europe, Southeast Asia, the Middle East and Africa, with market shares of 17.2%, 16.9%,
+    13.0% and 9.2%, respectively. In the first quarter of 2026, our smartphone shipments ranked
+    among the top three in 47 countries and regions globally and among the top five in 65 countries
+    and regions globally.
+
+    We continued to advance our premiumization strategy and proactively improve our sales mix.
+    In the first quarter of 2026, the average selling price (“ASP”) of our smartphones reached
+    a record high, up 8.2% year-over-year to RMB1,310. According to third-party data, in the
+    first quarter of 2026, our premium smartphone5 units sold accounted for 23.5% of our total
+    smartphone units sold in the Chinese Mainland.
+
+    In May 2026, we officially unveiled the Xiaomi 17 Max, a brand-new large-screen flagship
+    smartphone, debuting Leica’s 200MP main camera. Equipped with a 6.9-inch HyperRGB
+    display, an 8,000mAh Xiaomi Surge battery and the Snapdragon 8 Elite Gen 5 Mobile
+    Platform, the smartphone significantly enhances the flagship user experience in imaging,
+    display quality, battery endurance, and performance.
+
+    IoT and lifestyle products
+
+    In the first quarter of 2026, revenue from our IoT and lifestyle products reached RMB24.7
+    billion, and our overseas IoT and lifestyle products revenue reached a record high, driven by
+    the expansion of overseas channels and broader product categories. Despite the impact of rising
+    component prices in certain categories, we adhered to a profitability-focused strategy, actively
+    refined our sales mix, and continued to expand our overseas channels and product categories.
+    As a result, the gross margin of our IoT and lifestyle products maintained at a healthy level of
+    25.2% in this quarter, up 5.1 percentage points quarter-over-quarter.
+
+
+
+
+5
+    Premium smartphones in the Chinese Mainland are models with retail prices at or above RMB3,000.
+
+                                                           4
+    As of March 31, 2026, the number of connected IoT devices (excluding smartphones, tablets
+    and laptops) on our AIoT platform reached 1,118.7 million, up 18.5% year-over-year; the
+    number of users with five or more devices connected to our AIoT platform (excluding
+    smartphones, tablets and laptops) reached a record high of 23.6 million, up 22.3% year-over-
+    year. In March 2026, the MAU of our Xiaomi Home App reached a record high of 117.0
+    million, up 10.0% year-over-year. The MAU of our AI Assistant (“小愛同學”) reached a record
+    high of 169.3 million, up 15.5% year-over-year.
+
+    According to Omdia, in the first quarter of 2026, our TWS earbud shipments ranked
+    No. 2 globally and No. 2 in the Chinese Mainland. Our shipments of wearable bands6 ranked
+    No. 3 globally and No. 2 in the Chinese Mainland. In May 2026, we launched the Xiaomi Smart
+    Band 10 Pro and introduced our first clip-on earbuds, further expanding our wearable product
+    portfolio.
+
+    Our tablet business maintained stable performance. According to Omdia, in the first quarter of
+    2026, our tablet shipments ranked among the top five globally for the 8th consecutive quarter,
+    and ranked among the top three in the Chinese Mainland.
+
+    Internet services
+
+    In the first quarter of 2026, our internet services maintained healthy growth, with revenue
+    reaching RMB9.5 billion, up 4.3% year-over-year. The gross profit margin of our internet
+    services reached 76.1%. Our internet services revenue in the Chinese Mainland reached a
+    record high, driven by strong growth in our performance advertising revenue. Meanwhile, our
+    overseas internet services revenue reached RMB3.0 billion, up 9.0% year-over-year. Overseas
+    internet services revenue accounted for 31.4% of our total internet services revenue, up 1.4
+    percentage points year-over-year.
+
+    We have a solid user base globally. In March 2026, our global MAU reached 746.2 million, up
+    3.8% year-over-year, and our MAU in the Chinese Mainland reached a record high of 195.8
+    million, up 8.1% year-over-year. In March 2026, the global MAU of our smart TVs7 reached
+    76.7 million, up 5.1% year-over-year.
+
+    In the first quarter of 2026, our advertising business sustained growth momentum, with
+    advertising revenue reaching RMB7.1 billion, up 7.8% year-over-year.
+
+
+
+
+6
+    Including basic bands, basic watches and smart watches.
+7
+    Including Xiaomi Box and Xiaomi TV Stick.
+
+
+                                                              5
+3. Smart EV, AI and Other New Initiatives
+
+    In the first quarter of 2026, revenue from our smart EV, AI and other new initiatives segment
+    reached RMB19.9 billion, up 6.9% year-over-year, consisting of RMB19.0 billion from smart
+    EV and RMB0.9 billion from other related businesses. In the first quarter of 2026, affected by
+    our subsidies for vehicle purchase tax and rising prices of key components, the gross profit
+    margin of our smart EV, AI and other new initiatives segment was 20.1%. In the first quarter of
+    2026, the loss from operations8 related to our smart EV, AI and other new initiatives segment
+    was RMB3.1 billion.
+
+    In the first quarter of 2026, despite discontinued sales and lower deliveries of the first-
+    generation Xiaomi SU7 Series, we achieved total deliveries of 80,856 vehicles, up 6.6% year-
+    over-year. In March 2026, we officially launched the New-Generation Xiaomi SU7 Series
+    (“New-Generation SU7”). As of May 6, 2026, locked-in orders for the New-Generation SU7
+    surpassed 80,000 vehicles during its initial sales period. As of April 23, 2026, cumulative
+    deliveries of the New-Generation SU7 surpassed 26,000 vehicles. In addition, cumulative
+    deliveries of the Xiaomi YU7 Series reached 232,000 vehicles in the first 10 months after
+    launch9.
+
+    We continued to enrich our EV product portfolio. The Xiaomi YU7 GT was officially launched
+    on May 21, 2026, positioned as a “sports car-level SUV designed for long-distance travel”, and
+    priced starting at RMB389,900. Combining high performance with long range, it is powered by
+    the brand-new Xiaomi HyperEngine V8s EVO with peak horsepower of 1,003PS, accelerating
+    from 0–100 km/h in just 2.92 seconds and reaching a top speed of 300 km/h. The Xiaomi YU7
+    GT features a 101.7 kWh ternary lithium battery built on an 897V high-voltage platform with
+    5.2C fast-charging capability, delivering a CLTC range of 705km, complemented by advanced
+    chassis tuning, robust vehicle performance, and enhanced safety redundancies. Notably, the
+    Xiaomi YU7 GT is the first model developed with deep engagement from the team at the
+    Xiaomi EV Europe R&D and Design Center. In early 2025, Xiaomi established this center in
+    Munich, Germany, bringing together top global automotive experts and renowned designers.
+    The team focuses on high performance, luxury experience, and innovative research, with core
+    members recruited from leading global automakers such as Porsche, Lamborghini, Mercedes-
+    Benz, and BMW.
+
+    We are continuously honing our technologies through track testing. In April 2026, our Xiaomi
+    YU7 GT with Track Package set a new SUV lap record at the Nürburgring Nordschleife,
+    becoming the fastest SUV with a lap time of 7:22.755.
+
+    On May 21, 2026, we also officially launched the Xiaomi YU7 Standard, featuring a
+    comprehensive suite of advanced technologies, including the Xiaomi HyperVision panoramic
+    display, LiDAR, the 700TOPS NVIDIA DRIVE AGX Thor platform, a 752V silicon carbide
+    high-voltage platform, and the Xiaomi HyperEngine V6s Plus. It delivers a CLTC range of
+    643km and is priced starting at RMB233,500.
+
+
+
+8
+    Defined as gross profit minus operating expenses.
+9
+    As of April 30, 2026, according to China Passenger Car Association (CPCA).
+
+                                                           6
+     Recently, Xiaomi EV achieved a clean sweep across J.D. Power’s two major 2026 China New
+     Energy Vehicle (NEV) studies, with two models winning championships across two segments.
+     The first-generation Xiaomi SU7 Series retained its No. 1 position for two consecutive years
+     in both the J.D. Power 2026 China NEV Automotive Performance, Execution and Layout
+     (NEV-APEAL) Study and the J.D. Power 2026 China NEV Initial Quality Study (NEV-IQS)
+     within the large BEV car segment. Meanwhile, the Xiaomi YU7 Series, in its first year on the
+     market, ranked No. 1 in both the NEV-APEAL Study and the NEV-IQS in the large BEV SUV
+     segment.
+
+     We continued to expand our sales and service network. As of March 31, 2026, in the Chinese
+     Mainland, we opened 490 smart EV sales centers10 across 143 cities.
+
+4. Corporate Social Responsibility (CSR)
+
+     We are committed to advancing sustainable development. In April 2026, we published our
+     Xiaomi Corporation 2025 Environmental, Social and Governance (ESG) Report, which we
+     have released for the eighth consecutive year. The report provides a comprehensive overview
+     of our strategies and achievements in 2025 across key areas such as data security and privacy
+     protection, responsible marketing and sincere services, circular economy, sustainable supply
+     chain, talent nurturing, and corporate governance. As part of our low-carbon development
+     efforts, in the first quarter of 2026, our total renewable electricity consumption amounted
+     to 26,021MWh. This included 22,393MWh from renewable electricity procurement and
+     3,628MWh from on-site distributed photovoltaic systems across our campuses.
+
+     In terms of ESG ratings, in March 2026, we maintained an A rating in the MSCI ESG ratings.
+     In addition, at the S&P Global Corporate Sustainability Assessment (S&P CSA), we were
+     recognized as a “Top 1% S&P Global CSA Score (China)” company, and were included in the
+     S&P Global Sustainability Yearbook (China Edition) 2026, gaining continued recognition for
+     our ESG practices.
+
+
+
+
+10
+     The sales centers of Xiaomi EV include Xiaomi EV delivery centers, Xiaomi EV sales and service centers and Xiaomi
+     stores.
+
+                                                          7
+MANAGEMENT DISCUSSION AND ANALYSIS
+
+First Quarter of 2026 Compared to First Quarter of 2025
+
+The following table sets forth the comparative figures for the first quarter of 2026 and the first
+quarter of 2025:
+
+                                                                         Unaudited
+                                                                     Three months ended
+                                                                     March 31,     March 31,
+                                                                         2026           2025
+                                                                      (RMB in millions)
+
+Revenue                                                                 99,141.6       111,293.3
+Cost of sales                                                          (77,331.5)      (85,887.4)
+Gross profit                                                            21,810.1        25,405.9
+Research and development expenses                                       (8,954.4)       (6,711.7)
+Selling and marketing expenses                                          (8,276.5)       (7,199.8)
+Administrative expenses                                                 (1,630.4)       (1,530.1)
+Fair value changes on financial instruments measured
+  at fair value through profit or loss                                     848.5         2,827.0
+Share of net profits of investments accounted
+  for using the equity method                                               43.8            63.5
+Other income                                                             1,085.4           161.8
+Other gains, net                                                           386.1           108.8
+Operating profit                                                         5,312.6        13,125.4
+Finance income, net                                                        416.1            42.6
+Profit before income tax                                                 5,728.7        13,168.0
+Income tax expenses                                                       (994.1)       (2,275.3)
+Profit for the period                                                    4,734.6        10,892.7
+Non-IFRS Measure: Adjusted Net Profit                                    6,072.1        10,675.6
+
+
+
+
+                                                8
+Revenue
+
+Revenue decreased by 10.9% from RMB111.3 billion in the first quarter of 2025 to RMB99.1
+billion in the first quarter of 2026. The following table sets forth our revenue by segment in the first
+quarter of 2026 and the first quarter of 2025:
+
+                                                                 Unaudited
+                                                            Three months ended
+                                                  March 31, 2026            March 31, 2025
+                                                           % of total                  % of total
+                                                 Amount      revenue       Amount        revenue
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT                                79,277.2         80.0%        92,713.2         83.3%
+Smart EV, AI and other new initiatives           19,864.4         20.0%        18,580.1         16.7%
+
+Total revenue                                    99,141.6        100.0%      111,293.3         100.0%
+
+Smartphone × AIoT
+
+Revenue from our smartphone × AIoT segment decreased by 14.5% from RMB92.7 billion in the
+first quarter of 2025 to RMB79.3 billion in the first quarter of 2026. The following table sets forth
+our revenue by line of our smartphone × AIoT segment in the first quarter of 2026 and the first
+quarter of 2025:
+
+                                                                 Unaudited
+                                                            Three months ended
+                                                  March 31, 2026            March 31, 2025
+                                                           % of total                  % of total
+                                                 Amount      revenue       Amount        revenue
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT
+ Smartphones                                     44,273.3         44.7%        50,612.0         45.5%
+ IoT and lifestyle products                      24,681.2         24.9%        32,339.2         29.1%
+ Internet services                                9,468.3          9.6%         9,076.1          8.2%
+ Other related businesses                           854.4          0.8%           685.9          0.5%
+
+Total revenue of
+  smartphone × AIoT segment                      79,277.2         80.0%        92,713.2         83.3%
+
+
+
+
+                                                   9
+(i) Smartphones
+
+    Revenue from our smartphones decreased by 12.5% from RMB50.6 billion in the first quarter
+    of 2025 to RMB44.3 billion in the first quarter of 2026, primarily due to the decrease in our
+    smartphone shipments, partially offset by the increase in our smartphone ASP. Our smartphone
+    shipments decreased by 19.2% from 41.8 million units in the first quarter of 2025 to 33.8
+    million units in the first quarter of 2026, primarily due to the optimization of our product
+    portfolio and the reduction in shipments of our mid-range and low-end smartphones. The ASP
+    of our smartphones increased by 8.2% from RMB1,210.6 per unit in the first quarter of 2025
+    to RMB1,310.1 per unit in the first quarter of 2026, a record high, primarily due to the higher
+    contribution from our premium smartphone shipments.
+
+(ii) IoT and lifestyle products
+
+    Revenue from our IoT and lifestyle products decreased by 23.7% from RMB32.3 billion in
+    the first quarter of 2025 to RMB24.7 billion in the first quarter of 2026, primarily due to the
+    decreased revenue in the Chinese Mainland resulting from the reduction in national subsidies,
+    partially offset by the increased revenue in the overseas markets, driven by smart TVs and
+    tablets.
+
+(iii) Internet services
+
+    Revenue from our internet services increased by 4.3% from RMB9.1 billion in the first quarter
+    of 2025 to RMB9.5 billion in the first quarter of 2026, primarily due to the increased revenue
+    from our advertising business.
+
+(iv) Other related businesses
+
+    Revenue from our other related businesses increased by 24.5% from RMB0.7 billion in the first
+    quarter of 2025 to RMB0.9 billion in the first quarter of 2026, primarily due to the increased
+    revenue from sales of materials.
+
+Smart EV, AI and Other New Initiatives
+
+Revenue from our smart EV, AI and other new initiatives segment increased by 6.9% from
+RMB18.6 billion in the first quarter of 2025 to RMB19.9 billion in the first quarter of 2026.
+
+Revenue from our smart EV increased by 5.1% from RMB18.1 billion in the first quarter of 2025 to
+RMB19.0 billion in the first quarter of 2026, primarily due to the increase in our vehicle deliveries,
+partially offset by the decrease in our vehicle ASP. Our vehicle deliveries increased by 6.6% from
+75,869 units in the first quarter of 2025 to 80,856 units in the first quarter of 2026, primarily due to
+the introduction of Xiaomi YU7 Series, partially offset by the decreased deliveries of Xiaomi SU7
+Series resulting from discontinued sales of the first-generation Xiaomi SU7 Series in this quarter.
+The ASP of our smart EV decreased by 1.3% from RMB238,301 per unit in the first quarter of
+2025 to RMB235,116 per unit in the first quarter of 2026, primarily due to our subsidies for vehicle
+purchase tax and the sales of in-stock vehicles with lower ASP.
+
+
+
+                                                  10
+Revenue from our other related businesses increased by 70.6% from RMB0.5 billion in the first
+quarter of 2025 to RMB0.9 billion in the first quarter of 2026, primarily due to the increased
+revenue from after-sales services.
+
+Cost of Sales
+
+Our cost of sales decreased by 10.0% from RMB85.9 billion in the first quarter of 2025 to
+RMB77.3 billion in the first quarter of 2026. The following table sets forth our cost of sales by
+segment in the first quarter of 2026 and the first quarter of 2025:
+
+                                                                Unaudited
+                                                           Three months ended
+                                                 March 31, 2026            March 31, 2025
+                                                          % of total                  % of total
+                                                Amount      revenue       Amount        revenue
+                                                    (RMB in millions, unless specified)
+
+Smartphone × AIoT                               61,461.0        62.0%        71,612.7         64.4%
+Smart EV, AI and other new initiatives          15,870.5        16.0%        14,274.7         12.8%
+
+Total cost of sales                             77,331.5        78.0%        85,887.4         77.2%
+
+Smartphone × AIoT
+
+Cost of sales related to our smartphone × AIoT segment decreased by 14.2% from RMB71.6 billion
+in the first quarter of 2025 to RMB61.5 billion in the first quarter of 2026. The following table sets
+forth our cost of sales by line of our smartphone × AIoT segment in the first quarter of 2026 and the
+first quarter of 2025:
+
+                                                                Unaudited
+                                                           Three months ended
+                                                 March 31, 2026            March 31, 2025
+                                                          % of total                  % of total
+                                                Amount      revenue       Amount        revenue
+                                                    (RMB in millions, unless specified)
+
+Smartphone × AIoT
+ Smartphones                                    39,796.7        40.1%        44,329.3         39.8%
+ IoT and lifestyle products                     18,465.5        18.6%        24,184.4         21.7%
+ Internet services                               2,262.2         2.3%         2,094.3          1.9%
+ Other related businesses                          936.6         1.0%         1,004.7          1.0%
+
+Total cost of sales of
+  smartphone × AIoT segment                     61,461.0        62.0%        71,612.7         64.4%
+
+
+
+
+                                                  11
+(i) Smartphones
+
+    Cost of sales related to our smartphones decreased by 10.2% from RMB44.3 billion in the first
+    quarter of 2025 to RMB39.8 billion in the first quarter of 2026, primarily due to the decreased
+    sales of our smartphones, partially offset by the increased price of key components.
+
+(ii) IoT and lifestyle products
+
+    Cost of sales related to our IoT and lifestyle products decreased by 23.6% from RMB24.2
+    billion in the first quarter of 2025 to RMB18.5 billion in the first quarter of 2026, primarily due
+    to the decreased sales of our IoT and lifestyle products.
+
+(iii) Internet services
+
+    Cost of sales related to our internet services increased by 8.0% from RMB2.1 billion in the first
+    quarter of 2025 to RMB2.3 billion in the first quarter of 2026, primarily due to the increased
+    cost of our advertising business.
+
+(iv) Other related businesses
+
+    Cost of sales related to our other related businesses decreased by 6.8% from RMB1.0 billion
+    in the first quarter of 2025 to RMB0.9 billion in the first quarter of 2026, primarily due to the
+    decreased sales from installation services provided for air conditioners.
+
+Smart EV, AI and Other New Initiatives
+
+Cost of sales related to our smart EV, AI and other new initiatives segment increased by 11.2%
+from RMB14.3 billion in the first quarter of 2025 to RMB15.9 billion in the first quarter of 2026,
+primarily due to the increased sales of our smart EV.
+
+Gross Profit and Margin
+
+As a result of the foregoing, our gross profit decreased by 14.2% from RMB25.4 billion in the first
+quarter of 2025 to RMB21.8 billion in the first quarter of 2026. Our gross profit margin decreased
+from 22.8% in the first quarter of 2025 to 22.0% in the first quarter of 2026.
+
+
+
+
+                                                  12
+The following table sets forth our gross profit and margin by segment in the first quarter of 2026
+and the first quarter of 2025:
+
+                                                                Unaudited
+                                                           Three months ended
+                                                 March 31, 2026             March 31, 2025
+                                                              Gross                        Gross
+                                            Gross profit margin % Gross profit          margin %
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT                               17,816.2         22.5%       21,100.5         22.8%
+Smart EV, AI and other new initiatives           3,993.9         20.1%        4,305.4         23.2%
+
+Total gross profit and margin                   21,810.1         22.0%       25,405.9         22.8%
+
+Smartphone × AIoT
+
+The gross profit margin from our smartphone × AIoT segment decreased from 22.8% in the first
+quarter of 2025 to 22.5% in the first quarter of 2026. The following table sets forth our gross profit
+and margin by line of our smartphone × AIoT segment in the first quarter of 2026 and the first
+quarter of 2025:
+
+                                                                Unaudited
+                                                           Three months ended
+                                                 March 31, 2026             March 31, 2025
+                                                              Gross                        Gross
+                                            Gross profit margin % Gross profit          margin %
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT
+ Smartphones                                     4,476.6         10.1%        6,282.7         12.4%
+ IoT and lifestyle products                      6,215.7         25.2%        8,154.8         25.2%
+ Internet services                               7,206.1         76.1%        6,981.8         76.9%
+ Other related businesses                          (82.2)        (9.6%)        (318.8)       (46.5%)
+
+Total gross profit and margin of
+  smartphone × AIoT segment                     17,816.2         22.5%       21,100.5         22.8%
+
+The gross profit margin from our smartphones decreased from 12.4% in the first quarter of 2025
+to 10.1% in the first quarter of 2026, mainly due to the increased price of key components and the
+increased competition in the Chinese Mainland.
+
+The gross profit margin from our IoT and lifestyle products remained stable at 25.2% in the first
+quarter of 2026 compared to the first quarter of 2025.
+
+
+
+
+                                                  13
+The gross profit margin from our internet services decreased from 76.9% in the first quarter of 2025
+to 76.1% in the first quarter of 2026, mainly due to the decreased gross profit margin of other value-
+added services, partially offset by the increased gross profit margin of our gaming business.
+
+Smart EV, AI and Other New Initiatives
+
+The gross profit margin from our smart EV, AI and other new initiatives segment decreased from
+23.2% in the first quarter of 2025 to 20.1% in the first quarter of 2026, primarily due to the lower
+contribution from deliveries of Xiaomi SU7 Ultra, our subsidies for vehicle purchase tax, as well as
+the increased price of key components.
+
+Operating Expenses
+
+Our operating expenses increased by 22.1% from RMB15.4 billion in the first quarter of 2025 to
+RMB18.9 billion in the first quarter of 2026. Our operating expenses related to our smart EV, AI
+and other new initiatives segment increased by 45.8% from RMB4.8 billion in the first quarter of
+2025 to RMB7.1 billion in the first quarter of 2026.
+
+Research and Development Expenses
+
+Our research and development expenses increased by 33.4% from RMB6.7 billion in the first
+quarter of 2025 to RMB9.0 billion in the first quarter of 2026, primarily due to the higher research
+and development expenses related to our smart EV, AI and other new initiatives, as well as the
+increase in compensation for research and development personnel related to smartphone × AIoT.
+
+Selling and Marketing Expenses
+
+Our selling and marketing expenses increased by 15.0% from RMB7.2 billion in the first quarter
+of 2025 to RMB8.3 billion in the first quarter of 2026, primarily due to the increase in selling and
+marketing expenses related to our smart EV business, as well as expenses related to expansion of
+our new retail stores.
+
+Administrative Expenses
+
+Our administrative expenses increased by 6.6% from RMB1.5 billion in the first quarter of 2025
+to RMB1.6 billion in the first quarter of 2026, primarily due to the increase in compensation for
+administrative personnel.
+
+
+
+
+                                                  14
+Fair Value Changes on Financial Instruments Measured at Fair Value Through Profit or Loss
+
+Our fair value changes on financial instruments measured at fair value through profit or loss
+decreased from a gain of RMB2.8 billion in the first quarter of 2025 to a gain of RMB0.8 billion
+in the first quarter of 2026, primarily due to the fair value losses of listed equity investments in
+the first quarter of 2026, compared to the fair value gains of listed equity investments in the first
+quarter of 2025, partially offset by the higher fair value gains of other investments in private equity
+investment funds in the first quarter of 2026.
+
+Share of Net Profits of Investments Accounted for Using the Equity Method
+
+Our share of net profits of investments accounted for using the equity method decreased from
+RMB63.5 million in the first quarter of 2025 to RMB43.8 million in the first quarter of 2026.
+
+Other Income
+
+Our other income increased from RMB0.2 billion in the first quarter of 2025 to RMB1.1 billion in
+the first quarter of 2026, primarily due to the increase in value-added tax preferences and subsidy
+income.
+
+Other Gains, Net
+
+Our net other gains increased from RMB0.1 billion in the first quarter of 2025 to RMB0.4 billion in
+the first quarter of 2026.
+
+Finance Income, Net
+
+Our net finance income increased from RMB42.6 million in the first quarter of 2025 to RMB416.1
+million in the first quarter of 2026, primarily due to the increase of net interest income and the
+change of value of financial liabilities payable to fund investors.
+
+Income Tax Expenses
+
+Our income tax expenses decreased by 56.3% from RMB2.3 billion in the first quarter of 2025 to
+RMB1.0 billion in the first quarter of 2026, primarily due to the decrease of taxable profit in the
+first quarter of 2026.
+
+Profit for the Period
+
+As a result of the foregoing, our profit for the period decreased by 56.5% from RMB10.9 billion in
+the first quarter of 2025 to RMB4.7 billion in the first quarter of 2026.
+
+Adjusted Net Profit
+
+Our adjusted net profit decreased by 43.1% from RMB10.7 billion in the first quarter of 2025 to
+RMB6.1 billion in the first quarter of 2026.
+
+
+
+                                                  15
+First Quarter of 2026 Compared to Fourth Quarter of 2025
+
+The following table sets forth the comparative figures for the first quarter of 2026 and the fourth
+quarter of 2025:
+
+                                                                          Unaudited
+                                                                      Three months ended
+                                                                      March 31, December 31,
+                                                                          2026           2025
+                                                                       (RMB in millions)
+
+Revenue                                                                 99,141.6        116,916.5
+Cost of sales                                                          (77,331.5)       (92,553.7)
+Gross profit                                                            21,810.1         24,362.8
+Research and development expenses                                       (8,954.4)        (9,597.7)
+Selling and marketing expenses                                          (8,276.5)        (9,926.9)
+Administrative expenses                                                 (1,630.4)        (1,647.6)
+Fair value changes on financial instruments measured at
+  fair value through profit or loss                                        848.5          1,638.1
+Share of net profits of investments accounted
+  for using the equity method                                               43.8            150.6
+Other income                                                             1,085.4            589.1
+Other gains, net                                                           386.1            660.3
+Operating profit                                                         5,312.6          6,228.7
+Finance income, net                                                        416.1            891.8
+Profit before income tax                                                 5,728.7          7,120.5
+Income tax expenses                                                       (994.1)          (576.7)
+Profit for the period                                                    4,734.6          6,543.8
+Non-IFRS Measure: Adjusted Net Profit                                    6,072.1          6,349.1
+
+
+
+
+                                                16
+Revenue
+
+Revenue decreased by 15.2% from RMB116.9 billion in the fourth quarter of 2025 to RMB99.1
+billion in the first quarter of 2026. The following table sets forth our revenue by segment in the first
+quarter of 2026 and the fourth quarter of 2025:
+
+                                                                 Unaudited
+                                                            Three months ended
+                                                  March 31, 2026          December 31, 2025
+                                                           % of total                  % of total
+                                                 Amount      revenue       Amount        revenue
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT                                79,277.2         80.0%        79,700.4         68.2%
+Smart EV, AI and other new initiatives           19,864.4         20.0%        37,216.1         31.8%
+
+Total revenue                                    99,141.6        100.0%      116,916.5         100.0%
+
+Smartphone × AIoT
+
+Revenue from our smartphone × AIoT segment decreased by 0.5% from RMB79.7 billion in the
+fourth quarter of 2025 to RMB79.3 billion in the first quarter of 2026. The following table sets forth
+our revenue by line of our smartphone × AIoT segment in the first quarter of 2026 and the fourth
+quarter of 2025:
+
+                                                                 Unaudited
+                                                            Three months ended
+                                                  March 31, 2026          December 31, 2025
+                                                           % of total                  % of total
+                                                 Amount      revenue       Amount        revenue
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT
+ Smartphones                                     44,273.3         44.7%        44,338.8         37.9%
+ IoT and lifestyle products                      24,681.2         24.9%        24,596.6         21.0%
+ Internet services                                9,468.3          9.6%         9,886.0          8.5%
+ Other related businesses                           854.4          0.8%           879.0          0.8%
+
+Total revenue of
+  smartphone × AIoT segment                      79,277.2         80.0%        79,700.4         68.2%
+
+
+
+
+                                                   17
+(i) Smartphones
+
+    Revenue from our smartphones remained stable at RMB44.3 billion in the first quarter of
+    2026 compared to the fourth quarter of 2025, primarily due to the decrease in our smartphone
+    shipments, partially offset by the increase in our smartphone ASP. Our smartphone shipments
+    decreased by 10.4% from 37.7 million units in the fourth quarter of 2025 to 33.8 million
+    units in the first quarter of 2026, primarily due to the weakened global demand, as well as the
+    optimization of our product portfolio and the reduction in shipments of our mid-range and low-
+    end smartphones. The ASP of our smartphones increased by 11.4% from RMB1,176.0 per unit
+    in the fourth quarter of 2025 to RMB1,310.1 per unit in the first quarter of 2026, primarily due
+    to the higher contribution from our premium smartphone shipments in the overseas markets.
+
+(ii) IoT and lifestyle products
+
+    Revenue from our IoT and lifestyle products increased by 0.3% from RMB24.6 billion in the
+    fourth quarter of 2025 to RMB24.7 billion in the first quarter of 2026, primarily due to the
+    increased revenue from certain lifestyle products and tablets in the overseas markets, partially
+    offset by the seasonal decrease in the Chinese Mainland.
+
+(iii) Internet services
+
+    Revenue from our internet services decreased by 4.2% from RMB9.9 billion in the fourth
+    quarter of 2025 to RMB9.5 billion in the first quarter of 2026, primarily due to the decreased
+    revenue from our advertising business due to seasonality, partially offset by the increased
+    revenue from our gaming business.
+
+(iv) Other related businesses
+
+    Revenue from our other related businesses remained stable at RMB0.9 billion in the first
+    quarter of 2026 compared to the fourth quarter of 2025.
+
+Smart EV, AI and Other New Initiatives
+
+Revenue from our smart EV, AI and other new initiatives segment decreased by 46.6% from
+RMB37.2 billion in the fourth quarter of 2025 to RMB19.9 billion in the first quarter of 2026.
+
+Revenue from our smart EV decreased by 47.6% from RMB36.3 billion in the fourth quarter of
+2025 to RMB19.0 billion in the first quarter of 2026, primarily due to the decrease in both our
+vehicle deliveries and ASP. Our vehicle deliveries decreased by 44.3% from 145,115 units in the
+fourth quarter of 2025 to 80,856 units in the first quarter of 2026, primarily due to the decreased
+deliveries of Xiaomi YU7 Series, as well as the decreased deliveries of Xiaomi SU7 Series
+resulting from discontinued sales of the first-generation Xiaomi SU7 Series in this quarter. The
+ASP of our smart EV decreased by 5.9% from RMB249,846 per unit in the fourth quarter of 2025
+to RMB235,116 per unit in the first quarter of 2026, primarily due to our subsidies for vehicle
+purchase tax and increased sales of in-stock vehicles with lower ASP.
+
+
+
+
+                                                18
+Revenue from our other related businesses decreased by 11.0% from RMB1.0 billion in the fourth
+quarter of 2025 to RMB0.9 billion in the first quarter of 2026, primarily due to the decreased
+revenue from sales of accessories affected by the decrease in vehicle deliveries.
+
+Cost of Sales
+
+Our cost of sales decreased by 16.4% from RMB92.6 billion in the fourth quarter of 2025 to
+RMB77.3 billion in the first quarter of 2026. The following table sets forth our cost of sales by
+segment in the first quarter of 2026 and the fourth quarter of 2025:
+
+                                                              Unaudited
+                                                         Three months ended
+                                               March 31, 2026          December 31, 2025
+                                                        % of total                  % of total
+                                              Amount      revenue       Amount        revenue
+                                                  (RMB in millions, unless specified)
+
+Smartphone × AIoT                             61,461.0        62.0%       63,790.9        54.6%
+Smart EV, AI and other new initiatives        15,870.5        16.0%       28,762.8        24.6%
+
+Total cost of sales                           77,331.5        78.0%       92,553.7        79.2%
+
+Smartphone × AIoT
+
+Cost of sales related to our smartphone × AIoT segment decreased by 3.7% from RMB63.8 billion
+in the fourth quarter of 2025 to RMB61.5 billion in the first quarter of 2026. The following table
+sets forth our cost of sales by line of our smartphone × AIoT segment in the first quarter of 2026
+and the fourth quarter of 2025:
+
+                                                              Unaudited
+                                                         Three months ended
+                                               March 31, 2026          December 31, 2025
+                                                        % of total                  % of total
+                                              Amount      revenue       Amount        revenue
+                                                  (RMB in millions, unless specified)
+
+Smartphone × AIoT
+ Smartphones                                  39,796.7        40.1%       40,671.0        34.8%
+ IoT and lifestyle products                   18,465.5        18.6%       19,644.8        16.8%
+ Internet services                             2,262.2         2.3%        2,294.0         2.0%
+ Other related businesses                        936.6         1.0%        1,181.1         1.0%
+
+Total cost of sales of
+  smartphone × AIoT segment                   61,461.0        62.0%       63,790.9        54.6%
+
+
+
+
+                                                19
+(i) Smartphones
+
+    Cost of sales related to our smartphones decreased by 2.1% from RMB40.7 billion in the fourth
+    quarter of 2025 to RMB39.8 billion in the first quarter of 2026, primarily due to the decreased
+    shipments of our smartphones, partially offset by the increased price of key components.
+
+(ii) IoT and lifestyle products
+
+    Cost of sales related to our IoT and lifestyle products decreased by 6.0% from RMB19.6
+    billion in the fourth quarter of 2025 to RMB18.5 billion in the first quarter of 2026. Although
+    revenue from our IoT and lifestyle products increased slightly, the cost of sales decreased due
+    to changes in product mix.
+
+(iii) Internet services
+
+    Cost of sales related to our internet services remained stable at RMB2.3 billion in the first
+    quarter of 2026 compared to the fourth quarter of 2025.
+
+(iv) Other related businesses
+
+    Cost of sales related to our other related businesses decreased by 20.7% from RMB1.2 billion
+    in the fourth quarter of 2025 to RMB0.9 billion in the first quarter of 2026, primarily due to the
+    decreased sales from installation services provided for air conditioners.
+
+Smart EV, AI and Other New Initiatives
+
+Cost of sales related to our smart EV, AI and other new initiatives segment decreased by 44.8%
+from RMB28.8 billion in the fourth quarter of 2025 to RMB15.9 billion in the first quarter of 2026,
+primarily due to the decreased sales of our smart EV.
+
+Gross Profit and Margin
+
+As a result of the foregoing, our gross profit decreased by 10.5% from RMB24.4 billion in the
+fourth quarter of 2025 to RMB21.8 billion in the first quarter of 2026. Our gross profit margin
+increased from 20.8% in the fourth quarter of 2025 to 22.0% in the first quarter of 2026.
+
+
+
+
+                                                 20
+The following table sets forth our gross profit and margin by segment in the first quarter of 2026
+and the fourth quarter of 2025:
+
+                                                                Unaudited
+                                                           Three months ended
+                                                 March 31, 2026           December 31, 2025
+                                                              Gross                        Gross
+                                            Gross profit margin % Gross profit          margin %
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT                               17,816.2         22.5%       15,909.5         20.0%
+Smart EV, AI and other new initiatives           3,993.9         20.1%        8,453.3         22.7%
+
+Total gross profit and margin                   21,810.1         22.0%       24,362.8         20.8%
+
+Smartphone × AIoT
+
+The gross profit margin from our smartphone × AIoT segment increased from 20.0% in the fourth
+quarter of 2025 to 22.5% in the first quarter of 2026. The following table sets forth our gross profit
+and margin by line of our smartphone × AIoT segment in the first quarter of 2026 and the fourth
+quarter of 2025:
+
+                                                                Unaudited
+                                                           Three months ended
+                                                 March 31, 2026           December 31, 2025
+                                                              Gross                        Gross
+                                            Gross profit margin % Gross profit          margin %
+                                                     (RMB in millions, unless specified)
+
+Smartphone × AIoT
+ Smartphones                                     4,476.6         10.1%        3,667.8          8.3%
+ IoT and lifestyle products                      6,215.7         25.2%        4,951.8         20.1%
+ Internet services                               7,206.1         76.1%        7,592.0         76.8%
+ Other related businesses                          (82.2)        (9.6%)        (302.1)       (34.4%)
+
+Total gross profit and margin of
+  smartphone × AIoT segment                     17,816.2         22.5%       15,909.5         20.0%
+
+The gross profit margin from our smartphones increased from 8.3% in the fourth quarter of 2025 to
+10.1% in the first quarter of 2026, mainly due to the improved product mix, partially offset by the
+increased price of key components.
+
+The gross profit margin from our IoT and lifestyle products increased from 20.1% in the fourth
+quarter of 2025 to 25.2% in the first quarter of 2026, mainly due to the increased gross profit
+margin and higher revenue contribution of certain lifestyle products in the overseas markets, as
+well as the increased gross profit margin of smart large home appliances and tablets in the Chinese
+Mainland.
+
+                                                  21
+The gross profit margin from our internet services decreased from 76.8% in the fourth quarter of
+2025 to 76.1% in the first quarter of 2026, mainly due to the lower revenue contribution of our
+advertising business, partially offset by the increased gross profit margin of our gaming business.
+
+Smart EV, AI and Other New Initiatives
+
+The gross profit margin from our smart EV, AI and other new initiatives segment decreased from
+22.7% in the fourth quarter of 2025 to 20.1% in the first quarter of 2026, primarily due to our
+subsidies for vehicle purchase tax, the increased sales of in-stock vehicles in this quarter, as well as
+the increased price of key components.
+
+Operating Expenses
+
+Our operating expenses decreased by 10.9% from RMB21.2 billion in the fourth quarter of 2025 to
+RMB18.9 billion in the first quarter of 2026. Our operating expenses related to our smart EV, AI
+and other new initiatives segment decreased by 3.8% from RMB7.4 billion in the fourth quarter of
+2025 to RMB7.1 billion in the first quarter of 2026.
+
+Research and Development Expenses
+
+Our research and development expenses decreased by 6.7% from RMB9.6 billion in the fourth
+quarter of 2025 to RMB9.0 billion in the first quarter of 2026, primarily due to the pace of our
+research projects related to smartphone × AIoT.
+
+Selling and Marketing Expenses
+
+Our selling and marketing expenses decreased by 16.6% from RMB9.9 billion in the fourth quarter
+of 2025 to RMB8.3 billion in the first quarter of 2026, primarily due to the decrease in promotion
+and advertising expenses and logistics expenses related to smartphone × AIoT, as well as the selling
+and marketing expenses related to our smart EV business.
+
+Administrative Expenses
+
+Our administrative expenses remained stable at RMB1.6 billion in the first quarter of 2026
+compared to the fourth quarter of 2025.
+
+Fair Value Changes on Financial Instruments Measured at Fair Value Through Profit or Loss
+
+Our fair value changes on financial instruments measured at fair value through profit or loss
+decreased from a gain of RMB1.6 billion in the fourth quarter of 2025 to a gain of RMB0.8 billion
+in the first quarter of 2026, primarily due to the lower fair value gains of unlisted preferred shares
+investments in the first quarter of 2026, partially offset by the higher fair value gains of other
+investments in private equity investment funds in the first quarter of 2026.
+
+
+
+
+                                                   22
+Share of Net Profits of Investments Accounted for Using the Equity Method
+
+Our share of net profits of investments accounted for using the equity method decreased from
+RMB150.6 million in the fourth quarter of 2025 to RMB43.8 million in the first quarter of 2026.
+
+Other Income
+
+Our other income increased by 84.2% from RMB0.6 billion in the fourth quarter of 2025 to
+RMB1.1 billion in the first quarter of 2026, primarily due to the increase in value-added tax
+preferences.
+
+Other Gains, Net
+
+Our net other gains decreased from RMB0.7 billion in the fourth quarter of 2025 to RMB0.4 billion
+in the first quarter of 2026, primarily due to the decrease of deemed disposal gains of investments
+accounted for using the equity method.
+
+Finance Income, Net
+
+Our net finance income decreased by 53.3% from RMB0.9 billion in the fourth quarter of 2025
+to RMB0.4 billion in the first quarter of 2026, primarily due to the change of value of financial
+liabilities payable to fund investors and the decrease of net interest income.
+
+Income Tax Expenses
+
+Our income tax expenses increased by 72.4% from RMB0.6 billion in the fourth quarter of 2025 to
+RMB1.0 billion in the first quarter of 2026, primarily due to the increase of taxable profit in the first
+quarter of 2026.
+
+Profit for the Period
+
+As a result of the foregoing, our profit for the period decreased by 27.6% from RMB6.5 billion in
+the fourth quarter of 2025 to RMB4.7 billion in the first quarter of 2026.
+
+Adjusted Net Profit
+
+Our adjusted net profit decreased by 4.4% from RMB6.3 billion in the fourth quarter of 2025 to
+RMB6.1 billion in the first quarter of 2026.
+
+Non-IFRS Measure: Adjusted Net Profit
+
+To supplement our consolidated results which are prepared and presented in accordance with all
+applicable IFRS Accounting Standards issued by the International Accounting Standards Board
+(“IFRS Accounting Standards”), we utilize non-IFRS adjusted net profit (“Adjusted Net Profit”)
+as an additional financial measure. We define Adjusted Net Profit as profit for the period, as
+adjusted by adding back (i) share-based compensation, (ii) net fair value changes on investments,
+(iii) amortization of intangible assets resulting from acquisitions, (iv) changes of value of financial
+liabilities to investors, and (v) income tax effects of non-IFRS adjustments.
+                                                   23
+Adjusted Net Profit is not required by, or presented in accordance with, IFRS Accounting
+Standards. We believe that the presentation of non-IFRS measures when shown in conjunction with
+the corresponding IFRS Accounting Standards measures provides useful information to investors
+and management regarding financial and business trends in relation to our financial condition
+and results of operations, by eliminating any potential impact of items that our management does
+not consider to be indicative of our operating performance such as certain non-cash items and
+the impact of certain investment transactions. We also believe that the non-IFRS measures are
+appropriate for evaluating the Group’s operating performance. However, the use of this particular
+non-IFRS measure has limitations as an analytical tool, and you should not consider it in isolation
+from, or as a substitute for analysis of, our results of operations or financial conditions as reported
+under IFRS Accounting Standards. In addition, this non-IFRS financial measure may be defined
+differently from similar terms used by other companies and therefore may not be comparable to
+similar measures used by other companies.
+
+The following tables set forth reconciliations of the Group’s non-IFRS measures for the first
+quarters of 2026 and 2025, respectively, and the fourth quarter of 2025 to the nearest measures
+prepared in accordance with IFRS Accounting Standards.
+
+                                                                        Unaudited
+                                                           Three Months Ended March 31, 2026
+                                                                       Adjustments
+                                                                       Amortization       Changes of
+                                                                        of intangible          value of
+                                                      Net fair value           assets         financial
+                                      Share-based       changes on resulting from            liabilities         Income
+                        As reported compensation(1)   investments  (2)
+                                                                       acquisitions (3)
+                                                                                        to investors(4)     tax effects(5)   Non-IFRS
+                                                            (RMB in thousand, unless specified)
+
+Profit for the period     4,734,577       1,410,743      (425,406)             36,002           610,649         (294,430)     6,072,135
+Net margin                    4.8%                                                                                                6.1%
+
+                                                                        Unaudited
+                                                            Three Months Ended March 31, 2025
+                                                                       Adjustments
+                                                                       Amortization        Changes of
+                                                                        of intangible           value of
+                                                      Net fair value           assets          financial
+                                       Share-based      changes on resulting from             liabilities        Income
+                        As reported compensation(1)   investments  (2)
+                                                                       acquisitions (3)
+                                                                                         to investors(4)    tax effects(5)   Non-IFRS
+                                                            (RMB in thousand, unless specified)
+
+Profit for the period    10,892,746       1,094,120      (2,002,137)           36,002           567,333           87,561     10,675,625
+Net margin                    9.8%                                                                                                9.6%
+
+
+
+
+                                                              24
+                                                                              Unaudited
+                                                                Three Months Ended December 31, 2025
+                                                                             Adjustments
+                                                                             Amortization        Changes of
+                                                                              of intangible           value of
+                                                            Net fair value           assets          financial
+                                             Share-based      changes on resulting from             liabilities        Income
+                              As reported compensation(1)   investments  (2)
+                                                                             acquisitions (3)
+                                                                                               to investors(4)    tax effects(5)   Non-IFRS
+                                                                  (RMB in thousand, unless specified)
+
+Profit for the period          6,543,789       1,429,755       (2,047,373)           36,002           490,913        (104,016)     6,349,070
+Net margin                         5.6%                                                                                                5.4%
+
+Notes:
+
+(1)   Represents the expenses related to share-based payments.
+
+(2)   Primarily includes fair value changes on equity investments and preferred shares investments deducting the accumulative
+      fair value changes for investments (including the financial assets measured at fair value through profit or loss (“FAFVPL”)
+      and the investments using the equity method transferred from FAFVPL) disposed in the current period, net gains/(losses)
+      on deemed disposals of subsidiaries and investee companies, the impairment provision for investments, re-measurement
+      impact on loss of significant influence in associates, and re-measurement impact on investments transferring from FAFVPL
+      to investments using the equity method.
+
+(3)   Represents amortization of intangible assets resulting from acquisitions.
+
+(4)   Represent the change of value of the financial liabilities payable to the investors.
+
+(5)   Income tax effects of non-IFRS adjustments.
+
+
+Liquidity and Financial Resources
+
+On December 4, 2020, the Company completed a placing of a total of 1,000,000,000 placing shares
+at HK$23.70 for each placing share owned by Smart Mobile Holdings Limited to not less than six
+independent placees and, on December 9, 2020, the Company allotted and issued 1,000,000,000
+subscription shares at HK$23.70 per subscription share under the general mandate to Smart Mobile
+Holdings Limited (the “2020 Placing and Subscription”). For further details, please refer to the
+announcements of the Company dated December 2, 2020, December 3, 2020 and December 9,
+2020.
+
+On March 27, 2025, the Company completed a placing of a total of 800,000,000 placing shares
+at HK$53.25 for each placing share owned by Smart Mobile Holdings Limited to not less than
+six independent placees and, on March 31, 2025, the Company allotted and issued 800,000,000
+subscription shares at HK$53.25 per subscription share under the general mandate to Smart Mobile
+Holdings Limited (the “2025 Placing and Subscription”). For further details, please refer to the
+announcements of the Company dated March 25, 2025 and March 31, 2025.
+
+
+
+
+                                                                    25
+Other than the funds raised through our Global Offering in July 2018, the 2020 Placing and
+Subscription, the 2025 Placing and Subscription and the issuance of debt securities as described in
+“Issuance of Debt Securities” below, we have historically funded our cash requirements principally
+from cash generated from our operations and bank borrowings. We had cash and cash equivalents of
+RMB26.3 billion and cash resources11 of RMB220.6 billion as of March 31, 2026.
+
+Issuance of Debt Securities
+
+On April 29, 2020, Xiaomi Best Time International Limited, a wholly-owned subsidiary of
+the Company, issued US$600 million 3.375% senior notes due 2030 unconditionally and
+irrevocably guaranteed by the Company (the “2030 Notes”). For further details, please refer to the
+announcements of the Company dated April 20, 2020, April 23, 2020 and May 3, 2020.
+
+On December 17, 2020, Xiaomi Best Time International Limited issued zero coupon guaranteed
+convertible bonds due 2027 guaranteed by the Company in the aggregate principal amount of
+US$855 million at an initial conversion price of HK$36.74 per conversion share (subject to
+adjustments) (the “2027 Bonds”). The 2027 Bonds are listed on The Stock Exchange of Hong
+Kong Limited (the “Stock Exchange”). For further details, please refer to the announcements of
+the Company dated December 2, 2020, December 3, 2020, December 17, 2020 and December 18,
+2020.
+
+As of March 31, 2026, 12,112,587 class B ordinary shares of the Company (the “Class B Shares”)
+were issued pursuant to conversion of the 2027 Bonds.
+
+On July 14, 2021, Xiaomi Best Time International Limited issued US$800 million 2.875% senior
+bonds due 2031 (the “2031 Bonds”) and US$400 million 4.100% senior green bonds due 2051 (the
+“Green Bonds”), both of which were unconditionally and irrevocably guaranteed by the Company.
+For further details of the 2031 Bonds and Green Bonds, please refer to the announcements of the
+Company dated July 6, 2021, July 8, 2021, July 14, 2021 and July 15, 2021.
+
+
+
+
+11
+     Including (i) cash and cash equivalents, (ii) restricted cash, (iii) term bank deposits, (iv) short-term investments measured at
+     fair value through profit or loss, (v) short-term investments measured at amortized cost, (vi) long-term investments measured
+     at amortized cost, and (vii) treasury investments included in long-term investments measured at fair value through profit or
+     loss.
+
+
+                                                                26
+Consolidated Statement of Cash Flows
+
+                                                                                              Unaudited
+                                                                                          Three months ended
+                                                                                          March 31,   December 31,
+                                                                                              2026           2025
+                                                                                           (RMB in millions)
+
+Net cash (used in)/generated from operating activities(1)                                     (1,792.0)                 614.0
+Net cash generated from/(used in) investing activities                                         8,326.9               (9,457.6)
+Net cash (used in)/generated from financing activities(1)                                     (7,059.3)                 247.7
+
+Net decrease in cash and cash equivalents                                                       (524.4)              (8,595.9)
+
+Cash and cash equivalents at the beginning of the period                                     26,914.4                35,548.0
+Effects of exchange rate changes on cash and cash equivalents                                   (55.5)                  (37.7)
+
+Cash and cash equivalents at the end of the period                                           26,334.5                26,914.4
+
+Note:
+
+(1)   Excluding (1) the change of trade payables related to the finance factoring business; (2) the change of loan and interest
+      receivables and impairment provision for loan receivables mainly resulting from the fintech business; and (3) the change
+      of restricted cash resulting from the fintech business, the net cash used in operating activities was RMB5.2 billion in the
+      first quarter of 2026 and the net cash generated from operating activities was RMB7.3 billion in the fourth quarter of 2025.
+      Excluding the change of borrowings for the finance factoring business, the net cash used in financing activities was RMB6.3
+      billion and RMB3.8 billion in the first quarter of 2026 and in the fourth quarter of 2025, respectively. The information in
+      this footnote is based on the management accounts of the Group, which have not been audited or reviewed by the Group’s
+      auditor. The accounting policies applied in the preparation of the management accounts are consistent with those used for
+      other figures in this announcement.
+
+
+Net Cash Used in Operating Activities
+
+Net cash used in our operating activities represents the cash generated from our operations minus
+the income tax paid. Cash generated from our operations primarily comprises our profit before
+income tax adjusted by non-cash items and changes in working capital.
+
+In the first quarter of 2026, our net cash used in operating activities was RMB1.8 billion,
+representing cash generated from operations of RMB2.1 billion minus income tax paid of RMB3.9
+billion. Cash generated from operations was primarily due to our profit before income tax of
+RMB5.7 billion, mainly adjusted by a decrease in trade payables of RMB5.8 billion, partially offset
+by a decrease in prepayments and other receivables of RMB1.6 billion.
+
+
+
+
+                                                                27
+Net Cash Generated from Investing Activities
+
+In the first quarter of 2026, our net cash generated from investing activities was RMB8.3 billion,
+which was primarily due to the net decrease in short-term investments measured at fair value
+through profit or loss of RMB11.2 billion, partially offset by the purchase of property, plant and
+equipment of RMB2.1 billion and the purchase of long-term investments measured at amortized
+cost of RMB2.1 billion.
+
+Net Cash Used in Financing Activities
+
+In the first quarter of 2026, our net cash used in financing activities was RMB7.1 billion, which
+was primarily due to the payments for shares repurchase of RMB4.7 billion, the distribution to fund
+investors of RMB1.1 billion and the payments of deferred consideration for acquisition of intangible
+assets of RMB1.0 billion.
+
+Borrowings
+
+As of March 31, 2026, we had total borrowings of RMB35.4 billion.
+
+Capital Expenditures
+
+                                                                         Unaudited
+                                                                     Three months ended
+                                                                     March 31,   December 31,
+                                                                         2026           2025
+                                                                      (RMB in millions)
+
+Capital expenditures
+  Smartphone × AIoT                                                      1,780.0           1,295.3
+  Smart EV, AI and other new initiatives                                 1,494.1           3,883.0
+
+Total                                                                    3,274.1           5,178.3
+
+Off-Balance Sheet Commitments and Arrangements
+
+As of March 31, 2026, we had not entered into any significant off-balance sheet commitments or
+arrangements.
+
+Investments Held
+
+As of March 31, 2026, we had invested in about 410 companies with an aggregate book value of
+RMB87.4 billion. In the first quarter of 2026, we recorded a net gain on disposal of investments
+(after tax) of RMB0.2 billion. The total amount of our investments (including (i) fair value of our
+stakes in listed investee companies accounted for using the equity method based on the stock price
+on March 31, 2026, (ii) book value of our stakes in unlisted investee companies accounted for using
+the equity method and (iii) book value of long-term investments measured at fair value through
+profit or loss) reached RMB89.6 billion as of March 31, 2026.
+
+                                                 28
+The Group did not make or hold any significant investments (including any investment in an
+investee company with a value of 5% or more of the Group’s total assets as of March 31, 2026)
+during the three months ended March 31, 2026.
+
+Material Acquisitions and Disposals of Subsidiaries, Associates and Joint Ventures
+
+In the first quarter of 2026, we did not conduct any material acquisitions or disposals of
+subsidiaries, associates or joint ventures.
+
+Employee and Remuneration Policy
+
+As of March 31, 2026, we had 55,994 full-time employees, 53,190 of whom were based in the
+Chinese Mainland, primarily at our headquarters in Beijing. As of March 31, 2026, our research and
+development personnel, totaling 26,048 employees, were staffed across our various departments.
+
+Our success depends on our ability to attract, retain and motivate qualified personnel. As part of our
+human resources strategy, we offer employees competitive compensation packages. As of March
+31, 2026, 16,294 employees held share-based awards. The total remuneration expenses, including
+share-based compensation expenses, in the first quarter of 2026 were RMB8.2 billion.
+
+Foreign Exchange Risk
+
+The transactions of our Company are denominated and settled in our functional currency, the United
+States Dollar. Our Group’s subsidiaries primarily operate in the People’s Republic of China (the
+“PRC”) and other regions such as India, and are exposed to foreign exchange risk arising from
+the exposure to various currencies, primarily with respect to the United States Dollar. Therefore,
+foreign exchange risk primarily arises from the recognized assets and liabilities in our subsidiaries
+when receiving or expecting to receive foreign currencies from, or paying or expecting to pay
+foreign currencies to overseas business partners.
+
+We will continue to monitor changes in currency exchange rates and will take necessary measures
+to mitigate any impacts caused by exchange rate fluctuations.
+
+Pledge of Assets
+
+As of March 31, 2026, our total restricted bank deposits amounted to RMB4.2 billion. We also had
+pledged certain buildings and land use right for borrowings.
+
+Contingent Liabilities
+
+We did not have any material contingent liabilities as of March 31, 2026. Further details of the
+contingencies are set out in Note 12 to the financial information.
+
+
+
+
+                                                  29
+FINANCIAL INFORMATION
+
+INTERIM CONDENSED CONSOLIDATED INCOME STATEMENT
+For the three months ended March 31, 2026
+(Expressed in Renminbi (“RMB”))
+
+                                                                      Unaudited
+                                                                  Three months ended
+                                                                      March 31,
+                                                          Note         2026         2025
+                                                                  RMB’000       RMB’000
+
+Revenue                                                    2      99,141,618    111,293,337
+Cost of sales                                             2, 3   (77,331,498)   (85,887,427)
+
+Gross profit                                                     21,810,120      25,405,910
+Research and development expenses                          3     (8,954,381)     (6,711,708)
+Selling and marketing expenses                             3     (8,276,483)     (7,199,817)
+Administrative expenses                                    3     (1,630,385)     (1,530,094)
+Fair value changes on financial instruments measured at
+  fair value through profit or loss                                 848,517       2,827,022
+Share of net profits of investments accounted
+  for using the equity method                                        43,767         63,531
+Other income                                                      1,085,385        161,766
+Other gains, net                                                    386,105        108,797
+
+Operating profit                                                  5,312,645      13,125,407
+Finance income                                                    1,278,054       1,003,965
+Finance costs                                                      (861,992)       (961,404)
+
+Profit before income tax                                          5,728,707      13,167,968
+Income tax expenses                                        4       (994,130)     (2,275,222)
+
+Profit for the period                                             4,734,577      10,892,746
+
+Attributable to:
+— Owners of the Company                                           4,723,120      10,924,321
+— Non-controlling interests                                          11,457         (31,575)
+
+                                                                  4,734,577      10,892,746
+
+Earnings per share (expressed in RMB per share):           5
+Basic                                                                   0.18           0.44
+
+Diluted                                                                 0.18           0.42
+
+                                               30
+INTERIM CONDENSED CONSOLIDATED STATEMENT OF COMPREHENSIVE INCOME
+For the three months ended March 31, 2026
+(Expressed in RMB)
+
+                                                           Unaudited
+                                                       Three months ended
+                                                           March 31,
+                                                            2026         2025
+                                                       RMB’000       RMB’000
+
+Profit for the period                                  4,734,577     10,892,746
+
+Other comprehensive (loss)/income:
+Items that may be reclassified subsequently to
+   profit or loss
+Share of other comprehensive income of
+   investments accounted for using the equity method      15,191          8,729
+Net gains from changes in fair value of
+   financial assets at fair value through
+   other comprehensive income                                 —          32,502
+Currency translation differences                        (769,217)        41,854
+Item that will not be reclassified subsequently to
+   profit or loss
+Currency translation differences                       (1,056,814)      (63,588)
+
+Other comprehensive (loss)/income for the period,
+  net of tax                                           (1,810,840)       19,497
+
+Total comprehensive income for the period              2,923,737     10,912,243
+
+Attributable to:
+— Owners of the Company                                2,912,280     10,946,363
+— Non-controlling interests                               11,457        (34,120)
+
+                                                       2,923,737     10,912,243
+
+
+
+
+                                               31
+INTERIM CONDENSED CONSOLIDATED BALANCE SHEET
+As of March 31, 2026
+(Expressed in RMB)
+
+                                                              Unaudited     Audited
+                                                                  As of       As of
+                                                              March 31, December 31,
+                                                      Note        2026         2025
+                                                              RMB’000      RMB’000
+
+Assets
+Non-current assets
+  Property, plant and equipment                               28,746,276    27,950,293
+  Intangible assets                                           11,675,867     8,319,373
+  Investments accounted for using the equity method            6,354,209     6,268,209
+  Long-term investments measured at fair value
+   through profit or loss                              6      81,052,059    80,881,337
+  Deferred income tax assets                                   3,583,828     3,636,008
+  Term bank deposits                                          88,910,343    92,045,627
+  Long-term investments measured at amortized cost     6      15,456,222    13,405,600
+  Other non-current assets                                    20,876,807    20,778,731
+
+                                                             256,655,611   253,285,178
+
+Current assets
+  Inventories                                          8      78,186,312    80,989,452
+  Trade and notes receivables                          7      17,782,583    15,239,877
+  Loan receivables                                             9,133,578    12,580,269
+  Prepayments and other receivables                           32,599,838    33,725,967
+  Short-term investments measured at amortized cost    6         200,000       200,000
+  Short-term investments measured at fair value
+   through profit or loss                              6      18,247,657    29,273,546
+  Term bank deposits                                          53,443,271    51,308,666
+  Restricted cash                                              4,164,351     4,578,635
+  Cash and cash equivalents                                   26,334,483    26,914,377
+
+                                                             240,092,073   254,810,789
+
+Total assets                                                 496,747,684   508,095,967
+
+
+
+
+                                              32
+INTERIM CONDENSED CONSOLIDATED BALANCE SHEET (CONTINUED)
+As of March 31, 2026
+(Expressed in RMB)
+
+                                                        Unaudited     Audited
+                                                            As of       As of
+                                                        March 31, December 31,
+                                                Note        2026         2025
+                                                        RMB’000      RMB’000
+
+Equity and liabilities
+Equity attributable to owners of the Company
+  Share capital                                                424           426
+  Reserves                                             265,915,111   266,218,235
+
+                                                       265,915,535   266,218,661
+
+Non-controlling interests                                 118,389       104,608
+
+Total equity                                           266,033,924   266,323,269
+
+Liabilities
+Non-current liabilities
+  Borrowings                                     9      25,006,733    22,921,433
+  Deferred income tax liabilities                        2,117,825     2,400,758
+  Provisions                                             3,878,340     3,652,246
+  Other non-current liabilities                         24,021,184    20,392,784
+
+                                                        55,024,082    49,367,221
+
+Current liabilities
+ Trade payables                                 10     104,936,289   110,699,472
+ Other payables and accruals                            31,174,133    35,351,923
+ Advance from customers                                 17,466,933    19,272,778
+ Borrowings                                      9      10,360,504    13,202,226
+ Income tax liabilities                                  4,211,268     6,649,117
+ Provisions                                              7,540,551     7,229,961
+
+                                                       175,689,678   192,405,477
+
+Total liabilities                                      230,713,760   241,772,698
+
+Total equity and liabilities                           496,747,684   508,095,967
+
+
+
+
+                                           33
+INTERIM CONDENSED CONSOLIDATED STATEMENT OF CASH FLOWS
+For the three months ended March 31, 2026
+(Expressed in RMB)
+
+                                                               Unaudited
+                                                           Three months ended
+                                                               March 31,
+                                                                2026         2025
+                                                           RMB’000       RMB’000
+
+Net cash (used in)/generated from operating activities     (1,792,006)    4,509,497
+
+Net cash generated from investing activities                8,326,889     9,920,811
+
+Net cash (used in)/generated from financing activities     (7,059,256)   38,077,395
+
+Net (decrease)/increase in cash and cash equivalents         (524,373)   52,507,703
+Cash and cash equivalents at the beginning of the period   26,914,377    33,661,442
+Effects of exchange rate changes on cash and
+  cash equivalents                                            (55,521)        2,782
+
+Cash and cash equivalents at the end of the period         26,334,483    86,171,927
+
+
+
+
+                                                 34
+1   Basis of preparation
+
+    The condensed consolidated interim financial information comprises the interim condensed consolidated balance sheet as
+    of March 31, 2026, the interim condensed consolidated income statement, the interim condensed consolidated statement
+    of comprehensive income, the interim condensed consolidated statement of changes in equity and the interim condensed
+    consolidated statement of cash flows for the three-month period then ended, and selected explanatory notes (the “Interim
+    Financial Information”). The Interim Financial Information is presented in RMB, unless otherwise stated.
+
+    The Interim Financial Information has been prepared in accordance with International Accounting Standard (“IAS”) 34,
+    “Interim Financial Reporting”, issued by the International Accounting Standards Board (“IASB”).
+
+    The Interim Financial Information does not include all the notes of the type normally included in annual financial
+    statements. The Interim Financial Information should be read in conjunction with the annual audited consolidated financial
+    statements of the Group for the year ended December 31, 2025 which have been prepared in accordance with all applicable
+    IFRS Accounting Standards issued by the IASB (“IFRS Accounting Standards”) as set out in the 2025 annual report of the
+    Company dated March 24, 2026 (the “2025 Financial Statements”), and any public announcement made by the Company
+    during the three months ended March 31, 2026 (the “Interim Report Period”) and up to date of approval of this unaudited
+    Interim Financial Information.
+
+    The accounting policies and methods of computations used in the preparation of the Interim Financial Information are
+    consistent with those used in the preparation of the 2025 Financial Statements, except for the adoption of certain new and
+    amended standards which has had no significant impact on the Group’s results for the Interim Report Period and the Group’s
+    financial position as of March 31, 2026.
+
+2   Segment information and revenue
+
+    The Group’s business activities, for which discrete financial statements are available, are regularly reviewed and evaluated
+    by the Chief Operating Decision Maker (“CODM”). The CODM, who is responsible for allocating resources and assessing
+    performance of the operating segments, has been identified as the Chief Executive Officer of the Company. The Group
+    determined that it has the following reportable segments, which is consistent with the way the Group was reviewed by the
+    CODM:
+
+    •    Smartphone × AIoT
+
+         —    Smartphones
+
+         —    IoT and lifestyle products
+
+         —    Internet services
+
+         —    Other related businesses
+
+    •    Smart EV, AI and other new initiatives
+
+    The CODM assesses the performance of the operating segments mainly based on segment revenue and gross profit of each
+    operating segment. There were no material inter-segment sales during the three months ended March 31, 2026 and 2025.
+    The revenues from external customers reported to the CODM are measured in a manner consistent with that applied in the
+    interim condensed consolidated income statement.
+
+
+
+
+                                                              35
+The segment results and revenue information for the three months ended March 31, 2026 and 2025 are as follows:
+
+
+                                                               Three months ended March 31, 2026
+                                                     Smartphone × AIoT                                          Smart EV,
+                                                IoT and                                                             AI and
+                                                lifestyle      Internet Other related                            other new
+                          Smartphones          products        services     businesses       Subtotal            initiatives       Total
+                            RMB’000           RMB’000        RMB’000         RMB’000        RMB’000              RMB’000         RMB’000
+
+(Unaudited)
+Segment revenues               44,273,331     24,681,157      9,468,346          854,367      79,277,201        19,864,417       99,141,618
+Cost of sales                 (39,796,684)   (18,465,421)    (2,262,242)        (936,609)    (61,460,956)      (15,870,542)     (77,331,498)
+
+Gross profit/(loss)            4,476,647      6,215,736       7,206,104          (82,242)     17,816,245         3,993,875       21,810,120
+
+                                                                 Three months ended March 31, 2025
+                                                      Smartphone × AIoT                                         Smart EV,
+                                                IoT and                                                            AI and
+                                               lifestyle         Internet   Other related                       other new
+                          Smartphones          products          services      businesses        Subtotal       initiatives          Total
+                            RMB’000           RMB’000          RMB’000         RMB’000         RMB’000          RMB’000           RMB’000
+
+(Unaudited)
+Segment revenues               50,611,952     32,339,234      9,076,097          685,989      92,713,272        18,580,065      111,293,337
+Cost of sales                 (44,329,301)   (24,184,366)    (2,094,257)      (1,004,771)    (71,612,695)      (14,274,732)     (85,887,427)
+
+Gross profit/(loss)            6,282,651      8,154,868       6,981,840         (318,782)     21,100,577         4,305,333       25,405,910
+
+
+For the three months ended March 31, 2026 and 2025, the geographical information on the total revenues is as follows:
+
+
+                                                                                   Three months ended March 31,
+                                                                                    2026                      2025
+                                                                            RMB’000          %        RMB’000                           %
+                                                                          (Unaudited)               (Unaudited)
+
+Chinese Mainland                                                           59,570,951            60.1          73,068,671             65.7
+Rest of the world (Note(a))                                                39,570,667            39.9          38,224,666             34.3
+
+                                                                           99,141,618                        111,293,337
+
+Note:
+
+(a)    Revenues outside the Chinese Mainland are mainly from Europe and India.
+
+The following table shows inventory information by reportable segment as of March 31, 2026 and December 31, 2025.
+
+
+                                                                                                             As of        As of
+                                                                                                         March 31, December 31,
+                                                                                                             2026         2025
+                                                                                                          RMB’000     RMB’000
+                                                                                                        (Unaudited)    (Audited)
+
+Smartphone × AIoT                                                                                           66,651,700         74,758,465
+Smart EV, AI and other new initiatives                                                                      11,534,612          6,230,987
+
+                                                                                                            78,186,312         80,989,452
+
+                                                               36
+3   Expenses by nature
+
+
+                                                                                                Three months ended
+                                                                                                    March 31,
+                                                                                                    2026           2025
+                                                                                                RMB’000        RMB’000
+                                                                                              (Unaudited)     (Unaudited)
+
+    Changes in inventories of finished goods and work in progress                               8,318,386          505,228
+    Raw materials and consumables used and royalty fees                                        60,545,016       79,213,840
+    Provision for impairment of inventories                                                     2,057,409        1,329,972
+    Employee benefit expenses                                                                   8,192,723        6,529,713
+    Depreciation of property, plant and equipment, right-of-use assets
+      and investment properties                                                                 1,457,375        1,059,920
+    Amortization of intangible assets                                                             953,724          722,942
+    Promotion and advertising expenses                                                          2,265,765        1,999,872
+    Warranty expenses                                                                           1,287,124        1,436,440
+
+4   Income tax expenses
+
+    The income tax expenses of the Group during the three months ended March 31, 2026 and 2025 are analyzed as follows:
+
+                                                                                                Three months ended
+                                                                                                    March 31,
+                                                                                                    2026           2025
+                                                                                                RMB’000        RMB’000
+                                                                                              (Unaudited)     (Unaudited)
+
+    Current income tax                                                                          1,240,889        2,168,514
+    Deferred income tax                                                                          (246,759)         106,708
+
+    Income tax expenses                                                                           994,130        2,275,222
+
+5   Earnings per share
+
+    (a)   Basic
+
+          Basic earnings per share for the three months ended March 31, 2026 and 2025 are calculated by dividing the profit
+          attributable to the Company’s owners by the weighted average number of ordinary shares that are outstanding during
+          the periods.
+
+                                                                                                Three months ended
+                                                                                                    March 31,
+                                                                                                    2026           2025
+                                                                                              (Unaudited)     (Unaudited)
+
+          Net profit attributable to the owners of the Company (RMB’000)                        4,723,120       10,924,321
+          Weighted average number of outstanding ordinary shares (thousand shares)             25,774,240       24,962,488
+
+          Basic earnings per share (expressed in RMB per share)                                       0.18            0.44
+
+
+
+
+                                                              37
+    (b)   Diluted
+
+          Diluted earnings per share is calculated by adjusting the weighted average number of outstanding ordinary shares
+          to assume conversion of all dilutive potential ordinary shares. In addition, profit attributable to the owners of the
+          Company (numerator) has been adjusted by all the dilutive effects.
+
+                                                                                                   Three months ended
+                                                                                                       March 31,
+                                                                                                       2026           2025
+                                                                                                 (Unaudited)     (Unaudited)
+
+          Net profit attributable to the owners of the Company (RMB’000)                           4,723,120      10,924,321
+          Add: Interest expenses on convertible bonds (RMB’000)                                           —           62,211
+          Less: Dilution effect arising from share-based awards
+                  granted by a subsidiary (RMB’000)                                                  (44,200)              —
+
+          Net profit attributable to the owners of the Company
+            for calculation of diluted earnings per share (RMB’000)                                4,678,920      10,986,532
+
+          Weighted average number of outstanding ordinary shares (thousand shares)               25,774,240       24,962,488
+          Adjustments for dilutive restricted shares units and share options (thousand shares)      676,923          866,211
+          Adjustments for dilutive convertible bonds (thousand shares)                                   —           180,447
+
+          Weighted average number of ordinary shares
+           for calculation of diluted earnings per share (thousand shares)                       26,451,163       26,009,146
+
+          Diluted earnings per share (expressed in RMB per share)                                       0.18             0.42
+
+6   Investments
+
+
+                                                                                                      As of        As of
+                                                                                                  March 31, December 31,
+                                                                                                      2026         2025
+                                                                                                   RMB’000     RMB’000
+                                                                                                 (Unaudited)    (Audited)
+
+    Current assets
+    Short-term investments measured at
+      — Amortized cost                                                                              200,000          200,000
+      — Fair value through profit or loss                                                        18,247,657       29,273,546
+
+                                                                                                 18,447,657       29,473,546
+
+
+    Non-current assets
+    Long-term investments measured at amortized cost                                             15,456,222       13,405,600
+    Long-term investments measured at fair value through profit or loss
+      — Ordinary shares investments                                                              17,541,519       19,944,672
+      — Preferred shares investments                                                             35,024,415       35,198,710
+      — Treasury investments                                                                     21,817,543       21,562,313
+      — Other investments                                                                         6,668,582        4,175,642
+
+                                                                                                 96,508,281       94,286,937
+
+
+
+
+                                                               38
+    Amounts recognized in profit or loss of investments measured at fair value through profit or loss:
+
+
+                                                                                                    Three months ended
+                                                                                                        March 31,
+                                                                                                        2026           2025
+                                                                                                    RMB’000        RMB’000
+                                                                                                  (Unaudited)     (Unaudited)
+
+    Long-term investments measured at fair value through profit or loss
+      — Ordinary shares investments                                                                (1,943,831)      2,481,305
+      — Preferred shares investments                                                                  405,017         (17,743)
+      — Treasury and other investments                                                              2,272,668         175,751
+    Short-term investments measured at fair value through profit or loss                              165,051         140,160
+
+                                                                                                         898,905    2,779,473
+
+7   Trade and notes receivables
+
+    The Group generally allows a credit period within 180 days to its customers. Aging analysis of trade and notes receivables
+    based on invoice date is as follows:
+
+
+                                                                                                       As of        As of
+                                                                                                   March 31, December 31,
+                                                                                                       2026         2025
+                                                                                                    RMB’000     RMB’000
+                                                                                                  (Unaudited)    (Audited)
+
+    Up to 3 months                                                                                 14,954,666      11,963,353
+    3 to 6 months                                                                                   1,272,731       1,806,243
+    6 months to 1 year                                                                              1,105,255       1,117,839
+    1 to 2 years                                                                                      515,400         427,200
+    Over 2 years                                                                                      254,421         234,403
+
+                                                                                                   18,102,473      15,549,038
+
+    Less: credit loss allowance                                                                      (319,890)       (309,161)
+
+                                                                                                   17,782,583      15,239,877
+
+
+
+
+                                                              39
+8   Inventories
+
+
+                                                                                                As of        As of
+                                                                                            March 31, December 31,
+                                                                                                2026         2025
+                                                                                             RMB’000     RMB’000
+                                                                                           (Unaudited)    (Audited)
+
+    Raw materials                                                                          29,859,804      23,974,417
+    Finished goods                                                                         40,990,107      50,094,764
+    Work in progress                                                                        5,444,736       4,658,465
+    Spare parts                                                                             3,806,390       3,999,973
+    Others                                                                                  1,302,439       1,264,219
+
+                                                                                           81,403,476      83,991,838
+
+    Less: provision for impairment (Note (a))                                               (3,217,164)    (3,002,386)
+
+                                                                                           78,186,312      80,989,452
+
+
+    Note:
+
+    (a)   During the three months ended March 31, 2026, the Group incurred inventory impairment provision approximately
+          RMB2,057,409,000 (2025: RMB1,329,972,000) and transferred out of such provision upon the sales of inventories
+          approximately RMB1,842,631,000 (2025: RMB899,767,000)
+
+9   Borrowings
+
+
+                                                                                                As of         As of
+                                                                                            March 31,  December 31,
+                                                                                                2026          2025
+                                                                                             RMB’000      RMB’000
+                                                                                           (Unaudited)     (Audited)
+
+    Included in non-current liabilities
+    Secured borrowings                                                                      1,718,799       1,754,255
+    Unsecured borrowings                                                                   18,188,172      16,046,323
+    Convertible bonds                                                                       5,099,762       5,120,855
+
+                                                                                           25,006,733      22,921,433
+
+
+    Included in current liabilities
+    Secured borrowings                                                                         73,134          73,094
+    Unsecured borrowings                                                                   10,287,370      13,129,132
+
+                                                                                           10,360,504      13,202,226
+
+
+
+
+                                                          40
+10   Trade payables
+
+     Trade payables primarily include payables for inventories. Trade payables and their aging analysis based on invoice date are
+     as follows:
+
+
+                                                                                                         As of        As of
+                                                                                                     March 31, December 31,
+                                                                                                         2026         2025
+                                                                                                      RMB’000     RMB’000
+                                                                                                    (Unaudited)    (Audited)
+
+     Up to 3 months                                                                                  95,097,279        93,538,383
+     3 to 6 months                                                                                    6,314,859        11,379,071
+     6 months to 1 year                                                                               1,135,079         3,169,615
+     1 to 2 years                                                                                       704,294           978,245
+     Over 2 years                                                                                     1,684,778         1,634,158
+
+                                                                                                    104,936,289      110,699,472
+
+11   Dividends
+
+     No dividends have been paid or declared by the Company during the three months ended March 31, 2026 and 2025.
+
+12   Contingencies
+
+     The Group, in the ordinary course of its business, is involved in various claims, lawsuits, and legal proceedings that arise
+     from time to time. Since December 2021, Xiaomi Technology India Private Limited (“Xiaomi India”), a wholly-owned
+     subsidiary of the Group, has been involved in various investigations and notifications initiated by relevant Indian authorities
+     including the Income Tax Department, the Directorate of Revenue Intelligence and the Directorate of Enforcement in
+     relation to compliance of relevant income tax regulations, custom duties regulations as well as foreign exchange regulations,
+     respectively.
+
+     In this connection, Xiaomi India received orders alleging that it has inappropriately deducted certain costs and expenses,
+     including purchase costs of mobile phones and royalty fees paid to overseas third parties as well as companies within the
+     Group. As a result, certain of its bank accounts have been attached and thereby India Rupees (“INR”) 48,883,184,000
+     (equivalent to RMB3,581,671,000) has been considered as restrictive as of March 31, 2026 (December 31, 2025:
+     INR48,550,132,000 (equivalent to RMB3,784,968,000)). The cases are currently in the hearing stages and not yet
+     concluded.
+
+     Management assessed the aforesaid matters related to Xiaomi India, after taking into considerations of opinions from
+     professional advisors, it is concluded that Xiaomi India has valid grounds to respond to the relevant Indian authorities. The
+     Group, hence, has not made any material provision as of March 31, 2026 pertaining to these matters.
+
+     Conclusions of legal proceedings, investigations and allegations could take a long period of time, and the Group could
+     receive judgments or enter into settlements that may adversely affect its operating results or cash flows. Quantifying the
+     related financial effects is not practical at this stage.
+
+
+
+
+                                                                41
+OTHER INFORMATION
+
+Purchase, Sale or Redemption of the Company’s Listed Securities
+
+During the three months ended March 31, 2026 and up to the Latest Practicable Date12, the
+Company repurchased a total of 250,491,600 Class B Shares on the Stock Exchange at an aggregate
+consideration of approximately HK$8,412,337,168 (the “Shares Repurchased”) to enhance the
+shareholder value in the long run. Particulars of the Shares Repurchased are as follows:
+
+                                                                                                   Aggregate
+                                      No. of Shares                    Price Paid per Share     Consideration
+Month of Repurchase                   Repurchased                     Highest          Lowest (approximately)
+                                                                       (HK$)            (HK$)          (HK$)
+
+January                                   68,751,000                     39.32                    34.92       2,540,279,326
+February                                  39,376,400                     36.78                    33.94       1,392,181,061
+March                                     40,503,800                     35.18                    31.54       1,326,056,687
+April                                     78,918,600                     32.44                    29.08       2,453,839,435
+May (up to the Latest
+  Practicable Date)                       22,941,800                     31.58                    29.42          699,980,660
+
+Total                                   250,491,600                                                           8,412,337,168
+
+In respect of the Shares Repurchased, the weighted voting rights (the “WVR”) beneficiaries of the
+Company simultaneously reduced their WVR in the Company proportionately by way of converting
+their class A ordinary shares of the Company (the “Class A Shares”) into Class B Shares on a one-
+to-one ratio pursuant to Rule 8A.21 of the Rules Governing the Listing of Securities on the Stock
+Exchange (the “Listing Rules”), such that the proportion of shares carrying WVR of the Company
+shall not be increased, pursuant to the requirements under Rules 8A.13 and 8A.15 of the Listing
+Rules.
+
+During the three months ended March 31, 2026 and up to the Latest Practicable Date, the number of
+Class B Shares in issue (excluding treasury shares) was reduced by 336,083,800 shares as a result
+of (i) the repurchase of 215,333,400 Class B Shares from November 20, 2025 to February 20, 2026,
+which were subsequently cancelled on March 19, 2026; (ii) the repurchase of 36,747,800 Class B
+Shares from February 24, 2026 to March 23, 2026, which were subsequently cancelled on April 14,
+2026; and (iii) the repurchase of 84,002,600 Class B Shares from March 27, 2026 to April 24, 2026,
+which were subsequently cancelled on May 19, 2026.
+
+A total of 37,155,542 Class A Shares were converted into Class B Shares on a one-to-one ratio
+on March 19, 2026, of which Mr. Lei Jun, through Smart Mobile Holdings Limited, converted
+33,462,639 Class A Shares and Mr. Lin Bin, through Apex Star LLC, converted 3,692,903 Class A
+Shares.
+
+
+12
+     The Latest Practicable Date refers to May 22, 2026, being the latest practicable date prior to the publication of this results
+     announcement for the purpose of ascertaining certain information contained herein.
+
+                                                                42
+A total of 6,339,850 Class A Shares were converted into Class B Shares on a one-to-one ratio
+on April 14, 2026, of which Mr. Lei Jun, through Smart Mobile Holdings Limited, converted
+5,709,730 Class A Shares and Mr. Lin Bin, through Apex Star LLC, converted 630,120 Class A
+Shares.
+
+A total of 14,478,942 Class A Shares were converted into Class B Shares on a one-to-one ratio
+on May 19, 2026, of which Mr. Lei Jun, through Smart Mobile Holdings Limited, converted
+13,039,875 Class A Shares and Mr. Lin Bin, through Apex Star LLC, converted 1,439,067 Class A
+Shares.
+
+Save as disclosed above, neither the Company nor any of its subsidiaries purchased, sold or
+redeemed any of the Company’s securities listed on the Stock Exchange (including sale of treasury
+shares) during the three months ended March 31, 2026 and up to the Latest Practicable Date.
+
+Compliance with the Corporate Governance Code
+
+The Company is committed to maintaining and promoting stringent corporate governance standards.
+The principles of the Company’s corporate governance are to promote effective internal control
+measures and to enhance the transparency and accountability of the Board to all shareholders.
+
+Save for code provision C.2.1 of the Corporate Governance Code (the “CG Code”) contained in
+Appendix C1 to the Listing Rules, the Company has complied with all the code provisions set out in
+the CG Code throughout the three months ended March 31, 2026.
+
+Pursuant to code provision C.2.1 of the CG Code, companies listed on the Stock Exchange are
+expected to comply with, but may choose to deviate from, the requirement that the responsibilities
+between the chairman and the chief executive officer should be segregated and should not be
+performed by the same individual. The Company does not have a separate chairman and chief
+executive officer and Mr. Lei Jun currently performs these two roles. The Board believes that
+vesting the roles of both chairman and chief executive officer in the same person has the benefit of
+ensuring consistent leadership within the Group and enabling more effective and efficient overall
+strategic planning for the Group. The Board considers that the balance of power and authority for
+the present arrangement will not be impaired and this structure will enable the Company to make
+and implement decisions promptly and effectively. The Board will continue to review and consider
+segregating the roles of chairman of the Board and chief executive officer of the Company at an
+appropriate time, taking into account the circumstances of the Group as a whole.
+
+Audit Committee
+
+The Audit Committee (comprising one non-executive Director and two independent non-executive
+Directors, namely, Mr. Liu Qin, Dr. Chen Dongsheng and Mr. Wong Shun Tak) has reviewed the
+unaudited interim results of the Group for the three months ended March 31, 2026. The Audit
+Committee has also discussed matters with respect to the accounting policies and practices adopted
+by the Company and internal control with senior management members and the external auditor of
+the Company, PricewaterhouseCoopers.
+
+
+
+
+                                                 43
+Material Litigation
+
+The Company was not involved in any material litigation or arbitration during the three months
+ended March 31, 2026, nor were the Directors aware of any material litigation or claims that were
+pending or threatened against the Company.
+
+Events after March 31, 2026
+
+Save as disclosed in this announcement, there have been no other significant events that might
+affect the Group after March 31, 2026 and up to the date of this announcement.
+
+                                                                                        By order of the Board
+                                                                                        Xiaomi Corporation
+                                                                                              Lei Jun
+                                                                                             Chairman
+
+Hong Kong, May 26, 2026
+
+As at the date of this announcement, the Board comprises Mr. Lei Jun as chairman and executive Director, Mr. Lin Bin
+as vice chairman and executive Director, Mr. Liu De as executive Director, Mr. Liu Qin as non-executive Director, and
+Dr. Chen Dongsheng, Mr. Wong Shun Tak and Ms. Cai Jinqing as independent non-executive Directors.
+
+
+
+
+                                                         44
+

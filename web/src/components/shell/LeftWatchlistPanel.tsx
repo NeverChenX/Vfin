@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { fetchAllLimited, fetchJSONSafe, startVisibilityPoll, QUOTE_POLL_MS } from '@/lib/poll';
 import { ensurePortfolioSynced } from '@/lib/sync-once';
+import { assetTypeClass, assetTypeLabel, inferAssetType } from '@/lib/asset-type';
 import type { WatchlistItem, QuoteSnapshot, WatchlistApiResponse } from '@/types/market';
 
 interface LeftWatchlistPanelProps {
@@ -130,7 +131,11 @@ function WatchRow({
   const pct = yclose ? (change / yclose) * 100 : 0;
   const colorCls = !hasQuote ? 'text-flat' : change > 0 ? 'text-up' : change < 0 ? 'text-down' : 'text-flat';
   const name = quote?.name?.trim() || item.displayName?.trim() || item.symbol;
-  const href = mode === 'research' ? `/research/${item.symbol}` : `/trade/${item.symbol}`;
+  const href =
+    mode === 'research'
+      ? `/company/${encodeURIComponent(item.symbol)}?tab=financials`
+      : `/company/${encodeURIComponent(item.symbol)}?tab=kline`;
+  const assetType = inferAssetType(item);
 
   // 之前用 inline ref callback 在每次父重渲染（5s quotes 更新）都跑一次 scrollIntoView → 布局重排
   // 现在只在 active 状态变化时跑一次
@@ -151,8 +156,16 @@ function WatchRow({
           <div className={`truncate text-[12px] ${active ? 'text-[var(--color-text-primary)] font-semibold' : 'text-[var(--color-text-primary)]'}`}>
             {name}
           </div>
-          <div className="num truncate text-[10px] text-[var(--color-text-tertiary)]">
-            {item.symbol.toUpperCase()}
+          <div className="flex min-w-0 items-center gap-1">
+            <span
+              className={`shrink-0 rounded border px-1 py-0 text-[9px] leading-[13px] ${assetTypeClass(assetType)}`}
+              title={`资产类型：${assetTypeLabel(assetType)}`}
+            >
+              {assetTypeLabel(assetType)}
+            </span>
+            <span className="num truncate text-[10px] text-[var(--color-text-tertiary)]">
+              {item.symbol.toUpperCase()}
+            </span>
           </div>
         </div>
         <div className="shrink-0 text-right">

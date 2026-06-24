@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { addSymbolToWatchlist, notifyWatchlistChanged } from '@/lib/watchlist-client';
 
 interface SearchHit {
   symbol: string;
@@ -26,6 +27,8 @@ export function SearchBox() {
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const [addingSymbol, setAddingSymbol] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,7 +72,22 @@ export function SearchBox() {
   const go = (symbol: string) => {
     setOpen(false);
     setQ('');
-    router.push(`/trade/${symbol}`);
+    router.push(`/company/${encodeURIComponent(symbol)}?tab=kline`);
+  };
+
+  const addWatchlist = async (symbol: string) => {
+    if (addingSymbol) return;
+    setAddingSymbol(symbol);
+    setMessage(null);
+    try {
+      const data = await addSymbolToWatchlist(symbol);
+      setMessage({ kind: 'ok', text: `${data.item?.symbol || symbol} 已加入自选` });
+      notifyWatchlistChanged();
+    } catch (error) {
+      setMessage({ kind: 'err', text: (error as Error).message || '添加自选失败' });
+    } finally {
+      setAddingSymbol(null);
+    }
   };
 
   const onKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -111,26 +129,45 @@ export function SearchBox() {
       {open && hits.length > 0 && (
         <div className="absolute left-0 right-0 top-[40px] z-50 max-h-[60vh] overflow-y-auto rounded border border-[var(--color-border-base)] bg-[var(--color-bg-elev2)] shadow-lg sm:top-[34px] sm:max-h-[360px]">
           {hits.map((h, i) => (
-            <button
+            <div
               key={`${h.symbol}-${i}`}
-              type="button"
               onMouseEnter={() => setActive(i)}
-              onClick={() => go(h.symbol)}
               className={`flex w-full items-center justify-between gap-3 px-3 py-1.5 text-left text-[12px] ${
                 i === active
                   ? 'bg-[var(--color-bg-elev3)] text-[var(--color-text-primary)]'
                   : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elev3)]'
               }`}
             >
-              <span className="num text-[12px] text-[var(--color-brand)]">{h.symbol}</span>
-              <span className="flex-1 truncate">{h.name}</span>
-              {h.market && (
-                <span className="rounded bg-[var(--color-bg-elev1)] px-1.5 py-0.5 text-[10px] text-[var(--color-text-tertiary)]">
-                  {h.market}
-                </span>
-              )}
-            </button>
+              <button
+                type="button"
+                onClick={() => go(h.symbol)}
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
+              >
+                <span className="num shrink-0 text-[12px] text-[var(--color-brand)]">{h.symbol}</span>
+                <span className="flex-1 truncate">{h.name}</span>
+                {h.market && (
+                  <span className="shrink-0 rounded bg-[var(--color-bg-elev1)] px-1.5 py-0.5 text-[10px] text-[var(--color-text-tertiary)]">
+                    {h.market}
+                  </span>
+                )}
+              </button>
+              <button
+                type="button"
+                disabled={addingSymbol === h.symbol}
+                onClick={() => addWatchlist(h.symbol)}
+                className="shrink-0 rounded border border-[var(--color-brand)]/40 px-2 py-0.5 text-[10.5px] font-semibold text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10 disabled:cursor-not-allowed disabled:border-[var(--color-border-base)] disabled:text-[var(--color-text-disabled)]"
+              >
+                {addingSymbol === h.symbol ? '添加中' : '添加自选'}
+              </button>
+            </div>
           ))}
+          {message && (
+            <div className={`border-t border-[var(--color-border-base)] px-3 py-1.5 text-[11px] ${
+              message.kind === 'ok' ? 'text-[var(--color-up)]' : 'text-[var(--color-down)]'
+            }`}>
+              {message.text}
+            </div>
+          )}
         </div>
       )}
     </div>

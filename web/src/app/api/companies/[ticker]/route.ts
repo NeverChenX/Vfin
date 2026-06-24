@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getCompany } from '@/data/companies';
 import { buildRatios } from '@/lib/finance/ratios';
 import { requireAuth } from '@/lib/auth-guard';
+import { fetchLiveQuoteSnapshot } from '@/lib/market/live-quote';
+import { buildCurrentMarketMetrics } from '@/components/companies/key-metrics-market-data';
 
 interface RouteCtx {
   params: Promise<{ ticker: string }>;
@@ -19,6 +21,8 @@ export async function GET(_req: Request, ctx: RouteCtx) {
   if (!company) {
     return NextResponse.json({ error: 'company not found' }, { status: 404 });
   }
+  const liveQuote = await fetchLiveQuoteSnapshot(ticker);
+  const currentMetrics = buildCurrentMarketMetrics(company, liveQuote);
   const rows = buildRatios(company);
   const latestY = rows.find((r) => r.period.granularity === 'Y') ?? rows[0];
   const v = latestY?.values ?? {};
@@ -32,8 +36,11 @@ export async function GET(_req: Request, ctx: RouteCtx) {
     currency: company.currency,
     periodLabel: latestY ? labelFromPeriod(latestY.period.year, latestY.period.granularity, latestY.period.index) : null,
     metrics: {
-      pe: v.pe_ttm ?? null,
-      pb: v.pb ?? null,
+      price: currentMetrics.price,
+      pe: currentMetrics.peTtm,
+      pb: currentMetrics.pb,
+      marketMultiplesValidationStatus: currentMetrics.marketMultiplesValidationStatus,
+      marketMultiplesSources: currentMetrics.sources ?? [],
       roe: v.roe ?? null,
       roa: v.roa ?? null,
       gross_margin: v.gross_margin ?? null,

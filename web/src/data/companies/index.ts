@@ -1,7 +1,7 @@
 import 'server-only';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import type { CompanyFinancials, PeriodKey } from '@/types/finance';
+import type { CompanyFinancials, KeyMetricsRow, PeriodKey } from '@/types/finance';
 import { marketGroup, type MarketGroup } from '@/lib/symbol-utils';
 
 // C4: env-overridable so prod containers with read-only src/ work.
@@ -29,6 +29,7 @@ export interface CompanyListEntry {
    */
   latestFiledAt?: string;
   isDemoFetched?: boolean;
+  ratios?: KeyMetricsRow[];
 }
 
 /**
@@ -170,6 +171,7 @@ function computeAllCompanies(): CompanyListEntry[] {
       fetchedAt: meta._fetchedAt,
       latestFiledAt: meta._latestFiledAt,
       isDemoFetched: meta._demo ?? false,
+      ratios: rec.data.ratios,
     });
   }
   // 纯 ASCII ticker，无需 localeCompare

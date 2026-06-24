@@ -1,6 +1,10 @@
 import { fetchJson } from '../providers/http-client.js';
 
-const EASTMONEY_CLIST_URL = 'https://push2.eastmoney.com/api/qt/clist/get';
+// 用 push2delay（延迟数据节点）而非 push2：本地出口对 push2.eastmoney.com
+// 全部 CDN 节点稳定 RST（TLS 通、HTTP 立即 Empty reply），但 push2delay 通畅。
+// 延迟数据闭市后 = 收盘数据；盘中相比 push2 延迟约 5 分钟——对"市场宽度"这种
+// 聚合统计完全够用（盘中 5 分钟前的涨跌比 ≈ 当下涨跌比，误差远小于翻页本身的开销）。
+const EASTMONEY_CLIST_URL = 'https://push2delay.eastmoney.com/api/qt/clist/get';
 // 沪深京 A 股全市场过滤（含主板/创业板/科创板/北交所）。
 const FS_A_SHARE = 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23,m:0+t:81+s:2048';
 // eastmoney push2 clist 实测：无论 pz 设多大都最多返回 100。

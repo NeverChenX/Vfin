@@ -51,6 +51,7 @@ export interface KeyMetricsRow {
     ps_ttm?: number | null;       // P/S TTM
     pcf_ttm?: number | null;      // P/CF TTM
     dividend_yield?: number | null;
+    dividend_status?: 'none' | 'unknown';
     market_cap?: number | null;   // 市值（原币种）
     market_cap_currency?: string; // 市值原币 (HKD / USD / CNY)
     total_shares?: number | null; // 总股本

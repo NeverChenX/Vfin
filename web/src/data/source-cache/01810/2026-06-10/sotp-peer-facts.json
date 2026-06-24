@@ -1,0 +1,127 @@
+{
+  "asOf": "2026-06-10",
+  "currency": "CNY",
+  "unit": "million",
+  "dataAcquisitionOrder": [
+    "public structured channels",
+    "official financial report",
+    "broader internet only if prior channels fail"
+  ],
+  "fx": {
+    "USDCNY": {
+      "value": 6.7727,
+      "source": "Yahoo Finance chart API USDCNY=X"
+    },
+    "HKDCNY": {
+      "value": 0.8638,
+      "source": "Yahoo Finance chart API HKDCNY=X"
+    }
+  },
+  "xiaomiSegments": {
+    "source": "Xiaomi Q1 2026 results announcement, cached at web/src/data/source-cache/01810/2026/Q1/q1-2026-earnings-release-quartr.pdf",
+    "grossProfitForAllocation": {
+      "smartphones": 4476.6,
+      "iotLifestyle": 6215.7,
+      "internetServices": 7206.1
+    },
+    "derivedNetProfit": {
+      "formula": "Q1 2026 group net profit RMB 4,734.6m. EV/AI uses disclosed Q1 2026 loss from operations RMB -3,100m. Remaining RMB 7,834.6m is allocated across smartphones, IoT, and internet by Q1 2026 gross-profit shares. Segment total reconciles to RMB 4,734.6m.",
+      "smartphones": 1959.525,
+      "iotLifestyle": 2720.775,
+      "internetServices": 3154.299,
+      "evAiNewInitiatives": -3100,
+      "smartphonesInternetServicesCombined": 5113.824,
+      "smartphonesInternetServicesAnnualized": 20455.296
+    },
+    "segmentRevenue": {
+      "evAiNewInitiatives": 19864.4,
+      "evAiNewInitiativesAnnualized": 79457.6,
+      "source": "Xiaomi Q1 2026 results announcement table: Smart EV, AI and other new initiatives revenue RMB19,864.4m"
+    },
+    "groupNetProfit": 4734.6,
+    "evAiOperatingResult": -3100
+  },
+  "peers": [
+    {
+      "segment": "smartphonesInternetServices",
+      "name": "Apple",
+      "ticker": "AAPL",
+      "netIncome": null,
+      "marketValue": 29035536.149,
+      "valuationMultiple": 35.24,
+      "valuationMultipleLabel": "PE-TTM 双源校验",
+      "price": 291.13,
+      "pb": 40.02,
+      "asOf": "2026-06-12 / TTM",
+      "sources": [
+        "Finance quote AAPL price USD291.13, PE 35.2458, market cap USD4.287T",
+        "StockAnalysis AAPL cached statistics PE 35.22, PB 40.02, market cap USD4.27T",
+        "Yahoo Finance / GuruFocus / FullRatio search snippets corroborate PE around 35.1-35.2",
+        "Yahoo Finance / StockAnalysis snippets corroborate PB around 40.0",
+        "Yahoo Finance chart API USDCNY=X cached FX 6.7727"
+      ]
+    },
+    {
+      "segment": "iotLifestyle",
+      "name": "美的集团",
+      "ticker": "000333.SZ",
+      "netIncome": null,
+      "marketValue": 616993,
+      "valuationMultiple": 13.96,
+      "valuationMultipleLabel": "PE-TTM 双源校验",
+      "price": 81.04,
+      "pb": 2.66,
+      "asOf": "2026-06-15 12:05",
+      "sources": [
+        "Tencent Finance sz000333 quote cached at web/src/data/source-cache/000333/2026-06-15/tencent-sz000333.raw.txt",
+        "Sina Finance hq price cached at web/src/data/source-cache/000333/2026-06-15/sina-hq-sz000333.raw.txt",
+        "Yahoo Finance chart API price cached at web/src/data/source-cache/000333/2026-06-15/yahoo-chart-000333.raw.json",
+        "Moomoo/Google/CFI snippets corroborate PE/PB within live quote rounding"
+      ]
+    },
+    {
+      "segment": "evAiNewInitiatives",
+      "name": "理想汽车",
+      "ticker": "2015.HK",
+      "valuationMethod": "PS",
+      "revenue": 22982.911,
+      "annualizedRevenue": 91931.644,
+      "marketValue": 97399.908,
+      "priceSales": 1.059481847,
+      "sources": [
+        "StockAnalysis HKG:2015 quarterly financials 2026Q1 revenue",
+        "StockAnalysis HKG:2015 statistics market cap",
+        "Tencent Finance hk02015 quote",
+        "Yahoo Finance chart API 2015.HK"
+      ]
+    }
+  ],
+  "reportingPeriod": "2026-03-31 Q1",
+  "latestFinancialReport": {
+    "source": "Xiaomi Q1 2026 results announcement / slides, cached under web/src/data/source-cache/01810/2026/Q1/",
+    "revenue": 99141.618,
+    "netIncome": 4734.6,
+    "adjustedNetProfit": 6072.1,
+    "smartEvAiLossFromOperations": -3100
+  },
+  "keyMetrics": {
+    "asOf": "2026-06-10 / 2026Q1",
+    "pe_ttm": {
+      "value": 18.109,
+      "source": "StockAnalysis HKG:1810 statistics, cached stockanalysis-statistics-1810.html"
+    },
+    "pb": {
+      "value": 2.313,
+      "source": "StockAnalysis HKG:1810 statistics, cached stockanalysis-statistics-1810.html"
+    },
+    "dividend_yield": {
+      "value": null,
+      "status": "none",
+      "source": "StockAnalysis HKG:1810 statistics says Xiaomi does not appear to pay dividends; Q1 2026 report states no dividends paid or declared during the quarter; 2025 annual report states no final dividend."
+    },
+    "market_cap_hkd": {
+      "value": 674941826359.28,
+      "source": "Tencent Finance hk01810, cached tencent-hk01810.txt"
+    }
+  }
+}

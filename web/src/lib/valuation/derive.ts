@@ -63,6 +63,13 @@ function latestAnnual(c: CompanyFinancials, statementId: 'IS' | 'BS' | 'CF'): Pe
   return periods.length > 0 ? periods[periods.length - 1] : null;
 }
 
+function latestAny(c: CompanyFinancials, statementId: 'IS' | 'BS' | 'CF'): PeriodValues | null {
+  const periods = [...c.statements[statementId].periods].sort(
+    (a, b) => periodSortKey(a.period) - periodSortKey(b.period),
+  );
+  return periods.length > 0 ? periods[periods.length - 1] : null;
+}
+
 function asNum(v: unknown): number | null {
   return typeof v === 'number' && Number.isFinite(v) ? v : null;
 }
@@ -78,6 +85,15 @@ function toMillion(raw: number | null): number | null {
 export function getLatestAnnualPeriod(c: CompanyFinancials): PeriodKey | null {
   const candidates = (['IS', 'BS', 'CF'] as const)
     .map((s) => latestAnnual(c, s)?.period ?? null)
+    .filter((p): p is PeriodKey => p !== null);
+  if (candidates.length === 0) return null;
+  return candidates.reduce((a, b) => (periodSortKey(a) > periodSortKey(b) ? a : b));
+}
+
+/** 最新报表期（取 IS / BS / CF 三表中最晚的任意期，含季度/半年度） */
+export function getLatestPeriod(c: CompanyFinancials): PeriodKey | null {
+  const candidates = (['IS', 'BS', 'CF'] as const)
+    .map((s) => latestAny(c, s)?.period ?? null)
     .filter((p): p is PeriodKey => p !== null);
   if (candidates.length === 0) return null;
   return candidates.reduce((a, b) => (periodSortKey(a) > periodSortKey(b) ? a : b));

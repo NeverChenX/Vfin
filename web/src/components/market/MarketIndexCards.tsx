@@ -9,35 +9,45 @@ import type { Quote } from './types';
 interface IndexConfig {
   symbol: string;
   label: string;
-  marketBadge: 'SH' | 'HK' | 'SZ' | 'US';
+  marketBadge: 'SH' | 'HK' | 'SZ' | 'US' | 'JP' | 'BTC' | 'XAU';
   forceLabel?: boolean;
+  sparklineCount?: number;
 }
 
-const INDICES: ReadonlyArray<IndexConfig> = [
+export const CORE_MARKET_INDICES: ReadonlyArray<IndexConfig> = [
   { symbol: '000001.sh', label: '上证指数', marketBadge: 'SH' },
   { symbol: 'HSI.hk',    label: '恒生指数', marketBadge: 'HK', forceLabel: true },
   { symbol: '399006.sz', label: '创业板指', marketBadge: 'SZ' },
   { symbol: 'IXIC.us',   label: '纳斯达克', marketBadge: 'US' },
+  { symbol: 'N225.jp',   label: '日经指数', marketBadge: 'JP', forceLabel: true },
+  { symbol: 'BTCUSD.crypto', label: '比特币', marketBadge: 'BTC', forceLabel: true, sparklineCount: 730 },
+  { symbol: 'XAU.cm', label: '黄金', marketBadge: 'XAU', forceLabel: true },
 ];
+
+export const MARKET_INDEX_SPARKLINE = {
+  count: 500,
+  width: 150,
+  height: 24,
+} as const;
 
 export function MarketIndexCards() {
   const [quotes, setQuotes] = useState<Record<string, Quote>>({});
 
   useEffect(() => startVisibilityPoll(async (signal) => {
-    const res = await fetchAllLimited(INDICES, (idx) =>
+    const res = await fetchAllLimited(CORE_MARKET_INDICES, (idx) =>
       fetchJSONSafe<Quote>(`/api/hq/stock?symbol=${encodeURIComponent(idx.symbol)}`, { signal }),
     );
     if (signal.aborted) return;
     setQuotes((prev) => {
       const next = { ...prev };
-      res.forEach((q, i) => { if (q) next[INDICES[i].symbol] = q; });
+      res.forEach((q, i) => { if (q) next[CORE_MARKET_INDICES[i].symbol] = q; });
       return next;
     });
   }, QUOTE_POLL_MS), []);
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
-      {INDICES.map((idx) => (
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 sm:gap-3">
+      {CORE_MARKET_INDICES.map((idx) => (
         <Card key={idx.symbol} cfg={idx} quote={quotes[idx.symbol]} />
       ))}
     </div>
@@ -74,7 +84,13 @@ function Card({ cfg, quote }: { cfg: IndexConfig; quote?: Quote }) {
         {hasChange ? `${sign}${change.toFixed(2)}  ${sign}${pct.toFixed(2)}%` : '--'}
       </div>
       <div className="mt-2 -mx-1">
-        <MiniSparkline symbol={cfg.symbol} dir={dir} width={120} height={30} />
+        <MiniSparkline
+          symbol={cfg.symbol}
+          dir={dir}
+          count={cfg.sparklineCount ?? MARKET_INDEX_SPARKLINE.count}
+          width={MARKET_INDEX_SPARKLINE.width}
+          height={MARKET_INDEX_SPARKLINE.height}
+        />
       </div>
     </div>
   );

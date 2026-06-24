@@ -78,20 +78,20 @@ export function HelpPopover({ explain, subjectZh, subjectCfa }: HelpPopoverProps
         left: pos.left,
         width: 300,
         zIndex: 9999,
-        background: '#ffffff',
-        border: '1px solid #cbd5e1',
-        borderRadius: 8,
+        background: '#181A20',
+        border: '1px solid #474D57',
+        borderRadius: 6,
         padding: '10px 14px',
         fontSize: 12,
         lineHeight: 1.65,
-        color: '#334155',
-        boxShadow: '0 10px 30px -8px rgba(15,23,42,0.25), 0 4px 12px -4px rgba(15,23,42,0.15)',
+        color: '#B7BDC6',
+        boxShadow: '0 10px 30px -8px rgba(0,0,0,0.65), 0 4px 12px -4px rgba(0,0,0,0.5)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, paddingBottom: 6, marginBottom: 6, borderBottom: '1px solid #f1f5f9' }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{subjectZh}</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, paddingBottom: 6, marginBottom: 6, borderBottom: '1px solid #2B3139' }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: '#EAECEF' }}>{subjectZh}</span>
         {subjectCfa && (
-          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10.5, color: '#94a3b8' }}>{subjectCfa}</span>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10.5, color: '#848E9C' }}>{subjectCfa}</span>
         )}
       </div>
       <p style={{ margin: 0 }}>{explain}</p>
@@ -115,17 +115,17 @@ export function HelpPopover({ explain, subjectZh, subjectCfa }: HelpPopoverProps
           marginLeft: 4,
           padding: 0,
           borderRadius: '50%',
-          border: '1px solid #cbd5e1',
-          background: open ? '#dbeafe' : '#f8fafc',
-          color: open ? '#1d4ed8' : '#64748b',
+          border: '1px solid #474D57',
+          background: open ? '#2B3139' : '#1E2329',
+          color: open ? '#F0B90B' : '#848E9C',
           fontSize: 10,
           fontWeight: 700,
           lineHeight: 1,
           cursor: 'pointer',
           transition: 'all 120ms',
         }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#0ea5e9'; (e.currentTarget as HTMLButtonElement).style.background = '#e0f2fe'; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#cbd5e1'; (e.currentTarget as HTMLButtonElement).style.background = open ? '#dbeafe' : '#f8fafc'; }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#F0B90B'; (e.currentTarget as HTMLButtonElement).style.background = '#2B3139'; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#474D57'; (e.currentTarget as HTMLButtonElement).style.background = open ? '#2B3139' : '#1E2329'; }}
       >
         ?
       </button>

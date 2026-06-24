@@ -1,0 +1,914 @@
+Xiaomi Corporation
+   Q1 2026 Results Announcement
+Disclaimer
+By attending the meeting where this presentation is made, or by reading the presentation materials, you agree to be bound by the following limitations:
+
+The information in this presentation has been prepared by representatives of Xiaomi Corporation (the “Company”, and together with its subsidiaries, the "Group") for use in
+presentations by the Group and does not constitute a recommendation regarding the securities of the Group. No part of this presentation should form the basis of, or be relied on
+in connection with, any contract or commitment or investment decision whatsoever.
+
+No representation or warranty, express or implied, is made as to, and no reliance should be placed on, the fairness, accuracy, completeness or correctness of the information, or
+opinions contained herein. Neither the Company nor any of the Company's subsidiaries, affiliates, advisors or representatives shall have any responsibility or liability whatsoever
+(for negligence or otherwise) for any loss howsoever arising from any use of this presentation or its contents or otherwise arising in connection with this presentation. The
+information set out herein may be subject to updating, completion, revision, verification and amendment and such information may change materially.
+
+This presentation is based on the economic, regulatory, market and other conditions in effect on the date hereof. It should be understood that subsequent developments may
+affect the information contained in this presentation, which neither the Company nor its subsidiaries, affiliates, advisors or representatives are under an obligation to update, revise
+or affirm.
+
+The information communicated in this presentation may contain certain statements that are or may be forward looking. These statements typically contain words such as "will",
+"may", "expects", "forecasts", "plans" and "anticipates" and words of similar import. By their nature forward looking statements involve risk and uncertainty because they relate to
+events and depend on circumstances that will occur in the future. There may be additional material risks that are currently not considered to be material or of which the Company
+and its advisors or representatives are unaware. Against the background of these uncertainties, readers should not rely on these forward-looking statements. Neither the
+Company nor its subsidiaries, affiliates, advisors or representatives assume any responsibility to update forward-looking statements or to adapt them to future events or
+developments.
+
+This presentation and the information contained herein does not constitute or form part of any offer for sale or subscription of or solicitation or invitation of any offer to buy or
+subscribe for any securities of the Company or any of its subsidiaries or affiliates in any jurisdiction. The securities of the Company have not been and will not be registered under
+the U.S. Securities Act of 1933, as amended (the "Securities Act"), and may not be offered, sold or delivered within the United States or to U.S. persons absent from registration
+under or an applicable exemption from the registration requirements of the United States securities laws.
+
+In addition, certain information related to other companies and market in general presented in this presentation has been obtained from publicly available information. The
+accuracy and appropriateness of that information has not been verified by the Company and cannot be guaranteed.
+
+No invitation is made by this presentation or the information contained herein to enter into, or offer to enter into, any agreement to purchase, acquire, dispose of, subscribe for or
+underwrite any securities or structured products, and no offer is made of any shares in or debentures of a company for purchase or subscription except as permitted under
+relevant laws.
+
+
+
+                                                                                                                                                                                           2
+                                                                        Q1 2026 Financial Highlights
+
+
+
+                                                                                                              Group
+
+                                 Revenue                                                        Gross Profit Margin                                 Adjusted Net Profit1
+                                 RMB 99.1 billion                                               22.0%                                               RMB 6.1 billion
+
+
+
+                                            Smartphone x AIoT Segment                                                             Smart EV, AI and Other New Initiatives Segment
+
+                                Revenue                                                                                               Revenue
+                                RMB 79.3 billion                                                                                      RMB 19.9 billion
+
+                                Gross Profit Margin                                                                                   Gross Profit Margin
+                                22.5%                                                                                                 20.1%
+
+
+
+
+1   Defined as profit for the period, as adjusted by adding back (i) share-based compensation, (ii) net fair value changes on investments, (iii) amortization of intangible assets resulting from acquisitions, (iv) changes
+    of value of financial liabilities to investors, and (v) income tax effects of non-IFRS adjustments                                                                                                                         3
+                                                                    Q1 2026 Business Highlights
+
+                         Smartphone                                                                AIoT                   Smart Electric Vehicle
+
+               Global Smartphone Shipments Ranked                                 Global Tablet Shipments Ranked Top 5   Delivered 80,856 Smart Electric Vehicles
+               Top 3 for 23 Consecutive Quarters with                             Globally1                              Increased 6.6% YoY
+               11.3% Market Share1
+
+               Smartphones ASP Reached RMB1,310,                                  Global Wearable Bands Ranked No.31     490 Sales Centers Cover 143 Cities2
+               a Record High                                                      and Global TWS Earbuds Ranked No.21
+
+
+
+                                                                                                                         Over 80,000 Units Locked-in Orders of
+                                                                                                                         New-Generation Xiaomi SU7 Series During
+                                                                                                                         the Initial Sales Period3
+
+
+
+
+1   According to Omdia, by shipments in Q1 2026. Wearable bands include basic bands, basic watches, and smartwatches
+2   As of March 31, 2026
+3   The initial sales period spanned from March 23, 2026 to May 6, 2026
+                                                                                                                                                                    4
+                  R&D Expenses Increased 33% YoY to RMB9.0 Billion in Q1 2026
+
+
+           R&D Expenses                                                     Q1 2026 R&D Expenses
+           RMB Billions
+                                                              40.0+
+                                                                               up   33.4% YoY
+
+
+                                                       33.1
+                                                                          Number of R&D Employees1
+                                                24.1
+                                         19.1
+                                                                                26,000+
+                                  16.0
+                           13.2
+               9.3                                             9.0
+
+
+                                                                      Number of Granted Patents Globally1
+             2020          2021   2022   2023   2024   2025   2026
+                                                                                47,000+
+
+
+1   As of March 31, 2026                                                                                    5
+                  Xiaomi MiMo Foundation Models: Stronger Agentic Capabilities
+                                  and Longer Attention Span
+
+
+                            MiMo-V2.5-Pro                               MiMo-V2-Pro                     MiMo-V2.5 and MiMo-V2.5-Pro
+             Artificial Analysis Intelligence Index and   Open-Source Agent Framework Hermes Agent
+                           Agentic Index1                   Tops Global Invocation Volume Rankings2   Achieved Top Agent Models
+                        Both Ranked 1st                       Xiaomi MiMo Ranked No.1                 in Complex Software Engineering and
+                   Among Global Open-Source                                                                Long-Horizon Tasks Globally
+                                                                  Contributing Model
+                       Model Providers
+
+
+
+
+1   As of April 23, 2026
+2   Sourced from OpenRouter, as of May 12, 2026
+                                                                                                                                            6
+                             Xiaomi miclaw: Exploring the Possibilities of AI Agents
+                                     Powered by MiMo Foundation Models
+
+            Smartphones                                  Visual Smart Speaker
+                                                                                  Xiaomi miclaw Among The First in
+                                                                                      Chinese Mainland to Pass
+                                                                                   CAICT1 Mobile Intelligent Assistant
+                                                                                          (Claw) Assessment
+
+
+
+
+                                                                                      Cross-Device Connectivity
+
+      Wearables                                                      Tablets    One Command for Files & Screen Mirroring
+
+
+
+
+                                                                                    Shared Memory Architecture
+                                                                                   Ensuring Context Synchronization
+                                                                                   across the Multi-Device Ecosystem
+
+
+
+                                        Laptops
+                                                                                Cross-Device Planning and Execution
+
+                                                                                    Smart Enough for Ambiguous or
+                                                                                          Complex Command
+
+
+
+
+1   China Academy of Information and Communications Technology                                                             7
+           Advancing the Frontier of Embodied Intelligence
+
+
+
+    Open-Sourced Xiaomi-Robotics-0          Xiaomi ROBOTS Showcased
+Real-World Post-Training is Now Available   at 2026 Group Investor Day
+
+
+
+
+                                                                         8
+Xiaomi YU7 GT: A Long-Range Sports-Car-Grade SUV
+
+
+
+
+                                Officially Launched in May 2026 RMB 389,900
+
+
+
+                              2.92s                 1,003ps                  300km/h
+                             0-100 km/h                  Max
+                                                                               Top Speed
+                             Acceleration            Horsepower
+
+
+
+                           V8s EVO                   705km                      897v
+                                                                               SiC-Based
+                          Xiaomi HyperEngine     Maximum CLTC Range
+                                                                          High-Voltage Platform
+
+
+
+                                                                  Xiaomi Smart Chassis 2.0
+                           Track-Specific Braking System
+                                                                      Master Edition
+
+
+
+
+                                                                                                  9
+                        Xiaomi YU7 GT Sets SUV Lap Record
+                          at the Nü rburgring Nordschleife
+
+
+
+
+                    with Track Package
+
+New Official Lap Record for SUVs
+at the Nü rburgring Nordschleife
+
+
+
+
+                                                             10
+                  Pursue High-Quality New Retail Strategy
+
+Number of Xiaomi Stores      Number of Over 500 Xiaomi     Number of New Retail
+  in Chinese Mainland         Stores in Chinese Mainland     Stores Overseas
+
+
+
+
+                                                                        520+
+              16,000+                         260+
+ 15,000+
+
+                                   80+
+                                                             10+
+
+ Q1 2025      Q1 2026            Q1 2025     Q1 2026       Q1 2025     Q1 2026
+
+
+
+
+                                                                                  11
+Smartphone x AIoT Segment
+             Smartphone Shipments Ranked Top 3 for 23 Consecutive Quarters
+
+
+                              Q1 2026 Shipments                        YoY Shipments
+             Vendor                             Q1 2026 Market Share
+                                (Million Units)                           Change                80.0                                                         20.0%
+
+
+
+                                                                                                70.0
+            Samsung                 65.4               21.9%               8.0%                         14.1%    14.7%
+                                                                                                                                13.6%                        15.0%
+
+                                                                                               60.0
+                                                                                                                                        11.1%    11.3%
+                                                                                                50.0
+              Apple                 60.4               20.3%               9.9%                                   42.4          43.4                         10.0%
+                                                                                                        41.8
+                                                                                               40.0
+                                                                                                                                        37.8
+                                                                                                                                                  33.8
+             Xiaomi
+             Xiaomi                 33.8               11.3%              -19.2%                30.0
+                                                                                                                                                             5.0%
+
+
+
+
+                                                                                                20.0
+                                                                                                                                                             0.0%
+              OPPO                  30.7               10.3%               -6.6%
+                                                                                                10.0
+
+
+
+                                                                                                  -                                                          -5.0%
+               vivo                 21.3                7.1%               -6.7%
+                                                                                                       Q1 2025 Q2 2025 Q3 2025 Q4 2025 Q1 2026
+                                                                                                  Global Smartphone Shipments
+                                                                                                                                          Market Share (%)
+             Others                 86.8               29.1%               3.5%                   (Million Units)
+
+                                                                                          QoQ
+                                                                                       Market Share     +1.1%    +0.6%          -1.1%   -2.4%    +0.2%
+              Total                 298.5              100.0%              0.5%          Change
+
+
+
+
+Source: Omdia, by shipments                                                                                                                                          13
+                                Leadership Across All Major International Markets
+
+             Q1 2026 Smartphone Shipments Ranking and Market Share
+
+
+
+                                                              No.3
+                                                              17.2%
+                         No.3                                 Europe
+                         11.3%                                                         No.4
+                          Global                                          No.3         12.1%
+                                                                         13.0%         India
+                                                             No.3      Middle East
+                                                             9.2%                                No.3
+                                               No.2          Africa                             16.9%
+                                                                                               Southeast
+                                              17.4%                                              Asia
+                                            Latin America
+
+
+
+
+                              Smartphone Market Share Ranked Top 3 in 47 Markets and Top 5 in 65 Markets
+
+Source: Omdia, by shipments                                                                                14
+                                                Chinese Mainland Smartphone Market Share
+                                                       Maintained at Healthy Level
+
+            Market Share                            No.2                    No.5                  No.5            No.5                   No.3
+              Ranking
+                                     7.0                                                                                                         20.0%
+
+
+
+
+                                    6.0            15.9%                                                                                 16.0%
+                                                                                                                  14.1%
+                                     5.0
+                                                                             13.5%                13.5%                                          15.0%
+
+
+
+
+                                                                                                                   4.0
+                                    4.0              3.7
+                                                                                                   3.1                                    3.3    10.0%
+
+
+                                     3.0                                     2.8
+
+                                     2.0
+                                                                                                                                                 5.0%
+
+
+
+
+                                     1.0
+
+
+
+
+                                      -                                                                                                          0.0%
+
+
+                                                Nov 2025                   Dec 2025            Jan 2026          Feb 2026           Mar 2026
+
+                                                        Chinese Mainland Smartphone Units Sold (Million Units)        Market Share (%)
+
+
+
+
+Source: According to third-party data, by units sold in Chinese mainland                                                                                 15
+                                                    Achieved Record-High Smartphone ASP
+
+
+
+                                    Smartphone ASP (RMB)                                                                        Premium Smartphone as % of
+                                                                                                                       Total Smartphone Units Sold in Chinese Mainland1
+
+                                                                                8%+
+
+                                                                                         1,310                                                               27.1%
+                                                                       1,211                                                                                            25.0%
+                                    1,138             1,129                                                                                23.3%                                23.5%
+                  1,082
+                                                                                                                          20.3%
+
+
+
+
+                 2023              2024              2025               Q1                Q1                             2023              2024              2025        Q1      Q1
+                                                                       2025              2026                                                                           2025    2026
+
+
+
+
+1   According to third-party data, by units sold in Chinese mainland. Premium smartphones in Chinese mainland are smartphones with retail prices at or above RMB3,000                   16
+                                                              Leading Consumer AIoT Platform
+
+         Number of Connected Devices1                                                    Xiaomi Home App MAU
+         Millions                                                                        Millions
+                                                  1,079.2                      1,118.7
+                                904.6                                  943.7                                       112.7              117.0
+                                                                                                       100.8                106.4
+              739.7                                                                          85.8
+
+
+
+
+              2023              2024               2025            Q1 2025     Q1 2026      2023        2024       2025    Q1 2025   Q1 2026
+
+
+
+         Users with 5 or More Devices Connected to                                       Xiaomi AI Assistant MAU
+         Xiaomi’s AIoT Platform1                                                         Millions
+         Millions
+                                                                                                                                      169.3
+                                                    22.7                        23.6                               159.9
+                                                                                                        137.1               146.7
+                                  18.3                                  19.3                 122.3
+               14.5
+
+
+
+
+              2023              2024               2025            Q1 2025     Q1 2026       2023       2024       2025    Q1 2025   Q1 2026
+
+
+
+1   As of March 31, 2026, excluding smartphones, tablets and laptops                                                                           17
+                                                      Tablets: Ranked Top 5 Globally
+
+
+
+
+                 Vendor
+                                Q1 2026 Global Shipments     Q1 2026      YoY Shipments   Ranked Top 3 in Chinese Mainland
+                                     (Million Units)       Market Share      Change
+                                                                                               Ranked Top 5 Globally
+                  Apple                   14.7                39.9%           7.2%
+
+
+                Samsung                   5.8                 15.7%          -12.6%
+
+
+                 Huawei                   3.3                 8.8%           28.6%
+
+
+                 Lenovo                   3.0                 8.2%           20.0%
+
+
+                 Xiaomi                   2.7                 7.2%           -13.6%
+
+
+                 Others                   7.4                 20.2%          -11.9%
+
+
+                  Total                   36.9               100.0%           -0.1%
+
+
+
+
+Source: Omdia, by shipments in Q1 2026                                                                                       18
+                                                       Wearables: Leading Position Globally
+
+
+                                    Wearable Bands                                                                      TWS
+
+                       Global                             Chinese Mainland                                     Global     Chinese Mainland
+                      Ranking                                 Ranking                                         Ranking         Ranking
+
+
+                     No.3                                        No.2                                         No.2            No.2
+
+
+
+
+Source: Omdia, by shipments in Q1 2026. Wearable bands include basic bands, basic watches, and smartwatches                                  19
+Smart EV, AI and Other New
+   Initiatives Segment
+                                       Delivered 80,856 Vehicles in Q1 2026
+                               Delivered 232,000 Xiaomi YU7 10 Months Post-Launch
+
+
+                                       Xiaomi EV
+                                        Number of Delivery
+                                                                                             145,115
+
+                                                                                   108,796
+                                                                                                                 Xiaomi SU7 Series1
+                                                     75,869               81,302                       80,856
+                                                                                                                 Xiaomi YU7 Series
+
+
+
+
+                                                    Q1 2025              Q2 2025   Q3 2025   Q4 2025   Q1 2026
+
+
+
+
+Note: As of April 30, 2026, sourced from the China Passenger Car Association
+1   Including Xiaomi SU7 Ultra
+                                                                                                                                      21
+                                     Robust Initial Sales of New-Generation Xiaomi SU7
+
+
+
+
+                  Commenced Delivery of The New-Generation
+                  Xiaomi SU7 Series Starting March 23, 2026
+
+
+
+                  Locked-in Orders Over                   80,000 units
+                  During the Initial Sales Period1
+
+
+
+
+                  26,000 Vehicles Delivered                               2
+
+
+
+
+1   The initial sales period spanned from March 23, 2026 to May 6, 2026
+2   As of April 23, 2026
+                                                                                         22
+            Introduced Xiaomi YU7 Standard Version in May 2026
+           Completed the Product Lineup of the Xiaomi YU7 Series
+
+
+Xiaomi YU7 Standard Version    RMB 233,500
+
+
+      V6s Plus
+                         Xiaomi HyperVision
+  Xiaomi HyperEngine
+
+
+
+
+       643km                    752V
+                              SiC-Based
+     CLTC Range          High-Voltage Platform
+
+
+
+
+     700TOPS                 LiDAR &
+   Computing Power
+  for Assisted Driving   4D mmWave Radar
+
+
+
+
+                                                                   23
+                                                  Industry Recognition for Vehicle Quality
+
+
+
+
+                   First-Generation Xiaomi SU7                                                                            Xiaomi YU7
+                   Among Large Pure Electric Sedan1                                                                       Among Large Pure Electric SUV2
+
+                   Ranked No.1 in NEV Initial Quality Study                                                               Ranked No.1 in NEV Initial Quality Study
+                   Ranked No.1 in NEV-APEAL Study                                                                         Ranked No.1 in NEV-APEAL Study
+
+
+
+
+1   Ranked No.1 in J.D. Power 2025 & 2026 China New Energy Vehicle Initial Quality Study (NEV-IQS); Ranked No.1 in J.D. Power 2025 & 2026 China New Energy Vehicle–Automotive Performance, Execution and
+    Layout (NEV-APEAL) Study
+2   Ranked No.1 in J.D. Power 2026 China New Energy Vehicle Initial Quality Study (NEV-IQS); Ranked No.1 in J.D. Power 2026 China New Energy Vehicle–Automotive Performance, Execution and Layout (NEV-APEAL)
+    Study
+                                                                                                                                                                                                                24
+                                                      Continued to Expand EV Sales Network
+
+
+
+
+            EV Sales Centers and City Coverage
+
+
+
+                                                                    138 Cities        143 Cities
+                                                                    477 Stores       490 Stores
+                                                    119 Cities
+                                                   402 Stores
+                                   92 Cities
+                                  335 Stores
+                  65 Cities
+                 235 Stores
+
+
+
+
+                  Q1 2025          Q2 2025          Q3 2025          Q4 2025           Q1 2026
+
+
+
+
+Note: Sales centers of Xiaomi EV includes Xiaomi EV delivery centers, Xiaomi EV sales and service centers and Xiaomi stores   25
+          Steady Execution of Overseas Expansion Strategy
+
+
+        Overseas Expansion              Received Global Attention
+
+             2027 H2
+Target to Enter the European Market
+
+              2028 H1
+Expand to Right-Hand Drive Regions
+
+
+
+
+                                                                    26
+Financial Highlights
+           Q1 2026 Total Revenue Reached RMB99.1 Billion
+
+
+Revenue
+RMB Billions
+
+
+                111.3                116.0            113.1                116.9
+                                                                                                   99.1
+                18.6                  21.3
+                                                      29.0                  37.2
+                                                                                                   19.9
+
+
+                92.7                 94.7             84.1                  79.7                   79.3
+
+
+
+               Q1 2025             Q2 2025           Q3 2025             Q4 2025                Q1 2026
+                         Smartphone x AIoT segment     Smart EV, AI and other new initiatives segment
+
+
+
+YoY%           +47.4%               +30.5%           +22.3%                +7.3%                 -10.9%
+
+
+
+
+                                                                                                          28
+                                      Q1 2026 Revenue by Category
+
+Smartphones Revenue                                                IoT and Lifestyle Products Revenue
+RMB Billions                                                       RMB Billions
+                              Smartphone shipments reached 33.8                                         IoT and lifestyle products revenue
+                              million units, down 19.2% YoY           32.3                              reached RMB24.7 billion, down
+ 50.6
+           44.3      44.3                                                                               23.7% YoY
+                              Smartphones ASP reached RMB1,310,                 24.6       24.7
+                              a record high, up 8.2% YoY                                                Overseas IoT and lifestyle products
+                                                                                                        revenue reached a record high
+                              Smartphones revenue reached
+                              RMB44.3 billion, down 12.5% YoY
+
+
+Q1 2025   Q4 2025   Q1 2026                                         Q1 2025   Q4 2025    Q1 2026
+
+
+
+Internet Services Revenue                                          Smart EV, AI and Other New Initiatives Revenue
+RMB Billions                                                       RMB Billions
+                              Internet services revenue reached                                         Smart EV, AI and other new
+                              RMB9.5 billion, up 4.3% YoY                       37.2                    initiatives revenue reached RMB19.9
+                                                                                                        billion, up 6.9% YoY
+            9.9
+                      9.5     Advertising revenue reached RMB7.1
+  9.1                         billion, up 7.8% YoY                                                      Smart EV sales revenue reached
+                                                                      18.6                19.9
+                                                                                                        RMB19.0 billion, up 5.1% YoY
+                              Chinese Mainland internet services
+                              revenue reached a record high                                             Other related businesses revenue
+                                                                                                        reached RMB0.9 billion, up 70.6% YoY
+
+Q1 2025   Q4 2025   Q1 2026                                         Q1 2025   Q4 2025   Q1 2026
+
+
+                                                                                                                                               29
+                     Gross Profit Margin Maintained at Healthy Level
+
+
+                 Group                                                            Group Gross Profit
+                 %         22.8%             22.0%
+
+
+
+
+                                                                                            17%                        18%
+                          Q1 2025           Q1 2026
+
+                                                                                            27%
+                                                                                                                       33%
+Smartphone x AIoT Segment               Smart EV, AI and Other New Initiatives
+                                        Segment
+%
+                                        %
+     22.8%            22.5%                    23.2%
+                                                                                            32%
+                                                                20.1%                                                  28%
+
+
+                                                                                            25%                        21%
+    Q1 2025          Q1 2026                 Q1 2025          Q1 2026
+
+• Gross profit margin for smartphones    • Lower contribution from Xiaomi SU7
+                                                                                         Q1 2025                     Q1 2026
+  reached 10.1%, due to substantial        Ultra
+  increased price of key components      • Subsidies for vehicle purchase tax          Smartphones           IoT and lifestyle products
+• Gross profit margin for IoT and        • Increased price of key EV components        Internet services     Other related businesses
+  lifestyle products reached 25.2%
+                                                                                       Smart EV, AI and other new initiatives
+
+
+
+                                                                                                                                          30
+                           Continued to Manage Core Business Operating Expenses
+
+             Group Operating Expenses1
+             RMB Billions
+
+
+                          30.0
+                                                                                                                                  17.3%
+                                                                                                      14.8%                                                  14.9%
+                                                                                                                                                                               15.0%
+                          25.0
+                                            11.4%                       11.9%
+
+                          20.0                                                                                                                                                 10.0%
+
+                                                                                                                                   7.4
+                          15.0                                                                         6.7                                                     7.1
+                                                                         5.9
+                                           4.8                                                                                                                                 5.0%
+
+
+                          10.0
+
+
+
+                                                                                                      12.5                        13.8                                         0.0%
+                           5.0             10.6                          11.3                                                                                 11.8
+
+                            -                                                                                                                                                  -5.0%
+
+                                        Q1 2025                      Q2 2025                       Q3 2025                       Q4 2025                  Q1 2026
+
+                                  Operating expenses related to Smartphone x AIoT segment                      Operating expenses related to Smart EV, AI and other new initiatives segment
+
+                                  Operating expenses related to Smartphone x AIoT segment as % of Smartphone x AIoT segment revenue
+
+
+
+
+1   Operating expenses comprised research and development expenses, selling and marketing expenses and administrative expenses                                                                31
+                                        Q1 2026 Adjusted Net Profit Reached RMB6.1 Billion
+
+
+               Adjusted Net Profit118.0
+
+
+               RMB Billions
+                                   16.0
+
+
+
+
+                                   14.0
+
+
+
+
+                                   12.0
+                                                                                  10.8                             11.3
+                                                  10.7
+                                   10.0
+
+
+
+
+                                    8.0
+
+
+                                                                                                                                                    6.3                             6.1
+                                    6.0
+
+
+
+
+                                    4.0
+
+
+
+
+                                    2.0
+
+
+
+
+                                    -
+
+
+
+
+                                              Q1 2025                         Q2 2025                         Q3 2025                         Q4 2025                          Q1 2026
+
+               Adjusted Net
+                                                  9.6%                            9.3%                            10.0%                            5.4%                            6.1%
+               Profit Margin
+
+
+
+
+1   Defined as profit for the period, as adjusted by adding back (i) share-based compensation, (ii) net fair value changes on investments, (iii) amortization of intangible assets resulting from acquisitions, (iv) changes
+    of value of financial liabilities to investors, and (v) income tax effects of non-IFRS adjustments                                                                                                                         32
+                       Capex Reached RMB3.3 Billion in Q1 2026
+                                Increased 20.0% YoY
+
+Capex
+RMB Billions
+
+
+     60.0
+                                                     5.4                    5.2
+                                       4.9
+     50.0
+
+
+     40.0
+                                                                                                    3.3
+                                                     3.8
+                 2.7                   3.2                                  3.9
+     30.0
+                                                                                                    1.5
+     20.0        1.1
+
+     10.0
+                 1.6                   1.7           1.6                                            1.8
+                                                                            1.3
+      -
+               Q1 2025              Q2 2025        Q3 2025              Q4 2025                 Q1 2026
+
+                       Smartphone x AIoT segment       Smart EV, AI and other new initiatives segment
+
+
+                                                                                                          33
+                                          Continued to Return Value to Our Shareholders
+                                               through Share Repurchase Program
+
+                                                                   Shares Repurchased
+                                                                   HKD Billions
+
+                                                                                                     8.4
+
+
+              Returned cash to shareholders through                                           6.3
+
+              Repurchasing 250.5 million shares
+
+              (HKD8.41 Billion) in 20261                                                3.7
+                                                                      2.8
+
+                                                                              1.5
+
+
+
+                                                                     2022    2023   2024      2025   2026
+
+
+
+
+1   As of May 22, 2026, excluding transaction fees                                                          34
+                                  Industry Recognitions for ESG Efforts
+
+
+ In Q1 2026, the Group’s Total Renewable
+
+ Electricity Consumption Reached 26,021 MWh
+                                                                                 ESG Report
+ •   22,393 MWh of Procured Renewable Energy                                Published for the 8th
+                                                                              Consecutive Year
+ •   3,628 MWh of On-Site Solar Generation from
+
+     Distributed PV Systems Across Campus
+
+
+
+
+                      6
+                    AAA
+                     5
+  MSCI              AA
+                     A4                                     A       A
+                                                                                 S&P Global
+                                                                            Corporate Sustainability Assessment
+                      3
+                    BBB                           BBB
+ Rating Upgrade      2
+                    BB                      BB                               Top 1% Among Chinese Companies
+for 3 Consecutive                                                           in Computers & Peripherals and Office
+      Years          B1     B       B                                                   Electronics
+                      0
+                    CCC
+                          2021/08 2022/10 2023/09 2024/10 2025/10 2026/03
+
+
+
+
+                                                                                                                    35
+ IR@xiaomi.com
+https://ir.mi.com/
+

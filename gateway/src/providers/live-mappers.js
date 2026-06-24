@@ -3,6 +3,12 @@ function toNumber(value) {
   return Number.isFinite(num) ? num : 0;
 }
 
+function toNullableNumber(value) {
+  if (value === undefined || value === null || value === '') return null;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
+
 import { createTimestamp as beijingNow, beijingToday } from '../utils/time.js';
 
 function parseTencentTimestamp(value) {
@@ -25,6 +31,13 @@ export function parseTencentQuote(raw) {
   }
   const parts = match[1].split('~');
   const info = (parts[35] || '').split('/');
+  const isMainlandStockQuote = parts[0] === '1' || parts[0] === '51';
+  const peTtm = isMainlandStockQuote
+    ? toNullableNumber(parts[52]) ?? toNullableNumber(parts[39])
+    : toNullableNumber(parts[39]);
+  const pb = isMainlandStockQuote
+    ? toNullableNumber(parts[46]) ?? toNullableNumber(parts[43])
+    : toNullableNumber(parts[43]);
 
   return {
     name: parts[1],
@@ -36,7 +49,9 @@ export function parseTencentQuote(raw) {
     low: toNumber(parts[34]),
     volume: toNumber(parts[6]),
     turnover: toNumber(info[2]) || toNumber(parts[37]),
-    time: parseTencentTimestamp(parts[30])
+    time: parseTencentTimestamp(parts[30]),
+    peTtm,
+    pb
   };
 }
 
@@ -173,6 +188,8 @@ export function parseEastmoneyHkQuote(raw) {
     prevClose: toNumber(d.f60) / scale,
     volume: toNumber(d.f47),
     turnover: toNumber(d.f48),
+    peTtm: toNullableNumber(d.f162) === null ? null : toNullableNumber(d.f162) / 100,
+    pb: toNullableNumber(d.f167) === null ? null : toNullableNumber(d.f167) / 100,
     time: Number.isFinite(Number(d.f86)) && Number(d.f86) > 0
       ? new Date(Number(d.f86) * 1000).toISOString().replace('Z', '+00:00')
       : beijingNow()
@@ -180,7 +197,11 @@ export function parseEastmoneyHkQuote(raw) {
 }
 
 export function parseTencentMinute(raw) {
-  const list = raw?.data ?? [];
+  const list = Array.isArray(raw?.data)
+    ? raw.data
+    : Array.isArray(raw?.data?.data)
+      ? raw.data.data
+      : [];
   const points = list.map((item) => {
     const [timeRaw, price, volume, amount] = item.split(' ');
     const time = `${timeRaw.slice(0, 2)}:${timeRaw.slice(2, 4)}`;

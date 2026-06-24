@@ -13,13 +13,10 @@ export function TopBar({ username, ticker }: TopBarProps) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
 
-  // 行情直接走 hq-classic（带 symbol 参数）— 经典版即默认行情页
-  const navItems: Array<{ href: string; label: string; external?: boolean }> = ticker
-    ? [
-        { href: `/hq-classic?symbol=${encodeURIComponent(ticker)}`, label: '行情', external: true },
-        { href: `/research/${ticker}`, label: '财报' },
-      ]
-    : [];
+  const navItems: Array<{ href: string; label: string }> = [
+    { href: '/', label: '市场总览' },
+    { href: '/assets', label: '资产列表' },
+  ];
 
   const onLogout = async () => {
     try {
@@ -50,8 +47,7 @@ export function TopBar({ username, ticker }: TopBarProps) {
               <NavLink
                 key={it.href}
                 href={it.href}
-                external={it.external}
-                current={pathname.startsWith(it.href.split('?')[0])}
+                current={pathname === it.href}
               >
                 {it.label}
               </NavLink>
@@ -85,12 +81,10 @@ export function TopBar({ username, ticker }: TopBarProps) {
 function NavLink({
   href,
   current,
-  external,
   children,
 }: {
   href: string;
   current: boolean;
-  external?: boolean;
   children: React.ReactNode;
 }) {
   const cls = `rounded px-3 py-1.5 transition-colors ${
@@ -98,10 +92,5 @@ function NavLink({
       ? 'bg-[var(--color-bg-elev3)] text-[var(--color-text-primary)]'
       : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-elev2)] hover:text-[var(--color-text-primary)]'
   }`;
-  // 经典版静态资源走原生 <a>，避免 Next router 拦截
-  return external ? (
-    <a href={href} className={cls}>{children}</a>
-  ) : (
-    <Link href={href} className={cls}>{children}</Link>
-  );
+  return <Link href={href} className={cls}>{children}</Link>;
 }

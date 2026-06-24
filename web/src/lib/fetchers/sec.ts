@@ -9,6 +9,8 @@
  */
 
 import type { CompanyFinancials, PeriodKey } from '@/types/finance';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const SEC_USER_AGENT = 'VFin/1.0 (lan@local)';
 
@@ -23,6 +25,7 @@ export const US_TICKER_CIK: Record<string, { cik: number; name: string; nameZh: 
   META:  { cik: 1326801,  name: 'Meta Platforms, Inc.',  nameZh: 'Meta',       industry: '互联网 / 社交' },
   NFLX:  { cik: 1065280,  name: 'Netflix, Inc.',         nameZh: '奈飞',       industry: '流媒体' },
 };
+const CIK_TICKER = new Map(Object.entries(US_TICKER_CIK).map(([ticker, meta]) => [meta.cik, ticker]));
 
 interface SECFactRecord {
   end: string;
@@ -45,6 +48,9 @@ interface SECFactsResponse {
 }
 
 async function fetchFacts(cik: number): Promise<SECFactsResponse> {
+  const cached = process.env.NODE_ENV === 'test' ? null : readCachedFacts(cik);
+  if (cached) return cached;
+
   const padded = String(cik).padStart(10, '0');
   const url = `https://data.sec.gov/api/xbrl/companyfacts/CIK${padded}.json`;
   const res = await fetch(url, {
@@ -52,7 +58,41 @@ async function fetchFacts(cik: number): Promise<SECFactsResponse> {
     signal: AbortSignal.timeout(20_000),
   });
   if (!res.ok) throw new Error(`SEC EDGAR ${url} → ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  if (process.env.NODE_ENV !== 'test') writeCachedFacts(cik, data);
+  return data;
+}
+
+function cacheRoot(): string {
+  return join(process.cwd(), 'src', 'data', 'source-cache');
+}
+
+function readCachedFacts(cik: number): SECFactsResponse | null {
+  const ticker = CIK_TICKER.get(cik);
+  if (!ticker) return null;
+  const dir = join(cacheRoot(), ticker);
+  if (!existsSync(dir)) return null;
+  const dateDirs = readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .sort()
+    .reverse();
+
+  for (const date of dateDirs) {
+    const file = join(dir, date, `sec-companyfacts-${ticker}.raw.json`);
+    if (!existsSync(file)) continue;
+    return JSON.parse(readFileSync(file, 'utf-8')) as SECFactsResponse;
+  }
+  return null;
+}
+
+function writeCachedFacts(cik: number, data: SECFactsResponse): void {
+  const ticker = CIK_TICKER.get(cik);
+  if (!ticker) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const dir = join(cacheRoot(), ticker, today);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, `sec-companyfacts-${ticker}.raw.json`), JSON.stringify(data));
 }
 
 /**
@@ -66,14 +106,10 @@ function getAnnualDuration(
   candidates: string[],
   year: number,
 ): number {
-  const start = `${year}-01-01`;
-  const end = `${year}-12-31`;
   for (const concept of candidates) {
     const records = facts.facts['us-gaap']?.[concept]?.units?.USD;
     if (!records) continue;
-    const matches = records
-      .filter((r) => r.end === end && r.start === start)
-      .sort((a, b) => b.filed.localeCompare(a.filed));
+    const matches = selectAnnualDurationRecords(records, year);
     if (matches.length > 0) return matches[0].val;
   }
   return 0;
@@ -88,14 +124,10 @@ function getAnnualDurationNullable(
   candidates: string[],
   year: number,
 ): number | null {
-  const start = `${year}-01-01`;
-  const end = `${year}-12-31`;
   for (const concept of candidates) {
     const records = facts.facts['us-gaap']?.[concept]?.units?.USD;
     if (!records) continue;
-    const matches = records
-      .filter((r) => r.end === end && r.start === start)
-      .sort((a, b) => b.filed.localeCompare(a.filed));
+    const matches = selectAnnualDurationRecords(records, year);
     if (matches.length > 0) return matches[0].val;
   }
   return null;
@@ -116,16 +148,48 @@ function getAnnualInstant(
   candidates: string[],
   year: number,
 ): number {
-  const end = `${year}-12-31`;
   for (const concept of candidates) {
     const records = facts.facts['us-gaap']?.[concept]?.units?.USD;
     if (!records) continue;
-    const matches = records
-      .filter((r) => r.end === end && !r.start)
-      .sort((a, b) => b.filed.localeCompare(a.filed));
+    const matches = selectAnnualInstantRecords(records, year);
     if (matches.length > 0) return matches[0].val;
   }
   return 0;
+}
+
+function byLatestPeriodThenFiling(a: SECFactRecord, b: SECFactRecord): number {
+  const endCmp = b.end.localeCompare(a.end);
+  if (endCmp !== 0) return endCmp;
+  return b.filed.localeCompare(a.filed);
+}
+
+function isAnnualTenK(record: SECFactRecord, year: number): boolean {
+  return record.fy === year && record.fp === 'FY' && /^10-K/.test(record.form);
+}
+
+function selectAnnualDurationRecords(records: SECFactRecord[], year: number): SECFactRecord[] {
+  const fiscalMatches = records
+    .filter((r) => r.start && isAnnualTenK(r, year))
+    .sort(byLatestPeriodThenFiling);
+  if (fiscalMatches.length > 0) return fiscalMatches;
+
+  const start = `${year}-01-01`;
+  const end = `${year}-12-31`;
+  return records
+    .filter((r) => r.end === end && r.start === start)
+    .sort((a, b) => b.filed.localeCompare(a.filed));
+}
+
+function selectAnnualInstantRecords(records: SECFactRecord[], year: number): SECFactRecord[] {
+  const fiscalMatches = records
+    .filter((r) => !r.start && isAnnualTenK(r, year))
+    .sort(byLatestPeriodThenFiling);
+  if (fiscalMatches.length > 0) return fiscalMatches;
+
+  const end = `${year}-12-31`;
+  return records
+    .filter((r) => r.end === end && !r.start)
+    .sort((a, b) => b.filed.localeCompare(a.filed));
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100;

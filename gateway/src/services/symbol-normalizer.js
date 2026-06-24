@@ -16,6 +16,10 @@ export function normalizeSymbol(input) {
     throw createInvalidSymbolError(input);
   }
 
+  if (['btc', 'bitcoin', '比特币'].includes(value)) {
+    return { market: 'crypto', symbol: 'BTCUSD.crypto' };
+  }
+
   // 带明确市场后缀时直接信任，无需校验前缀（指数如 000001.sh 合法）
   if (/^\d{6}\.sh$/.test(value)) {
     return { market: 'sh', symbol: value };
@@ -81,6 +85,11 @@ export function normalizeSymbol(input) {
     const code = value.slice(0, lastDot).toUpperCase();
     const mkt = value.slice(lastDot + 1);
     return { market: mkt, symbol: `${code}.${mkt}` };
+  }
+
+  if (/^[a-z0-9]{3,12}\.crypto$/.test(value)) {
+    const code = value.replace(/\.crypto$/, '').toUpperCase();
+    return { market: 'crypto', symbol: `${code}.crypto` };
   }
 
   // 美股代码可能含子类后缀（BRK.B、BF.B 等），保留代码段中的点
